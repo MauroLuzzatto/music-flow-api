@@ -33,17 +33,3 @@ for file in files:
 df = pd.DataFrame(full_data)
 df.to_csv("streams.csv")
 
-# print(df.head())
-
-# df_counts = df[["artistName", "trackName"]].value_counts().reset_index()
-# df_counts.columns = ["artistName", "trackName", "counts"]
-
-# print(df_counts)
-# df_counts.to_csv("df_counts.csv")
-
-
-# df_artists = df[["artistName"]].value_counts().reset_index()
-# df_artists.columns = ["artistName", "counts"]
-
-# print(df_artists)
-# df_artists.to_csv("df_artists.csv")

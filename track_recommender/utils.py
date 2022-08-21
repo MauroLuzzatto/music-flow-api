@@ -1,15 +1,10 @@
 import os
 import sys
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
-
-print(parent_dir_path)
-sys.path.insert(0, parent_dir_path)
-
 path = os.getcwd()
+path_base = os.path.join(path, "track_recommender")
 path_data = os.path.join(path, "data")
 path_features = os.path.join(path_data, "features")
+path_dataset = os.path.join(path_data, "dataset")
 
-
-print(path_features)
+print(path_dataset)

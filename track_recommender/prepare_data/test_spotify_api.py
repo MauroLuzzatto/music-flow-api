@@ -20,13 +20,8 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 track = "one more time"
 artist = "daft punk"
 
-print(CLIENT_ID, CLIENT_SECRET)
-
-
-if __name__ == "__main__":
-
-    spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
-    url = spotify_api.search_track_url(track, artist)
-    r = spotify_api.get_request(url)
-    id = spotify_api.get_track_id(r)
-    print(r, id)
+spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
+url = spotify_api.search_track_url(track, artist)
+r = spotify_api.get_request(url)
+id = spotify_api.get_track_id(r)
+print(r, id)
