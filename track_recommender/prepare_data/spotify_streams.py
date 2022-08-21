@@ -31,19 +31,19 @@ for file in files:
 
     full_data.extend(data)
 df = pd.DataFrame(full_data)
-df.to_csv("data.csv")
+df.to_csv("streams.csv")
 
-print(df.head())
+# print(df.head())
 
-df_counts = df[["artistName", "trackName"]].value_counts().reset_index()
-df_counts.columns = ["artistName", "trackName", "counts"]
+# df_counts = df[["artistName", "trackName"]].value_counts().reset_index()
+# df_counts.columns = ["artistName", "trackName", "counts"]
 
-print(df_counts)
-df_counts.to_csv("df_counts.csv")
+# print(df_counts)
+# df_counts.to_csv("df_counts.csv")
 
 
-df_artists = df[["artistName"]].value_counts().reset_index()
-df_artists.columns = ["artistName", "counts"]
+# df_artists = df[["artistName"]].value_counts().reset_index()
+# df_artists.columns = ["artistName", "counts"]
 
-print(df_artists)
-df_artists.to_csv("df_artists.csv")
+# print(df_artists)
+# df_artists.to_csv("df_artists.csv")

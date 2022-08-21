@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 24 21:29:13 2020
-
-@author: mauro
-"""
-
+# https://www.kaggle.com/code/harupy/scikit-learn-autologging-in-mlflow/notebook
 
 import datetime
 import json
@@ -26,9 +20,10 @@ from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from src.model.config import path_base
-from src.model.utils import create_folder, get_dataset
+
 from xgboost import XGBRegressor  # type: ignore
+
+from utils import create_folder
 
 
 class ModelClass(object):
@@ -329,7 +324,7 @@ class ModelClass(object):
         ) as f:
             json.dump(config, f, ensure_ascii=False, indent=4)
 
-    def train(self, param_distributions, cv_settings, config):
+    def train(self, param_distributions, cv_settings, config=None):
         """
         wrapper function to execute the full training process end-to-end,
         including hyperparameter tuning, evaluation, visualization
@@ -349,7 +344,9 @@ class ModelClass(object):
         self.visualize()
         self.full_data_training()
         self.save_pickle()
-        self.save_config(config)
+
+        if config:
+            self.save_config(config)
 
 
 param_distributions = {
@@ -373,28 +370,13 @@ cv_settings = {
 
 if __name__ == "__main__":
 
-    path_load = os.path.join(path_base, r"dataset", "training")
-    path_model = os.path.join(path_base, r"model")
+    path_model = r"model"
 
-    name = "training_data_v2.csv"
-
-    source = "training"
-
-    if source == "demo":
-        diabetes = load_diabetes()
-        X = diabetes.data
-        y = diabetes.target
-    elif source == "training":
-        X, y = get_dataset(
-            path_load=path_load,
-            name=name,
-        )
-    else:
-        raise
-
+    diabetes = load_diabetes()
+    X = diabetes.data
+    y = diabetes.target
+    
     estimator = XGBRegressor()
-
     config = {"target": list(y)[0], "features": list(X)}
-
     model = ModelClass(estimator, X, y, path_model)
     model.train(param_distributions, cv_settings, config)

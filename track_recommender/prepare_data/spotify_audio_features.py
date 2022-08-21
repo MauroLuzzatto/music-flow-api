@@ -25,7 +25,7 @@ def get_hash(name):
 if __name__ == "__main__":
 
     spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
-    df = pd.read_csv("data.csv")
+    df = pd.read_csv("streams.csv")
 
     cache = {}
     failing_tracks = []

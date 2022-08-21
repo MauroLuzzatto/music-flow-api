@@ -1,23 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Docs:
-https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-analysis/
-https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/
 
-https://api.spotify.com/v1/browse/new-releases
-
- Client ID
-  Client Secret
-
-https://open.spotify.com/user/?si=6lecnf0nTv6eXwzC5C2M2g
-
-https://open.spotify.com/album/3Gq2Dme9nesdgoqNNlcN8O
-r = requests.get(url="https://api.spotify.com/v1/browse/new-releases", headers=headers)
-
->>> import requests
->>> response = requests.get(
-... 'https://website.com/id', headers={'Authorization': 'access_token myToken'})
-"""
 import json
 
 import pandas as pd
@@ -67,15 +48,15 @@ class SpotifyAPI(object):
         )
         return json.loads(r.text)
 
-    def get_artist_info(self, ID):
+    def get_artist_info(self, id):
 
         r = requests.get(
-            url=f"https://api.spotify.com/v1/artists/{ID}", headers=self.headers
+            url=f"https://api.spotify.com/v1/artists/{id}", headers=self.headers
         )
         return json.loads(r.text)
 
-    def get_audio_features_url(self, ID):
-        return f"https://api.spotify.com/v1/audio-features/{ID}"
+    def get_audio_features_url(self, id):
+        return f"https://api.spotify.com/v1/audio-features/{id}"
 
     def search_track_url(self, track, artist=None):
         if not artist:
@@ -96,9 +77,9 @@ class SpotifyAPI(object):
             r = session.get(url=url, headers=self.headers)
         return json.loads(r.text)
 
-    def get_audio_analysis(self, ID):
+    def get_audio_analysis(self, id):
         r = requests.get(
-            url=f"https://api.spotify.com/v1/audio-analysis/{ID}", headers=self.headers
+            url=f"https://api.spotify.com/v1/audio-analysis/{id}", headers=self.headers
         )
         return json.loads(r.text)
 
