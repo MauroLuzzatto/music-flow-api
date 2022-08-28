@@ -4,15 +4,29 @@ import pandas as pd
 
 from xgboost import XGBRegressor  # type: ignore
 
-from track_recommender.model.ModelClass import ModelClass, cv_settings, param_distributions
+from track_recommender.model.ModelClass import (
+    ModelClass,
+    cv_settings,
+    param_distributions,
+)
 from track_recommender.utils import path, path_dataset
 
 path_model = os.path.join(path, "results")
-dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col = 0)
+dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
 
 
 columns_scope = [
-     'danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo'
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
 ]
 
 X = dataset[columns_scope]

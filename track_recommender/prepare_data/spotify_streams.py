@@ -32,4 +32,3 @@ for file in files:
     full_data.extend(data)
 df = pd.DataFrame(full_data)
 df.to_csv("streams.csv")
-

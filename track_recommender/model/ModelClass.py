@@ -13,9 +13,14 @@ from LoggerClass import LoggerClass
 from sklearn.base import is_classifier, is_regressor  # type: ignore
 from sklearn.datasets import load_diabetes  # type: ignore
 from sklearn.metrics import f1_score  # type: ignore
-from sklearn.metrics import (accuracy_score, mean_absolute_error,
-                             mean_absolute_percentage_error,
-                             mean_squared_error, precision_score, r2_score)
+from sklearn.metrics import (
+    accuracy_score,
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+)
 from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
@@ -350,7 +355,7 @@ class ModelClass(object):
 
 
 param_distributions = {
-    "learning_rate": [0.001, 0.01,0.1, 0.25],
+    "learning_rate": [0.001, 0.01, 0.1, 0.25],
     "max_depth": [3, 5, 7],
     "min_child_weight": [1, 3, 5],
     "subsample": [0.5, 0.8, 1.0],
@@ -375,7 +380,7 @@ if __name__ == "__main__":
     diabetes = load_diabetes()
     X = diabetes.data
     y = diabetes.target
-    
+
     estimator = XGBRegressor()
     config = {"target": list(y)[0], "features": list(X)}
     model = ModelClass(estimator, X, y, path_model)

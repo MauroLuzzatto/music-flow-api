@@ -11,7 +11,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from song_translator.translation.translation import (
-    get_translation, get_translator_by_language)
+    get_translation,
+    get_translator_by_language,
+)
 
 env_path = Path(".") / ".env"
 load_dotenv(dotenv_path=env_path)

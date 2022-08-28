@@ -1,4 +1,3 @@
-
 import json
 
 import pandas as pd
@@ -15,6 +14,11 @@ class SpotifyAPI(object):
 
         url = "https://accounts.spotify.com/api/token"
         response = requests.post(url, data=body_params, auth=(CLIENT_ID, CLIENT_SECRET))
+
+        if response.status_code != 200:
+            print("bad credentials")
+            print(response)
+            exit()
 
         token_raw = json.loads(response.text)
         token = token_raw["access_token"]
@@ -33,20 +37,19 @@ class SpotifyAPI(object):
         return json.loads(r.text)
 
     def get_playlist_items(self, playlist_id, limit=100, offset=1):
-
-        r = requests.get(
-            url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}",
-            headers=self.headers,
-        )
-        return json.loads(r.text)
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}"
+        r = self.get_request(url)
+        return r
 
     def get_track_info(self, track, artist, limit=4):
+        url = f"https://api.spotify.com/v1/search?q=track:{track}%20artist:{artist}&limit={limit}&type=track"
+        r = self.get_request(url)
+        return r
 
-        r = requests.get(
-            url=f"https://api.spotify.com/v1/search?q=track:{track}%20artist:{artist}&limit={limit}&type=track",
-            headers=self.headers,
-        )
-        return json.loads(r.text)
+    def get_track(self, id):
+        url = f"https://api.spotify.com/v1/tracks/{id}"
+        r = self.get_request(url)
+        return r
 
     def get_artist_info(self, id):
 
@@ -55,8 +58,10 @@ class SpotifyAPI(object):
         )
         return json.loads(r.text)
 
-    def get_audio_features_url(self, id):
-        return f"https://api.spotify.com/v1/audio-features/{id}"
+    def get_audio_features(self, id):
+        url = f"https://api.spotify.com/v1/audio-features/{id}"
+        r = self.get_request(url)
+        return r
 
     def search_track_url(self, track, artist=None):
         if not artist:
