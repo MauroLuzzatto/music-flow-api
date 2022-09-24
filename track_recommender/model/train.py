@@ -1,7 +1,7 @@
 import os
 import sys
-import pandas as pd
 
+import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
 from track_recommender.model.ModelClass import (

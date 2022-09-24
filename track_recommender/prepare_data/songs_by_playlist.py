@@ -1,9 +1,8 @@
+import os
 from collections.abc import MutableMapping
 from pprint import pprint
 
 import pandas as pd
-
-import os
 from dotenv import load_dotenv
 from spotify_api import SpotifyAPI
 
@@ -22,7 +21,7 @@ USER_ID = 1157239771
 # playlist_id = "6KOwiWg5zwrt83nEcx7HyI"
 # playlist_id = "37i9dQZF1DXbTxeAdrVG2l"
 
-random_playlists = ["6p21dRudS9FmcyGvKWPq2R", "3ldvCZiQqreYp7sEuqQ6uO"]
+random_playlists = ["6p21dRudS9FmcyGvKWPq2R"]  # , "3ldvCZiQqreYp7sEuqQ6uO"
 
 
 spotifAPI = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
@@ -31,16 +30,20 @@ tracks = []
 
 for playlist_id in random_playlists:
 
-    for offset in range(10):
+    for offset in range(30):
+
         paylist = spotifAPI.get_playlist_items(
-            playlist_id=playlist_id, limit=7, offset=offset
+            playlist_id=playlist_id, limit=1, offset=offset
         )
 
         print([track["track"]["name"] for track in paylist["items"]])
-        print(len(paylist))
+        print(len(paylist["items"]))
+
+        if len(paylist["items"]) == 0:
+            continue
 
         for track in paylist["items"]:
-            print("---" * 10)
+            print("---" * 5)
 
             # from pprint import pprint
             # pprint(track)
@@ -79,5 +82,11 @@ for playlist_id in random_playlists:
             tracks.append(track_dict)
 
 
-df = pd.DataFrame(tracks)
-df.to_csv("random_tracks.csv", sep=";")
+df = (
+    pd.DataFrame(tracks)
+    .drop_duplicates(subset=["track_name", "artists"], keep="last")
+    .reset_index(drop=True)
+)
+
+print(df)
+df.to_csv("random_tracks.csv", sep=";", header=False, mode="a")

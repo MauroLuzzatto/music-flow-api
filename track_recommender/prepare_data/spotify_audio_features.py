@@ -1,13 +1,14 @@
 import hashlib
 import json
 import os
+import time
 from pprint import pprint
 
 import pandas as pd
 from dotenv import load_dotenv
 from spotify_api import SpotifyAPI
 
-from track_recommender.utils import path_env, path_data
+from track_recommender.utils import path_data, path_env, path_features
 
 dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
@@ -17,9 +18,6 @@ CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 
-track = "one more time"
-artist = "daft punk"
-
 
 def get_hash(name):
     return hashlib.sha256(name.encode("utf-8")).hexdigest()
@@ -28,17 +26,29 @@ def get_hash(name):
 if __name__ == "__main__":
 
     spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
-    df = pd.read_csv(os.path.join(path_data, "streams.csv"))
 
-    cache = {}
+    df_streams = pd.read_csv(os.path.join(path_data, "streams.csv"))
+    print(df_streams.shape)
+    df = df_streams.drop_duplicates(subset=["trackName", "artistName"], keep="first")
+    print(df.shape)
+
+
+    if os.path.isfile(os.path.join(path_data, "cache.json")):
+        with open(os.path.join(path_data, "cache.json"), "r") as f:
+            cache = json.load(f)
+    else:
+        cache = {}
+
     failing_tracks = []
     dataset = []
 
     for index, row in df.iterrows():
 
-        if index % 10000 == 0 and index > 0:
-            df_save = pd.DataFrame(dataset)
-            df_save.to_csv(f"audio_features_{index}.csv", sep=";")
+        if index % 100 == 0:
+            with open(
+                os.path.join(path_data, "cache.json"), "w", encoding="utf-8"
+            ) as f:
+                json.dump(cache, f, ensure_ascii=False, indent=4)
 
         print(f"{index}/{len(df)} - {len(cache)}")
         track_name = row["trackName"]
@@ -51,28 +61,36 @@ if __name__ == "__main__":
             continue
 
         url = spotify_api.search_track_url(track_name, artist_name)
-        r = spotify_api.get_request(url)
-        id = spotify_api.get_track_id(r)
+        response, status_code = spotify_api.get_request(url)
+        print(status_code)
+        id = spotify_api.get_track_id(response)
 
-        if id:
-            audio_features = spotify_api.get_audio_features(id)
-            audio_analysis = spotify_api.get_audio_analysis(id)
-            track = spotify_api.get_track(id)
+        if not id:
+            failed ={"status": "failed", "track_name": track_name, "artist_name": artist_name}
+            cache[hash] = failed
+            print(failed)
+        else:
+            audio_features, status_code = spotify_api.get_audio_features(id)
+            # audio_analysis = spotify_api.get_audio_analysis(id)
+            track, status_code = spotify_api.get_track(id)
+
+            pprint(track)
+            print(status_code)
 
             # audio_features["ms_played"] = row["msPlayed"]
             # audio_features["end_time"] = row["endTime"]
 
-            for key in [
-                "codestring",
-                "code_version",
-                "echoprintstring",
-                "echoprint_version",
-                "synchstring",
-                "synch_version",
-                "rhythmstring",
-                "rhythm_version",
-            ]:
-                del audio_analysis["track"][key]
+            # for key in [
+            #     "codestring",
+            #     "code_version",
+            #     "echoprintstring",
+            #     "echoprint_version",
+            #     "synchstring",
+            #     "synch_version",
+            #     "rhythmstring",
+            #     "rhythm_version",
+            # ]:
+            #     del audio_analysis["track"][key]
 
             audio_features["track_name"] = track_name
             audio_features["artist_name"] = artist_name
@@ -87,6 +105,7 @@ if __name__ == "__main__":
             isrc = track["external_ids"]["isrc"]
 
             track_dict = {
+                "id_hash": hash,
                 "album": album,
                 "release_date": release_date,
                 "duration_ms": duration_ms,
@@ -97,20 +116,11 @@ if __name__ == "__main__":
             }
 
             audio_features.update(track_dict)
-            audio_features.update(audio_analysis["track"])
-
-            with open("data.json", "w", encoding="utf-8") as f:
-                json.dump(audio_features, f, ensure_ascii=False, indent=4)
-
-            exit()
-            # print(audio_analysis)
-            # print(audio_features)
+            # audio_features.update(audio_analysis["track"])
 
             dataset.append(audio_features)
             cache[hash] = audio_features
-        else:
-            failing_tracks.append((track, artist))
 
 
 df_save = pd.DataFrame(dataset)
-df_save.to_csv(r"audio_features.csv", sep=";")
+df_save.to_csv(os.path.join(path_features, r"audio_features.csv"), sep=";")
