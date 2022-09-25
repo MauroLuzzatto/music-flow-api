@@ -1,16 +1,16 @@
 import os
-from collections.abc import MutableMapping
 from pprint import pprint
 
 import pandas as pd
 from dotenv import load_dotenv
 from spotify_api import SpotifyAPI
 
+from track_recommender.utils import path_data
+
 dotenv_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"
 )
 load_dotenv(dotenv_path)
-print(dotenv_path)
 
 
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -32,7 +32,7 @@ for playlist_id in random_playlists:
 
     for offset in range(30):
 
-        paylist = spotifAPI.get_playlist_items(
+        paylist, status_code = spotifAPI.get_playlist_items(
             playlist_id=playlist_id, limit=1, offset=offset
         )
 
@@ -89,4 +89,4 @@ df = (
 )
 
 print(df)
-df.to_csv("random_tracks.csv", sep=";", header=False, mode="a")
+df.to_csv(os.path.join(path_data, "random_tracks.csv"), sep=";", header=False, mode="a")

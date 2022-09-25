@@ -352,25 +352,6 @@ class ModelClass(object):
             self.save_config(config)
 
 
-param_distributions = {
-    "learning_rate": [0.001, 0.01, 0.1, 0.25],
-    "max_depth": [3, 5, 7],
-    "min_child_weight": [1, 3, 5],
-    "subsample": [0.5, 0.8, 1.0],
-    "colsample_bytree": [0.25, 0.5, 0.7],
-    "n_estimators": [100, 200],
-    "objective": ["reg:squarederror"],
-}
-
-cv_settings = {
-    "n_iter": 50,  # total combinations testes
-    "scoring": "r2",
-    "cv": 3,
-    "random_state": 0,
-    "n_jobs": -1,
-    "verbose": 3,
-}
-
 if __name__ == "__main__":
 
     path_model = r"model"
@@ -382,4 +363,4 @@ if __name__ == "__main__":
     estimator = XGBRegressor()
     config = {"target": list(y)[0], "features": list(X)}
     model = ModelClass(estimator, X, y, path_model)
-    model.train(param_distributions, cv_settings, config)
+    # model.train(param_distributions, cv_settings, config)

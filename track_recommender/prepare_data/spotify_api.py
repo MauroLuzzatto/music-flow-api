@@ -1,11 +1,11 @@
 import json
+import string
 
 import pandas as pd
+import regex as re
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-import regex as re
-import string
 
 
 class SpotifyAPI(object):
@@ -89,10 +89,10 @@ class SpotifyAPI(object):
         return response.json(), response.status_code
 
     def get_audio_analysis(self, id):
-        r = requests.get(
-            url=f"https://api.spotify.com/v1/audio-analysis/{id}", headers=self.headers
-        )
-        return json.loads(r.text)
+
+        url = f"https://api.spotify.com/v1/audio-analysis/{id}"
+        response, status_code = self.get_request(url)
+        return response, status_code
 
     def post_url(self, url):
         r = requests.get(url=url, headers=self.headers)
@@ -118,4 +118,6 @@ class SpotifyAPI(object):
 
     @staticmethod
     def clean_string(_string):
-        return _string.replace("'", "").replace("-", "").replace("(", "").replace(")", "")
+        return (
+            _string.replace("'", "").replace("-", "").replace("(", "").replace(")", "")
+        )
