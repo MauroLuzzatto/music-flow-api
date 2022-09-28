@@ -109,7 +109,7 @@ class SpotifyAPI(object):
         r = requests.get(url=url, headers=self.headers)
         return json.loads(r.text)
 
-    def get_track_id(self, r):
+    def get_track_id_from_response(self, r):
 
         try:
             return r["tracks"]["items"][0]["id"]

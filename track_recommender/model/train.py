@@ -4,11 +4,7 @@ import sys
 import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
-from track_recommender.model.ModelClass import (
-    ModelClass,
-    cv_settings,
-    param_distributions,
-)
+from track_recommender.model.ModelClass import ModelClass
 from track_recommender.utils import path, path_dataset
 
 path_model = os.path.join(path, "results")

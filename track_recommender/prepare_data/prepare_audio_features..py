@@ -6,8 +6,8 @@ from pprint import pprint
 
 import pandas as pd
 from dotenv import load_dotenv
-from spotify_api import SpotifyAPI
 
+from track_recommender.core.spotify_api import SpotifyAPI
 from track_recommender.utils import (
     get_hash,
     path_data,
@@ -20,32 +20,26 @@ dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
 
 
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-
-
 if __name__ == "__main__":
 
+    CLIENT_ID = os.getenv("CLIENT_ID")
+    CLIENT_SECRET = os.getenv("CLIENT_SECRET")
     spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
 
-    df_streams = pd.read_csv(os.path.join(path_data, "streams.csv"))
-    df = df_streams.drop_duplicates(
-        subset=["trackName", "artistName"], keep="first"
-    ).reset_index()
+    df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 
     failing_tracks = 0
     dataset = []
 
     for index, row in df.iterrows():
 
-        if index % 1000 == 0:
-            print(f"{index}/{len(df)}")
+        if index % 100 == 0:
+            print(f"{index}/{len(df)} - {len(os.listdir(path_data_lake))}")
 
-        track_name = row["trackName"]
-        artist_name = row["artistName"]
+        track_name = row["track_name"]
+        artist_name = row["artist_name"]
+        hash = row["hash"]
 
-        name = f"{track_name}-{artist_name}"
-        hash = get_hash(name)
         filename = f"{hash}.json"
 
         try:

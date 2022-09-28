@@ -3,8 +3,8 @@ from pprint import pprint
 
 import pandas as pd
 from dotenv import load_dotenv
-from spotify_api import SpotifyAPI
 
+from track_recommender.core.spotify_api import SpotifyAPI
 from track_recommender.utils import path_data
 
 dotenv_path = os.path.join(

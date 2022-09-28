@@ -53,6 +53,7 @@ class ModelClass(object):
             path_model (str): [description]
             folder (str): add a folder extension in the save folder
         """
+
         self.X = X.values
         self.y = y.values
 
@@ -60,6 +61,7 @@ class ModelClass(object):
         self.path_model = path_model
         self.estimator = estimator
         self.save_name = estimator.__class__.__name__
+        self.is_regressor = is_regressor(self.estimator)
 
         self.folder = folder
 
@@ -237,7 +239,7 @@ class ModelClass(object):
         """
         self.y_pred = self.best_estimator.predict(self.X_test)
 
-        if is_regressor(self.estimator):
+        if self.is_regressor:
             methods = [
                 r2_score,
                 mean_absolute_error,
@@ -272,6 +274,13 @@ class ModelClass(object):
             pickle.dump(self.final_model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         self.logger.info(f"Save: {os.path.join(self.path_model, name)}")
+
+    def save_predictions(self):
+
+        self.df_test = pd.DataFrame(self.X_test, columns=self.column_names)
+        self.df_test["predictoions"] = self.y_pred
+        self.df_test["targets"] = self.y_test
+        self.df_test.to_csv(os.path.join(self.path_save, "df_test.csv"), sep=";")
 
     def load_pickle(self, name: str) -> None:
         """
@@ -347,6 +356,7 @@ class ModelClass(object):
         self.visualize()
         self.full_data_training()
         self.save_pickle()
+        self.save_predictions()
 
         if config:
             self.save_config(config)

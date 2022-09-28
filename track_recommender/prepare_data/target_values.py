@@ -1,52 +1,42 @@
 import os
-import sys
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.express as px
-from utils import path, path_features
 
-df = pd.read_csv(os.path.join(path_features, "streams.csv"), sep=";", index_col=0)
+from track_recommender.utils import get_hash, path_data
 
-# df_audio_features = df.drop_duplicates(subset=["track", "artist"], keep="first")
+df = pd.read_csv(
+    os.path.join(path_data, "streams.csv"), sep=";", usecols=["artistName", "trackName"]
+).rename(columns={"artistName": "artist_name", "trackName": "track_name"})
 
-# print(list(df))
-
-# number_of_tracks = len(df)
-# number_of_unique_tracks = len(df.groupby(["track", "artist"]))
-# number_of_artist = df["artist"].nunique()
-# duration_ms = df["ms_played"].sum()
-# print(number_of_tracks)
-# print(number_of_unique_tracks)
-# print(number_of_artist)
-# print(duration_ms)
 
 df_target_values = (
-    df.groupby(["track", "artist"]).size().reset_index().rename(columns={0: "plays"})
-)
-# plays_per_artist = counts_per_track.groupby(['artist'])['counts'].sum().reset_index().rename(columns={0:'plays_per_artist'})
-
-
-df_target_values.to_csv("target_values.csv", sep=";")
-
-
-exit()
-
-
-dataset = df_counts_per_track.merge(
-    df_audio_features, how="left", on=["track", "artist"]
-)
-dataset.drop(
-    columns=["error", "end_time", "ms_played", "track_href", "analysis_url", "type"],
-    inplace=True,
+    df.groupby(["artist_name", "track_name"])
+    .size()
+    .reset_index()
+    .rename(columns={0: "plays"})
 )
 
-print(dataset.shape)
-dataset.to_csv("dataset.csv", sep=";")
 
+df_random = (
+    (
+        pd.read_csv(
+            os.path.join(path_data, "random_tracks.csv"),
+            sep=";",
+            index_col=0,
+            usecols=["artists", "track_name"],
+        )
+    )
+    .drop_duplicates(keep="first")
+    .reset_index()
+)
 
-# df_plot = counts_per_track.sort_values("counts", ascending=False).head(10)
-# print(df_plot)
+df_random.rename(columns={"artists": "artist_name"}, inplace=True)
+df_random["plays"] = 0
 
-# fig = px.bar(df_plot, x="artist", y="counts", color = "track", height=800)
-# fig.show()
+df_target_values = pd.concat([df_target_values, df_random], axis=0).reset_index(
+    drop=True
+)
+df_target_values["hash"] = df_target_values.apply(
+    lambda row: get_hash(f"{row['track_name']}-{row['artist_name']}"), axis=1
+)
+df_target_values.to_csv(os.path.join(path_data, "target_values.csv"), sep=";")
