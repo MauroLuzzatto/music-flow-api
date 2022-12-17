@@ -5,24 +5,19 @@ import json
 import os
 import pickle
 import random
-import mlflow
-
+from pprint import pprint
 
 import matplotlib.pyplot as plt  # type: ignore
+import mlflow
 import pandas as pd  # type: ignore
 import sklearn  # type: ignore
 from LoggerClass import LoggerClass
 from sklearn.base import is_classifier, is_regressor  # type: ignore
 from sklearn.datasets import load_diabetes  # type: ignore
 from sklearn.metrics import f1_score  # type: ignore
-from sklearn.metrics import (
-    accuracy_score,
-    mean_absolute_error,
-    mean_absolute_percentage_error,
-    mean_squared_error,
-    precision_score,
-    r2_score,
-)
+from sklearn.metrics import (accuracy_score, mean_absolute_error,
+                             mean_absolute_percentage_error,
+                             mean_squared_error, precision_score, r2_score)
 from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
@@ -66,9 +61,7 @@ class ModelClass(object):
         self.is_regressor = is_regressor(self.estimator)
 
         self.folder = folder
-
         self.set_paths()
-
         Logger = LoggerClass()
         self.logger = Logger(self.path_save, stage="training")
 
@@ -132,13 +125,6 @@ class ModelClass(object):
         # tracking_uri = mlflow.get_tracking_uri()
         # print("Current tracking uri: {}".format(tracking_uri))
 
-        def fetch_logged_data(run_id):
-            client = mlflow.tracking.MlflowClient()
-            data = client.get_run(run_id).data
-            tags = {k: v for k, v in data.tags.items() if not k.startswith("mlflow.")}
-            artifacts = [f.path for f in client.list_artifacts(run_id, "model")]
-            return data.params, data.metrics, tags, artifacts
-
         # enable autologging
         mlflow.sklearn.autolog()
 
@@ -147,22 +133,30 @@ class ModelClass(object):
         with mlflow.start_run() as run:
             random_search.fit(self.X_train, self.y_train)
 
-        params, metrics, tags, artifacts = fetch_logged_data(run.info.run_id)
+        self.get_mlflow_logs(run)
 
-        from pprint import pprint
+        self.get_CV_results(random_search, sort_by="rank_test_score")
+        self.best_estimator = random_search.best_estimator_
+        self.best_params = random_search.best_params_
+        self.save_parameters(param_distributions, "param_distributions")
+        self.save_parameters(cv_settings, "cv_settings")
+
+    @staticmethod
+    def get_mlflow_logs(run):
+
+        run_id = run.info.run_id
+        client = mlflow.tracking.MlflowClient()
+        data = client.get_run(run_id).data
+        tags = {k: v for k, v in data.tags.items() if not k.startswith("mlflow.")}
+        artifacts = [f.path for f in client.list_artifacts(run_id, "model")]
+
+        params = data.params
+        metrics = data.metrics
 
         pprint(params)
         pprint(metrics)
         pprint(tags)
         pprint(artifacts)
-
-        self.get_CV_results(random_search, sort_by="rank_test_score")
-
-        self.best_estimator = random_search.best_estimator_
-        self.best_params = random_search.best_params_
-
-        self.save_parameters(param_distributions, "param_distributions")
-        self.save_parameters(cv_settings, "cv_settings")
 
     def save_parameters(self, variable: dict, name: str) -> None:
         """
@@ -330,7 +324,7 @@ class ModelClass(object):
         self.logger.info(f"Load: {os.path.join(self.path_model, name)}")
         return estimator
 
-    def visualize(self, image_name: str = "results.png"):
+    def visualize(self):
         """
         plot the predictions versus the true values
 
@@ -341,11 +335,29 @@ class ModelClass(object):
             None.
 
         """
+
+        image_name = "pred_versus_test.png"
         fig = plt.figure(figsize=(4, 5))
         # Plot Real vs Predict
         plt.scatter(self.y_pred, self.y_test, alpha=0.5)
-        plt.xlabel("y_pred")
-        plt.ylabel("y_test")
+        plt.plot(self.y_pred, self.y_pred, color="r")
+        plt.xlabel("predictions")
+        plt.ylabel("test values")
+        plt.show(block=False)
+        fig.savefig(os.path.join(self.path_save, image_name))
+
+        image_name = "residuals_versus_predictions.png"
+        fig = plt.figure(figsize=(4, 5))
+        plt.scatter(self.y_pred, self.y_pred - self.y_test, alpha=0.5)
+        plt.ylabel("residuals")
+        plt.xlabel("predictions")
+        plt.show(block=False)
+        fig.savefig(os.path.join(self.path_save, image_name))
+
+        image_name = "residuals_histogram.png"
+        fig = plt.figure(figsize=(4, 5))
+        plt.hist(self.y_pred - self.y_test, alpha=0.5)
+        plt.ylabel("residuals")
         plt.show(block=False)
         fig.savefig(os.path.join(self.path_save, image_name))
 

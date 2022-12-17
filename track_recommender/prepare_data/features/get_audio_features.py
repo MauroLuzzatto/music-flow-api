@@ -7,13 +7,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from track_recommender.core.spotify_api import SpotifyAPI
-from track_recommender.utils import (
-    get_hash,
-    path_data,
-    path_data_lake,
-    path_env,
-    path_features,
-)
+from track_recommender.utils import path_data, path_data_lake, path_env
 
 dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)

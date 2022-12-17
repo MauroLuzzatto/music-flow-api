@@ -1,30 +1,24 @@
-import hashlib
 import json
 import os
-import time
 from pprint import pprint
 
 import pandas as pd
 from dotenv import load_dotenv
 
-from track_recommender.core.spotify_api import SpotifyAPI
-from track_recommender.utils import (
-    get_hash,
-    path_data,
-    path_data_lake,
-    path_env,
-    path_features,
-)
+from track_recommender.utils import (path_data, path_data_lake, path_env,
+                                     path_features)
 
 dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
 
 
-if __name__ == "__main__":
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
 
-    CLIENT_ID = os.getenv("CLIENT_ID")
-    CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-    spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
+
+def create_audio_features_dataset():
 
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 
@@ -39,14 +33,11 @@ if __name__ == "__main__":
         track_name = row["track_name"]
         artist_name = row["artist_name"]
         hash = row["hash"]
-
         filename = f"{hash}.json"
 
         try:
-            with open(
-                os.path.join(path_data_lake, filename), "r", encoding="utf-8"
-            ) as f:
-                data = json.load(f)
+            path = os.path.join(path_data_lake, filename)
+            data = load_json(path)
         except FileNotFoundError:
             print(f"File not found: {filename}")
             continue
@@ -90,9 +81,14 @@ if __name__ == "__main__":
 
         audio_features.update(track_dict)
         # audio_features.update(audio_analysis["track"])
-
         dataset.append(audio_features)
 
+    dataset = create_audio_features_dataset()
+    df_audio_features = pd.DataFrame(dataset)
+    df_audio_features.to_csv(
+        os.path.join(path_features, r"audio_features.csv"), sep=";"
+    )
 
-df_save = pd.DataFrame(dataset)
-df_save.to_csv(os.path.join(path_features, r"audio_features.csv"), sep=";")
+
+if __name__ == "__main__":
+    create_audio_features_dataset()
