@@ -1,6 +1,5 @@
 import hashlib
 import os
-import sys
 
 path = os.getcwd()
 path_base = os.path.join(path, "track_recommender")

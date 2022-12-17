@@ -3,6 +3,7 @@
 app/
 data/
 data_lake/
+mlruns
 
 
 results/

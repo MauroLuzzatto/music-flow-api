@@ -5,6 +5,8 @@ import json
 import os
 import pickle
 import random
+import mlflow
+
 
 import matplotlib.pyplot as plt  # type: ignore
 import pandas as pd  # type: ignore
@@ -125,8 +127,35 @@ class ModelClass(object):
             param_distributions (dict): dictionary with distribution of values per hyperparameter
             cv_settings (dict): dictionary CV settings
         """
+
+        # mlflow.set_tracking_uri("file:///tmp/my_tracking")
+        # tracking_uri = mlflow.get_tracking_uri()
+        # print("Current tracking uri: {}".format(tracking_uri))
+
+        def fetch_logged_data(run_id):
+            client = mlflow.tracking.MlflowClient()
+            data = client.get_run(run_id).data
+            tags = {k: v for k, v in data.tags.items() if not k.startswith("mlflow.")}
+            artifacts = [f.path for f in client.list_artifacts(run_id, "model")]
+            return data.params, data.metrics, tags, artifacts
+
+        # enable autologging
+        mlflow.sklearn.autolog()
+
         random_search = self.build_CV_search(param_distributions, cv_settings)
-        random_search.fit(self.X_train, self.y_train)
+
+        with mlflow.start_run() as run:
+            random_search.fit(self.X_train, self.y_train)
+
+        params, metrics, tags, artifacts = fetch_logged_data(run.info.run_id)
+
+        from pprint import pprint
+
+        pprint(params)
+        pprint(metrics)
+        pprint(tags)
+        pprint(artifacts)
+
         self.get_CV_results(random_search, sort_by="rank_test_score")
 
         self.best_estimator = random_search.best_estimator_

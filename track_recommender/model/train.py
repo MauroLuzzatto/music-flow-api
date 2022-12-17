@@ -8,7 +8,30 @@ from track_recommender.model.ModelClass import ModelClass
 from track_recommender.utils import path, path_dataset
 
 path_model = os.path.join(path, "results")
+path_reports = os.path.join(path, "reports")
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
+
+
+from pandas_profiling import ProfileReport
+
+
+import numpy as np
+
+# transformation step
+for column in ["plays", "speechiness", "acousticness", "instrumentalness", "liveness"]:
+    dataset[column] = dataset[column].apply(np.log1p)
+
+
+make_report = True
+
+if make_report:
+    profile = ProfileReport(dataset, title="Pandas Profiling Report", explorative=True)
+    profile.to_file(os.path.join(path_reports, "dataset_report.html"))
+
+
+# feature engineering
+# - us np.log1 for skewed variables like instrumentalness
+# https://www.kaggle.com/general/93016
 
 
 columns_scope = [
@@ -28,6 +51,13 @@ columns_scope = [
     "explicit",
     "popularity",
 ]
+
+
+
+
+
+# key is a categorical variable
+
 
 X = dataset[columns_scope]
 y = dataset["plays"]

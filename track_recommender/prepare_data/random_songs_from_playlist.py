@@ -24,17 +24,16 @@ USER_ID = 1157239771
 random_playlists = ["6p21dRudS9FmcyGvKWPq2R"]  # , "3ldvCZiQqreYp7sEuqQ6uO"
 
 
+print(CLIENT_ID, CLIENT_SECRET)
 spotifAPI = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
 
 tracks = []
 
 for playlist_id in random_playlists:
 
-    for offset in range(30):
+    for offset in range(1):
 
-        paylist, status_code = spotifAPI.get_playlist_items(
-            playlist_id=playlist_id, limit=1, offset=offset
-        )
+        paylist, status_code = spotifAPI.get_playlist_items(playlist_id=playlist_id)
 
         print([track["track"]["name"] for track in paylist["items"]])
         print(len(paylist["items"]))
@@ -43,7 +42,6 @@ for playlist_id in random_playlists:
             continue
 
         for track in paylist["items"]:
-            print("---" * 5)
 
             # from pprint import pprint
             # pprint(track)
