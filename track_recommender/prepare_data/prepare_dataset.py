@@ -2,8 +2,9 @@ import os
 
 import pandas as pd
 
-from track_recommender.prepare_data.target_values.target_values import \
-    main as get_target_values
+from track_recommender.prepare_data.target_values.target_values import (
+    main as get_target_values,
+)
 from track_recommender.utils import path_data, path_dataset, path_features
 
 

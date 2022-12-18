@@ -1,11 +1,15 @@
 # track-recommender
 
+Use your spotify streaming history to create a machine learning model that predicts the number of future plays of a song using the spotify audio features.
+
+
+## Plan
 - download features from streaming-history
-- download features from some random tracks
+- download features from random tracks
 - calculate target values
     - number of plays
     - time listend to a song
-    - buckets: 
+    - buckets:
         - yes, no
         - low, medium, high, very high
 - train model using GridSearch
@@ -15,7 +19,7 @@
 
 
 
-# Features
+## Features
 - danceability
 - energy
 - key

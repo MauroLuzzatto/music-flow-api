@@ -6,3 +6,6 @@ black: ## black formatting
 
 mlflow:
 	mlflow ui
+
+clean:
+	pre-commit run --all-files

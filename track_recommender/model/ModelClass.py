@@ -15,9 +15,14 @@ from LoggerClass import LoggerClass
 from sklearn.base import is_classifier, is_regressor  # type: ignore
 from sklearn.datasets import load_diabetes  # type: ignore
 from sklearn.metrics import f1_score  # type: ignore
-from sklearn.metrics import (accuracy_score, mean_absolute_error,
-                             mean_absolute_percentage_error,
-                             mean_squared_error, precision_score, r2_score)
+from sklearn.metrics import (
+    accuracy_score,
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+)
 from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
