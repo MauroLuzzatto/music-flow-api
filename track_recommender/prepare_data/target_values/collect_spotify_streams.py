@@ -6,7 +6,7 @@ import pandas as pd
 from track_recommender.utils import path_data
 
 
-def main():
+def collect_streams():
 
     path = os.path.join(path_data, "raw")
 
@@ -18,7 +18,6 @@ def main():
                 for file in os.listdir(os.path.join(path_folder, "MyData")):
                     if "StreamingHistory" in file and not "Zone" in file:
                         files.append(os.path.join(path_folder, "MyData", file))
-                        print(files)
 
     full_data = []
     for file in files:
@@ -35,4 +34,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    collect_streams()

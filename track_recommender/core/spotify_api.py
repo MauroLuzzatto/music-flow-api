@@ -104,6 +104,7 @@ class SpotifyAPI(object):
             artist = ""
 
         track = self.clean_string(track)
+        artist = self.clean_string(artist)
         url = f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
 
         r = requests.get(url=url, headers=self.headers)
@@ -119,5 +120,10 @@ class SpotifyAPI(object):
     @staticmethod
     def clean_string(_string):
         return (
-            _string.replace("'", "").replace("-", "").replace("(", "").replace(")", "")
+            _string.replace("'", "")
+            .replace("-", "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("#", "")
+            .replace("-", "")
         )

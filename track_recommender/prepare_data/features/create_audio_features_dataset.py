@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from pprint import pprint
 
 import pandas as pd
@@ -23,11 +24,12 @@ def create_audio_features_dataset():
 
     failing_tracks = 0
     dataset = []
-
+    start = time.time()
     for index, row in df.iterrows():
 
-        if index % 100 == 0:
-            print(f"{index}/{len(df)} - {len(os.listdir(path_data_lake))}")
+        if index % 10_000 == 0:
+            time_passed = time.time() - start
+            print(f"{index}/{len(df)} - {time_passed/60.:.1f} min")
 
         track_name = row["track_name"]
         artist_name = row["artist_name"]
@@ -43,24 +45,22 @@ def create_audio_features_dataset():
 
         if data["status"] == "failed":
             failing_tracks += 1
+            os.remove(os.path.join(path_data_lake, filename))
             continue
 
         try:
             audio_features = data["audio_features"]
-            track = data["track"]
-
             audio_features["track_name"] = track_name
             audio_features["artist_name"] = artist_name
 
+            track = data["track"]
             duration_ms = track["duration_ms"]
             album = track["album"]["name"]
             release_date = track["album"]["release_date"]
-
             explicit = track["explicit"]
             popularity = track["popularity"]
             type = track["type"]
             isrc = track["external_ids"]["isrc"]
-
         except KeyError as e:
             print(e)
             pprint(data["track_name"])
@@ -82,11 +82,10 @@ def create_audio_features_dataset():
         # audio_features.update(audio_analysis["track"])
         dataset.append(audio_features)
 
-    dataset = create_audio_features_dataset()
     df_audio_features = pd.DataFrame(dataset)
-    df_audio_features.to_csv(
-        os.path.join(path_features, r"audio_features.csv"), sep=";"
-    )
+    path = os.path.join(path_features, r"audio_features.csv")
+    df_audio_features.to_csv(path, sep=";")
+    print(f"saved: {path}")
 
 
 if __name__ == "__main__":
