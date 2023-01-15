@@ -40,7 +40,7 @@ class SpotifyAPI(object):
         )
         return json.loads(r.text)
 
-    def get_playlist_items(self, playlist_id, limit=100, offset=1):
+    def get_playlist_items(self, playlist_id, limit=100, offset=0):
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}"
         response, status_code = self.get_request(url)
         return response, status_code

@@ -18,6 +18,53 @@ def load_json(path):
     return data
 
 
+def format_features(data, track_name, artist_name, hash=None):
+    """
+    TODO: update function
+    """
+
+    try:
+        audio_features = data["audio_features"]
+    except KeyError as e:
+        print(e)
+        return {}
+
+    try:
+        track = data["track"]
+    except KeyError as e:
+        print(e)
+        return {}
+
+    audio_features["track_name"] = track_name
+    audio_features["artist_name"] = artist_name
+
+    try:
+        duration_ms = track["duration_ms"]
+        album = track["album"]["name"]
+        release_date = track["album"]["release_date"]
+        explicit = track["explicit"]
+        popularity = track["popularity"]
+        type = track["type"]
+        isrc = track["external_ids"]["isrc"]
+    except KeyError as e:
+        print(e)
+        return {}
+
+    track_dict = {
+        "id_hash": hash,
+        "album": album,
+        "release_date": release_date,
+        "duration_ms": duration_ms,
+        "explicit": explicit,
+        "popularity": popularity,
+        "type": type,
+        "isrc": isrc,
+    }
+
+    audio_features.update(track_dict)
+    return audio_features
+
+
 def create_audio_features_dataset():
 
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
@@ -48,37 +95,13 @@ def create_audio_features_dataset():
             os.remove(os.path.join(path_data_lake, filename))
             continue
 
-        try:
-            audio_features = data["audio_features"]
-            audio_features["track_name"] = track_name
-            audio_features["artist_name"] = artist_name
+        audio_features = format_features(data, track_name, artist_name, hash)
 
-            track = data["track"]
-            duration_ms = track["duration_ms"]
-            album = track["album"]["name"]
-            release_date = track["album"]["release_date"]
-            explicit = track["explicit"]
-            popularity = track["popularity"]
-            type = track["type"]
-            isrc = track["external_ids"]["isrc"]
-        except KeyError as e:
-            print(e)
+        if not audio_features:
             pprint(data["track_name"])
             os.remove(os.path.join(path_data_lake, filename))
             continue
 
-        track_dict = {
-            "id_hash": hash,
-            "album": album,
-            "release_date": release_date,
-            "duration_ms": duration_ms,
-            "explicit": explicit,
-            "popularity": popularity,
-            "type": type,
-            "isrc": isrc,
-        }
-
-        audio_features.update(track_dict)
         # audio_features.update(audio_analysis["track"])
         dataset.append(audio_features)
 

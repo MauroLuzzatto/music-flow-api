@@ -30,6 +30,8 @@ from sklearn.preprocessing import StandardScaler
 from utils import create_folder
 from xgboost import XGBRegressor  # type: ignore
 
+from track_recommender.model.preprocessing import reverse_prediction
+
 
 class ModelClass(object):
     """
@@ -283,11 +285,13 @@ class ModelClass(object):
             results[method.__name__] = score
             self.logger.info(f"{method.__name__}: {score:.2f}")
 
-        pd.DataFrame(results, index=[self.time_stamp]).to_csv(
-            os.path.join(self.path_save, "best_score.csv"),
-            float_format="%.2f",
-            sep=";",
-        )
+        results["time_stamp"] = self.time_stamp
+        results["column_names"] = self.column_names
+        results["estimator_name"] = self.save_name
+
+        path_score = os.path.join(self.path_save, "best_score.json")
+        with open(path_score, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=4)
 
     def save_pickle(self) -> None:
         """
@@ -341,11 +345,14 @@ class ModelClass(object):
 
         """
 
+        self.y_pred_reversed = reverse_prediction(self.y_pred)
+        self.y_test_reversed = reverse_prediction(self.y_test)
+
         image_name = "pred_versus_test.png"
         fig = plt.figure(figsize=(4, 5))
         # Plot Real vs Predict
-        plt.scatter(self.y_pred, self.y_test, alpha=0.5)
-        plt.plot(self.y_pred, self.y_pred, color="r")
+        plt.scatter(self.y_pred_reversed, self.y_test_reversed, alpha=0.5)
+        plt.plot(self.y_pred_reversed, self.y_pred_reversed, color="r")
         plt.xlabel("predictions")
         plt.ylabel("test values")
         plt.show(block=False)
@@ -353,7 +360,9 @@ class ModelClass(object):
 
         image_name = "residuals_versus_predictions.png"
         fig = plt.figure(figsize=(4, 5))
-        plt.scatter(self.y_pred, self.y_pred - self.y_test, alpha=0.5)
+        plt.scatter(
+            self.y_pred_reversed, self.y_pred_reversed - self.y_test_reversed, alpha=0.5
+        )
         plt.ylabel("residuals")
         plt.xlabel("predictions")
         plt.show(block=False)
@@ -361,7 +370,7 @@ class ModelClass(object):
 
         image_name = "residuals_histogram.png"
         fig = plt.figure(figsize=(4, 5))
-        plt.hist(self.y_pred - self.y_test, alpha=0.5)
+        plt.hist(self.y_pred_reversed - self.y_test_reversed, alpha=0.5)
         plt.ylabel("residuals")
         plt.show(block=False)
         fig.savefig(os.path.join(self.path_save, image_name))

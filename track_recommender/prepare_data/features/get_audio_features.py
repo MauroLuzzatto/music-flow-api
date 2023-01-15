@@ -28,7 +28,8 @@ def request_failed(data, filename):
     save_data(data, filename)
 
 
-def get_features(track_name, artist_name):
+def get_features(track_name: str, artist_name: str) -> dict:
+    """ """
 
     data = {"track_name": track_name, "artist_name": artist_name}
 
