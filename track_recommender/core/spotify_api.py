@@ -126,4 +126,5 @@ class SpotifyAPI(object):
             .replace(")", "")
             .replace("#", "")
             .replace("-", "")
+            .replace("&", "")
         )

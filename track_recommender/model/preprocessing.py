@@ -41,6 +41,23 @@ def reverse_prediction(value):
 
 def feature_preprocessing(dataset: pd.DataFrame):
 
+    drop_columns = [
+        "type",
+        "id",
+        "uri",
+        "track_href",
+        "analysis_url",
+        "id_hash",
+        "release_date",
+        "isrc",
+        "album",
+        "track_name",
+        "artist_name",
+        "release_date_precision",
+    ]
+
+    dataset.drop(columns=drop_columns, inplace=True)
+
     # transformation step
     for column in [
         "plays",
@@ -56,30 +73,14 @@ def feature_preprocessing(dataset: pd.DataFrame):
     # https://www.kaggle.com/general/93016
 
     dataset["key"] = dataset["key"].apply(map_keys_to_string)
-    # key is a categorical variable
-    dataset = get_one_hot_encoding(dataset, column="key")
+
+    for column in ["key"]:
+        dataset = get_one_hot_encoding(dataset, column=column)
 
     for col in key_mapping.values():
         if col not in dataset:
             dataset[col] = 0
 
-    columns_scope = [
-        "danceability",
-        "energy",
-        # "key",
-        "loudness",
-        "mode",
-        "speechiness",
-        "acousticness",
-        "instrumentalness",
-        "liveness",
-        "valence",
-        "tempo",
-        "duration_ms",
-        "time_signature",
-        "explicit",
-        "popularity",
-    ]
-
+    columns_scope = list(dataset)
     columns_scope.extend(list(key_mapping.values()))
     return dataset, columns_scope

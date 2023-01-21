@@ -6,6 +6,7 @@ import os
 import pickle
 import random
 from pprint import pprint
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt  # type: ignore
 import mlflow
@@ -43,9 +44,9 @@ class ModelClass(object):
         self,
         estimator: sklearn.base.BaseEstimator,
         X: pd.DataFrame,
-        y: pd.DataFrame,
+        y: pd.Series,
         path_model: str,
-        folder: str = None,
+        folder: Optional[str] = None,
     ) -> None:
         """
         Initialize the class and setup the logger and define the paths to save the results to
