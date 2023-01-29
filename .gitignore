@@ -1,6 +1,5 @@
 
 .vscode/
-app/
 data/
 data_lake/
 mlruns/
