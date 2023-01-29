@@ -90,7 +90,7 @@ class ModelClass(object):
         self.path_save = create_folder(os.path.join(self.path_model, "results"))
 
     def get_train_test_split(
-        self, test_size: float = 0.2, random_state: float = None
+        self, test_size: float = 0.2, random_state: Optional[float] = None
     ) -> None:
         """
         Get the train and test split of the features and target values
@@ -109,10 +109,10 @@ class ModelClass(object):
 
         self.logger.info(f"self.X: {self.X.shape}")
         self.logger.info(f"self.y: {self.y.shape}")
-        self.logger.info(f"self.X_train: {self.X_train.shape}")
-        self.logger.info(f"self.y_train: {self.y_train.shape}")
-        self.logger.info(f"self.X_test: {self.X_test.shape}")
-        self.logger.info(f"self.y_test: {self.y_test.shape}")
+        self.logger.info(f"self.X_train: {self.X_train.shape}")  # type: ignore
+        self.logger.info(f"self.y_train: {self.y_train.shape}")  # type: ignore
+        self.logger.info(f"self.X_test: {self.X_test.shape}")  # type: ignore
+        self.logger.info(f"self.y_test: {self.y_test.shape}")  # type: ignore
         self.logger.info(f"test_size: {test_size}")
         self.logger.info(f"random_state: {test_size}")
         self.logger.info(f"column_names: {self.column_names}")
@@ -186,7 +186,7 @@ class ModelClass(object):
 
     def build_CV_search(
         self, param_distributions: dict, param_cv: dict
-    ) -> sklearn.model_selection.RandomizedSearchCV:
+    ) -> sklearn.model_selection.RandomizedSearchCV:  # type: ignore
         """
         Setup the random search cross validation object
 
@@ -213,7 +213,7 @@ class ModelClass(object):
 
     def get_CV_results(
         self,
-        random_search: sklearn.model_selection.RandomizedSearchCV,
+        random_search: sklearn.model_selection.RandomizedSearchCV,  # type: ignore
         sort_by: str,
         ascending: bool = True,
         n_rows: int = 1000,
@@ -257,7 +257,7 @@ class ModelClass(object):
 
         """
         self.final_model = self.estimator.set_params(**self.best_params)
-        self.final_model.fit(self.X, self.y)
+        self.final_model.fit(self.X, self.y)  # type: ignore
 
     def evaluate(self) -> None:
         """
@@ -423,8 +423,8 @@ if __name__ == "__main__":
     path_model = r"model"
 
     diabetes = load_diabetes()
-    X = diabetes.data
-    y = diabetes.target
+    X = diabetes.data  # type: ignore
+    y = diabetes.target  # type: ignore
 
     estimator = XGBRegressor()
     config = {"target": list(y)[0], "features": list(X)}
