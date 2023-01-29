@@ -5,7 +5,7 @@ data/
 data_lake/
 mlruns/
 reports/
-
+workspace.code-workspace
 
 results/
 
