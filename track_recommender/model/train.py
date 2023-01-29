@@ -20,25 +20,6 @@ def limit_max_plays(max_value: int = 10) -> pd.DataFrame:
     return dataset
 
 
-drop_columns = [
-    "source",
-    "hash",
-    "type",
-    "id",
-    "uri",
-    "track_href",
-    "analysis_url",
-    "id_hash",
-    "release_date",
-    "isrc",
-    "error",
-    "album",
-    "track_name",
-    "artist_name",
-    "release_date_precision",
-]
-
-dataset.drop(columns=drop_columns, inplace=True)
 dataset = limit_max_plays()
 dataset, columns_scope = feature_preprocessing(dataset)
 

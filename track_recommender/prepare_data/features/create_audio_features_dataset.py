@@ -2,24 +2,23 @@ import json
 import os
 import time
 from pprint import pprint
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv
 
-from track_recommender.utils import path_data, path_data_lake, path_env, path_features
+from track_recommender.file_handling import load_json
+from track_recommender.utils import (
+    dotenv_path,
+    path_data,
+    path_data_lake,
+    path_features,
+)
 
-dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
 
 INCLUDE_AUDIO_ANALYSIS_DATASET = os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")
 print(INCLUDE_AUDIO_ANALYSIS_DATASET)
-
-
-def load_json(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data
 
 
 def process_release_date(release_date: str) -> Tuple[int, int, int, bool]:
@@ -47,7 +46,7 @@ def process_release_date(release_date: str) -> Tuple[int, int, int, bool]:
 
 
 def format_features(
-    data: dict, track_name: str, artist_name: str, hash: str = None
+    data: dict, track_name: str, artist_name: str, hash: Optional[str] = None
 ) -> dict:
     """format features from spotify api"""
 
@@ -57,7 +56,6 @@ def format_features(
     try:
         track = data["track"]
         audio_features = data["audio_features"]
-        audio_analysis = data["audio_analysis"]
     except KeyError as e:
         print(e)
         return empty_dict
@@ -103,6 +101,7 @@ def format_features(
     features.update(track_dict)
     features.update(audio_features)
     # if INCLUDE_AUDIO_ANALYSIS_DATASET:
+    #      audio_analysis = data["audio_analysis"]
     #     features.update(audio_analysis)
     return features
 
@@ -122,7 +121,7 @@ def create_audio_features_dataset():
     start = time.time()
     for index, row in df.iterrows():
 
-        if index % 800 == 0:
+        if int(index) % 800 == 0:  # type: ignore
             time_passed = time.time() - start
             print(f"{index}/{len(df)} - {time_passed/60.:.1f} min")
             print(

@@ -2,20 +2,18 @@ import json
 import os
 import time
 from pprint import pprint
+from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 from dotenv import load_dotenv
 
 from track_recommender.core.spotify_api import SpotifyAPI
-from track_recommender.utils import path_data, path_data_lake, path_env
+from track_recommender.utils import dotenv_path, path_data, path_data_lake
 
-dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
 
 INCLUDE_AUDIO_ANALYSIS = os.getenv("INCLUDE_AUDIO_ANALYSIS_API")
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-spotify_api = SpotifyAPI(CLIENT_ID, CLIENT_SECRET)
+spotify_api = SpotifyAPI()
 
 
 def save_data(data, path, filename):
@@ -23,37 +21,48 @@ def save_data(data, path, filename):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def get_features(track_name: str, artist_name: str, track_id=None) -> dict:
+def get_song_data_metadata(response: dict) -> dict:
+    """ """
+    try:
+        song = response["tracks"]["items"][0]["name"]
+        artists = [
+            artist["name"] for artist in response["tracks"]["items"][0]["artists"]
+        ]
+        album = response["tracks"]["items"][0]["album"]["name"]
+    except (IndexError, KeyError):
+        return {}
+
+    metadata = {"song": song, "artist": artists, "album": album}
+    return metadata
+
+
+def get_features(
+    track_name: str, artist_name: str, track_id: Optional[str] = None
+) -> Tuple[dict, int]:
     """ """
 
     data = {
         "track_name": track_name,
         "artist_name": artist_name,
+        "metadata": {},
     }
 
     if not track_id:
-        is_wait = True
-        while is_wait:
+        url = spotify_api.search_track_url(track_name, artist_name)
+        response, status_code = spotify_api.get_request(url)
 
-            url = spotify_api.search_track_url(track_name, artist_name)
-            response, status_code = spotify_api.get_request(url)
-            # time.sleep(1)
-            if status_code == 200:
-                is_wait = False
-            elif status_code == 429:
-                print("waiting...")
-                time.sleep(60 * 3)
-            else:
-                data["status"] = "failed"
-                data["failure_type"] = "search_track_url"
-                return data
+        try:
+            track_id = response["tracks"]["items"][0]["id"]
+            failed = False
+        except (IndexError, KeyError):
+            failed = True
 
-        track_id = spotify_api.get_track_id_from_response(response)
-
-        if not track_id:
+        if status_code != 200 or failed:
             data["status"] = "failed"
-            data["failure_type"] = "track_id_from_response"
-            return data
+            data["failure_type"] = "search_track_url"
+            return data, status_code
+
+        data["metadata"] = get_song_data_metadata(response)  # type: ignore
 
     endpoints = [
         ("audio_features", spotify_api.get_audio_features),
@@ -65,23 +74,17 @@ def get_features(track_name: str, artist_name: str, track_id=None) -> dict:
 
     for name, function_call in endpoints:
 
-        is_wait = True
-        while is_wait:
-            response, status_code = function_call(track_id)
-            if status_code == 200:
-                data[name] = response
-                is_wait = False
-            elif status_code == 429:
-                print("waiting...")
-                time.sleep(60 * 3)
-            else:
-                data["status"] = "failed"
-                data["failure_type"] = name
-                return data
+        response, status_code = function_call(track_id)
+        if status_code == 200:
+            data[name] = response
+        else:
+            data["status"] = "failed"
+            data["failure_type"] = name
+            return data, status_code
 
     data["status"] = "success"
-    data["failure_type"] = None
-    return data
+    data["failure_type"] = None  # type: ignore
+    return data, status_code  # type: ignore
 
 
 def get_audio_features():
@@ -98,13 +101,13 @@ def get_audio_features():
 
     print(f"Files to download: {len(df) - number_of_files}")
 
-    success = 0
+    success = 0.000001
     failed = 0
 
     # TODO: refactor to only load data by api request
     for index, row in df.iterrows():
 
-        if index % 1_000 == 0:
+        if index % 1_000 == 0:  # type: ignore
             print(f"{index}/{len(df)}")
 
         hash = row["hash"]
@@ -116,7 +119,7 @@ def get_audio_features():
         track_name = row["track_name"]
         artist_name = row["artist_name"]
 
-        data = get_features(track_name, artist_name)
+        data, _ = get_features(track_name, artist_name)
         data["hash"] = hash
 
         if data["status"] == "success":
@@ -126,8 +129,19 @@ def get_audio_features():
             save_data(data, path_failed, filename)
             failed += 1
 
-        print(f"Success: {success}, Failed: {failed}")
+        print(f"Success: {success}, Failed: {failed}, Ratio: {failed/success:.2f}")
+
+        if success > 30 and failed / success > 0.15:
+            raise Exception("Too many failed requests")
 
 
 if __name__ == "__main__":
-    get_audio_features()
+
+    retries = 0
+    while retries < 20:
+        try:
+            get_audio_features()
+        except Exception as e:
+            print(e)
+            time.sleep(60 * 10)
+            retries += 1

@@ -3,12 +3,11 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
-from track_recommender.utils import get_hash, path_data, path_env
+from track_recommender.utils import dotenv_path, get_hash, path_data
 
-dotenv_path = os.path.join(path_env, ".env")
 load_dotenv(dotenv_path)
 
-NUMBER_OF_KAGGLE_DATASET_TRACKS = int(os.getenv("NUMBER_OF_KAGGLE_DATASET_TRACKS"))
+NUMBER_OF_KAGGLE_DATASET_TRACKS = int(os.getenv("NUMBER_OF_KAGGLE_DATASET_TRACKS"))  # type: ignore
 
 
 def get_df_streams():
