@@ -3,7 +3,6 @@ import pickle
 from typing import Optional
 
 import pandas as pd
-
 from track_recommender.core.get_playlist_tracks import get_playlist_tracks
 from track_recommender.core.spotify_api import SpotifyAPI
 from track_recommender.model.preprocessing import (

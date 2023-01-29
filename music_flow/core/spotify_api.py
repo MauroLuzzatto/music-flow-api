@@ -4,9 +4,8 @@ import os
 import requests
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
 from track_recommender.utils import dotenv_path
+from urllib3.util.retry import Retry
 
 load_dotenv(dotenv_path)
 

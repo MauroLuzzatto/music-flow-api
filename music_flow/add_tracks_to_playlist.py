@@ -5,7 +5,6 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-
 from track_recommender.core.get_playlist_tracks import get_playlist_tracks
 from track_recommender.core.playlist_handler import PlaylistHandler
 from track_recommender.core.predictor import Predictor

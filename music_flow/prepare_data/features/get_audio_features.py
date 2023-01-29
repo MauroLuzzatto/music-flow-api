@@ -5,7 +5,6 @@ from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv
-
 from track_recommender.core.spotify_api import SpotifyAPI
 from track_recommender.utils import dotenv_path, path_data, path_data_lake
 

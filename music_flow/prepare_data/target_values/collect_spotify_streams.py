@@ -2,7 +2,6 @@ import json
 import os
 
 import pandas as pd
-
 from track_recommender.utils import path_data
 
 

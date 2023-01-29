@@ -6,7 +6,6 @@ from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv
-
 from track_recommender.file_handling import load_json
 from track_recommender.utils import (
     dotenv_path,

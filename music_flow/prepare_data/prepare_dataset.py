@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-
 from track_recommender.utils import path_data, path_dataset, path_features
 
 

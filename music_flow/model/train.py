@@ -1,11 +1,10 @@
 import os
 
 import pandas as pd
-from xgboost import XGBRegressor  # type: ignore
-
 from track_recommender.model.ModelClass import ModelClass
 from track_recommender.model.preprocessing import feature_preprocessing
 from track_recommender.utils import path, path_dataset
+from xgboost import XGBRegressor  # type: ignore
 
 path_model = os.path.join(path, "results")
 path_reports = os.path.join(path, "reports")

@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-
 from track_recommender.core.get_playlist_tracks import get_playlist_tracks
 from track_recommender.core.spotify_api import SpotifyAPI
 from track_recommender.utils import path_data
