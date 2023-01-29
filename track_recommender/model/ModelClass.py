@@ -6,14 +6,14 @@ import os
 import pickle
 import random
 from pprint import pprint
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Optional
 
 import matplotlib.pyplot as plt  # type: ignore
 import mlflow
 import pandas as pd  # type: ignore
 import sklearn  # type: ignore
 from LoggerClass import LoggerClass
-from sklearn.base import is_classifier, is_regressor  # type: ignore
+from sklearn.base import is_regressor  # type: ignore
 from sklearn.datasets import load_diabetes  # type: ignore
 from sklearn.metrics import f1_score  # type: ignore
 from sklearn.metrics import (

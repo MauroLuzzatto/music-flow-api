@@ -16,7 +16,7 @@ def collect_streams():
         if os.path.isdir(path_folder):
             if "MyData" in os.listdir(path_folder):
                 for file in os.listdir(os.path.join(path_folder, "MyData")):
-                    if "StreamingHistory" in file and not "Zone" in file:
+                    if "StreamingHistory" in file and "Zone" not in file:
                         files.append(os.path.join(path_folder, "MyData", file))
 
     full_data = []

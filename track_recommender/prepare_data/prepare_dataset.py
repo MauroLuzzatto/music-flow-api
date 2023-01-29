@@ -1,12 +1,7 @@
 import os
-from pprint import pprint
 
 import pandas as pd
 
-from track_recommender.prepare_data import (
-    create_audio_features_dataset,
-    get_df_target_values,
-)
 from track_recommender.utils import path_data, path_dataset, path_features
 
 
@@ -30,10 +25,4 @@ def get_dataset() -> None:
 
 
 if __name__ == "__main__":
-
-    load_from_scratch = True
-
-    # if load_from_scratch:
-    #     get_df_target_values()
-    #     create_audio_features_dataset()
     get_dataset()

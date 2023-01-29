@@ -64,11 +64,11 @@ def format_features(
         duration_ms = track["duration_ms"]
         explicit = track["explicit"]
         popularity = track["popularity"]
-        type = track["type"]
+        # type = track["type"]
         isrc = track["external_ids"]["isrc"]
         album = track["album"]["name"]
         release_date = track["album"]["release_date"]
-        album_type = track["album"]["album_type"]
+        # album_type = track["album"]["album_type"]
         number_of_available_markets = len(track["available_markets"])
         release_date_precision = track["album"]["release_date_precision"]
         num_artists = len(track["artists"])

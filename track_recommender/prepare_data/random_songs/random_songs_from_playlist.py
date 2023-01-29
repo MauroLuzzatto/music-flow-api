@@ -1,8 +1,6 @@
 import os
-from pprint import pprint
 
 import pandas as pd
-from dotenv import load_dotenv
 
 from track_recommender.core.get_playlist_tracks import get_playlist_tracks
 from track_recommender.core.spotify_api import SpotifyAPI

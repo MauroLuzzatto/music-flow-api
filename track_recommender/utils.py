@@ -1,6 +1,5 @@
 import hashlib
 import os
-from typing import Dict
 
 path = os.getcwd()
 path_base = os.path.join(path, "track_recommender")

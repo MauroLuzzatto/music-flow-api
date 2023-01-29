@@ -1,8 +1,7 @@
 import json
 import os
 import time
-from pprint import pprint
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv

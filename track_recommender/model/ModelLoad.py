@@ -1,34 +1,13 @@
 # https://www.kaggle.com/code/harupy/scikit-learn-autologging-in-mlflow/notebook
 
 import datetime
-import json
 import os
 import pickle
-import random
-from pprint import pprint
 
-import matplotlib.pyplot as plt  # type: ignore
-import mlflow
 import pandas as pd  # type: ignore
 import sklearn  # type: ignore
 from LoggerClass import LoggerClass
-from sklearn.base import is_classifier, is_regressor  # type: ignore
-from sklearn.datasets import load_diabetes  # type: ignore
-from sklearn.metrics import f1_score  # type: ignore
-from sklearn.metrics import (
-    accuracy_score,
-    mean_absolute_error,
-    mean_absolute_percentage_error,
-    mean_squared_error,
-    precision_score,
-    r2_score,
-)
-from sklearn.model_selection import RandomizedSearchCV  # type: ignore
-from sklearn.model_selection import train_test_split  # type: ignore
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 from utils import create_folder
-from xgboost import XGBRegressor  # type: ignore
 
 
 class ModelClass(object):

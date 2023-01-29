@@ -1,12 +1,9 @@
 import os
-from typing import List
 
-import numpy as np
-import pandas as pd
 import requests
 import uvicorn
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Form
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
 from track_recommender.core.get_playlist_tracks import get_playlist_tracks
@@ -30,6 +27,9 @@ model_folder = "2023-01-21--12-33-25"
 
 app = FastAPI()
 
+# Global variable to store the auth token
+AUTH_TOKEN = ""
+
 
 def get_access_token(auth_code: str):
     response = requests.post(
@@ -47,17 +47,24 @@ def get_access_token(auth_code: str):
 
 @app.get("/")
 def auth():
-    auth_url = f"https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope=playlist-modify-private playlist-modify-public"
+    scope = ["playlist-modify-private", "playlist-modify-public"]
+    auth_url = f"https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={' '.join(scope)}"
     return HTMLResponse(content=f'<a href="{auth_url}">Authorize</a>')
 
 
 @app.get("/callback")
 def callback(code):
+    global AUTH_TOKEN
+    AUTH_TOKEN = get_access_token(code)
+    return {"message": "Successfully logged in"}
 
-    auth_headers = get_access_token(code)
-    playlist = PlaylistHandler(auth_headers)
 
-    playlist_items, status_code = playlist.get_playlist_items(
+@app.get("/update_playlist")
+def update_playlist():
+
+    playlist_handler = PlaylistHandler(headers=AUTH_TOKEN)
+
+    playlist_items, status_code = playlist_handler.get_playlist_items(
         playlist_id=playlist_id_discover_weekly
     )
     tracks = get_playlist_tracks(playlist_items)
@@ -67,30 +74,21 @@ def callback(code):
     predictions = []
     for track in tracks:
 
-        song = track["track_name"]
-        artist = track["artists"]
-        track_id = track["track_id"]
-
         prediction = predictor.make_prediction(
-            song=song,
-            artist=artist,
-            track_id=track_id,
+            song=track["track_name"],
+            artist=track["artists"],
+            track_id=track["track_id"],
         )
-        entry = {
-            "song": song,
-            "artist": artist,
-            "track_id": track_id,
-            "prediction": prediction[0],
-        }
-
-        print(entry)
-        predictions.append(entry)
+        prediction["track_id"] = track["track_id"]
+        print(prediction)
+        predictions.append(prediction)
 
     predictions.sort(key=lambda row: row["prediction"], reverse=True)
     print(predictions)
 
-    name = "Discover Weekly - autosort"
-    description = "Your sorted Discover weekly music, enjoy!"
+    playlist_name = "Discover Weekly"
+    name = f"{playlist_name} - autosort"
+    description = f"Your sorted {playlist_name} music, enjoy!"
 
     params = {
         "name": name,
@@ -98,10 +96,11 @@ def callback(code):
         "public": True,
     }
 
-    response, status_code = playlist.create_playlist(user_id, params)
+    response, status_code = playlist_handler.create_playlist(user_id, params)
     new_playlist_id = response["id"]
     track_ids = [track["track_id"] for track in predictions]
-    response, status_code = playlist.add_tracks_to_playlist(
+
+    response, status_code = playlist_handler.add_tracks_to_playlist(
         playlist_id=new_playlist_id, track_ids=track_ids
     )
 
