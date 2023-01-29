@@ -1,7 +1,8 @@
 import os
 
 import pandas as pd
-from track_recommender.utils import path_data, path_dataset, path_features
+
+from music_flow.utils import path_data, path_dataset, path_features
 
 
 def get_dataset() -> None:

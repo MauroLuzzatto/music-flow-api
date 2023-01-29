@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jul 19 20:13:34 2020
-
-@author: mauro
-"""
-
 import logging
 import os
 

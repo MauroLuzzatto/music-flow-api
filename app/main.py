@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.utils import map_score_to_emoji
-from track_recommender import Predictor, SpotifyAPI, format_features, get_features
+from music_flow import Predictor, SpotifyAPI, format_features, get_features
 
 model_folder = "2023-01-21--12-33-25"
 

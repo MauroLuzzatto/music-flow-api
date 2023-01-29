@@ -28,9 +28,10 @@ from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from track_recommender.model.preprocessing import reverse_prediction
 from utils import create_folder
 from xgboost import XGBRegressor  # type: ignore
+
+from music_flow.model.preprocessing import reverse_prediction
 
 
 class ModelClass(object):

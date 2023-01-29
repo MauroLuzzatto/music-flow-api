@@ -2,7 +2,8 @@ import json
 import os
 
 import pandas as pd
-from track_recommender.utils import path_data
+
+from music_flow.utils import path_data
 
 
 def collect_streams():

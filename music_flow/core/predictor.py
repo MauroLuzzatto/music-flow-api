@@ -3,17 +3,15 @@ import pickle
 from typing import Optional
 
 import pandas as pd
-from track_recommender.core.get_playlist_tracks import get_playlist_tracks
-from track_recommender.core.spotify_api import SpotifyAPI
-from track_recommender.model.preprocessing import (
-    feature_preprocessing,
-    reverse_prediction,
-)
-from track_recommender.prepare_data.features.create_audio_features_dataset import (
+
+from music_flow.core.get_playlist_tracks import get_playlist_tracks
+from music_flow.core.spotify_api import SpotifyAPI
+from music_flow.model.preprocessing import feature_preprocessing, reverse_prediction
+from music_flow.prepare_data.features.create_audio_features_dataset import (
     format_features,
 )
-from track_recommender.prepare_data.features.get_audio_features import get_features
-from track_recommender.utils import path_results
+from music_flow.prepare_data.features.get_audio_features import get_features
+from music_flow.utils import path_results
 
 # def get_model_folder(mode="latest"):
 #     list_folders = os.listdir(path_results)

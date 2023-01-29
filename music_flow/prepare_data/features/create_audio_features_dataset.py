@@ -1,4 +1,3 @@
-import json
 import os
 import time
 from pprint import pprint
@@ -6,13 +5,9 @@ from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv
-from track_recommender.file_handling import load_json
-from track_recommender.utils import (
-    dotenv_path,
-    path_data,
-    path_data_lake,
-    path_features,
-)
+
+from music_flow.file_handling import load_json
+from music_flow.utils import dotenv_path, path_data, path_data_lake, path_features
 
 load_dotenv(dotenv_path)
 

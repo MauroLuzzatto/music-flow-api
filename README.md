@@ -1,4 +1,4 @@
-# track-recommender
+# music-flow
 
 Use your spotify streaming history to create a machine learning model that predicts the number of future plays of a song using the spotify audio features.
 

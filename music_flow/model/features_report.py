@@ -2,7 +2,8 @@ import os
 
 import pandas as pd
 from pandas_profiling import ProfileReport
-from track_recommender.utils import path, path_dataset
+
+from music_flow.utils import path, path_dataset
 
 path_reports = os.path.join(path, "reports")
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
