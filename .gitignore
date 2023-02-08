@@ -2,8 +2,11 @@
 .vscode/
 data/
 data_lake/
+data_lake_v/
+
 mlruns/
 reports/
+notebooks/
 workspace.code-workspace
 
 results/

@@ -22,6 +22,7 @@ def get_dataset() -> None:
     print(f"save to: {path_dataset_csv}")
     print(df_dataset.head())
     print(list(df_dataset))
+    print(df_dataset.shape)
 
 
 if __name__ == "__main__":

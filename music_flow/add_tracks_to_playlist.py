@@ -5,10 +5,11 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from track_recommender.core.get_playlist_tracks import get_playlist_tracks
-from track_recommender.core.playlist_handler import PlaylistHandler
-from track_recommender.core.predictor import Predictor
-from track_recommender.utils import dotenv_path
+
+from music_flow.core.get_playlist_tracks import get_playlist_tracks
+from music_flow.core.playlist_handler import PlaylistHandler
+from music_flow.core.predictor import Predictor
+from music_flow.utils import dotenv_path
 
 load_dotenv(dotenv_path)
 
@@ -21,7 +22,7 @@ client_secret = os.getenv("CLIENT_SECRET")
 redirect_uri = "http://localhost:8000/callback/"
 
 
-model_folder = "2023-01-21--12-33-25"
+model_folder = "2023-02-01--22-06-44"
 
 
 app = FastAPI()

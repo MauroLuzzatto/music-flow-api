@@ -2,7 +2,7 @@ import hashlib
 import os
 
 path = os.getcwd()
-path_base = os.path.join(path, "track_recommender")
+path_base = os.path.join(path, "music_flow")
 
 path_data = os.path.join(path, "data")
 path_data_lake = os.path.join(path, "data_lake")

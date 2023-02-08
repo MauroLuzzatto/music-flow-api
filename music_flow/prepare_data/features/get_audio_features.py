@@ -93,10 +93,11 @@ def get_audio_features():
     path_failed = os.path.join(path_data_lake, "failed")
     number_of_files = len(os.listdir(path_data_lake))
 
-    files_set = set(os.listdir(path_data_lake))
-    files_failed_set = set(os.listdir(path_failed))
+    path_success = os.path.join(path_data_lake, "success")
+    files_set = set(os.listdir(path_success))
+    files_failed_set = set(os.listdir(path_success))
 
-    retry = False
+    retry = True
 
     print(f"Files to download: {len(df) - number_of_files}")
 
@@ -122,7 +123,7 @@ def get_audio_features():
         data["hash"] = hash
 
         if data["status"] == "success":
-            save_data(data, path_data_lake, filename)
+            save_data(data, path_success, filename)
             success += 1
         else:
             save_data(data, path_failed, filename)
@@ -130,8 +131,8 @@ def get_audio_features():
 
         print(f"Success: {success}, Failed: {failed}, Ratio: {failed/success:.2f}")
 
-        if success > 30 and failed / success > 0.15:
-            raise Exception("Too many failed requests")
+        # if success > 150 and failed / success > 0.5:
+        #     raise Exception("Too many failed requests")
 
 
 if __name__ == "__main__":

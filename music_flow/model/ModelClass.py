@@ -34,7 +34,7 @@ from xgboost import XGBRegressor  # type: ignore
 from music_flow.model.preprocessing import reverse_prediction
 
 
-class ModelClass(object):
+class TrainingClass(object):
     """
     This class provides the funktionality to train a model using
     a random grid search and evaluate the results
@@ -207,6 +207,7 @@ class ModelClass(object):
             n_jobs=param_cv["n_jobs"],
             verbose=param_cv["verbose"],
             random_state=param_cv["random_state"],
+            error_score="raise",
         )
 
         return random_search

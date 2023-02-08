@@ -54,9 +54,13 @@ def feature_preprocessing(dataset: pd.DataFrame):
         "track_name",
         "artist_name",
         "release_date_precision",
+        "source",
+        "hash",
+        "error",
     ]
 
-    dataset.drop(columns=drop_columns, inplace=True)
+    columns = list(set(drop_columns) & set(list(dataset)))
+    dataset.drop(columns=columns, inplace=True)
 
     # transformation step
     for column in [

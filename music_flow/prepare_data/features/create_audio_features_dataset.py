@@ -12,7 +12,6 @@ from music_flow.utils import dotenv_path, path_data, path_data_lake, path_featur
 load_dotenv(dotenv_path)
 
 INCLUDE_AUDIO_ANALYSIS_DATASET = os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")
-print(INCLUDE_AUDIO_ANALYSIS_DATASET)
 
 
 def process_release_date(release_date: str) -> Tuple[int, int, int, bool]:
@@ -94,9 +93,9 @@ def format_features(
 
     features.update(track_dict)
     features.update(audio_features)
-    # if INCLUDE_AUDIO_ANALYSIS_DATASET:
-    #      audio_analysis = data["audio_analysis"]
-    #     features.update(audio_analysis)
+    if INCLUDE_AUDIO_ANALYSIS_DATASET:
+        audio_analysis = data["audio_analysis"]
+        features.update(audio_analysis)
     return features
 
 
@@ -106,8 +105,9 @@ def create_audio_features_dataset():
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 
     path_audio_features = os.path.join(path_features, r"audio_features.csv")
+    path_success = os.path.join(path_data_lake, "success")
 
-    files_set = set(os.listdir(path_data_lake))
+    files_set = set(os.listdir(path_success))
     count_failing_tracks = 0
     count_missing_tracks = 0
 
@@ -131,7 +131,7 @@ def create_audio_features_dataset():
             count_missing_tracks += 1
             continue
 
-        path_file = os.path.join(path_data_lake, filename)
+        path_file = os.path.join(path_success, filename)
         data = load_json(path_file)
 
         if (

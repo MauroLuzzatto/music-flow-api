@@ -1,17 +1,18 @@
 import os
 
 import pandas as pd
-from track_recommender.model.ModelClass import ModelClass
-from track_recommender.model.preprocessing import feature_preprocessing
-from track_recommender.utils import path, path_dataset
 from xgboost import XGBRegressor  # type: ignore
+
+from music_flow.model.ModelClass import ModelClass
+from music_flow.model.preprocessing import feature_preprocessing
+from music_flow.utils import path, path_dataset
 
 path_model = os.path.join(path, "results")
 path_reports = os.path.join(path, "reports")
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
 
 
-def limit_max_plays(max_value: int = 10) -> pd.DataFrame:
+def limit_max_plays(max_value: int = 30) -> pd.DataFrame:
     """limit the max value of plays to max_value"""
     dataset["plays"] = dataset["plays"].apply(
         lambda row: row if row < max_value else max_value
@@ -27,8 +28,9 @@ columns_scope.remove("plays")
 X = dataset[columns_scope]
 y = dataset["plays"]
 
-
+print(list(X))
 print(X.describe().T)
+
 
 # train model
 estimator = XGBRegressor()
@@ -46,8 +48,8 @@ param_distributions = {
 }
 
 cv_settings = {
-    "n_iter": 160,  # total combinations testes
-    "scoring": "r2",
+    "n_iter": 30,  # total combinations testes
+    "scoring": "neg_mean_squared_error",
     "cv": 3,
     "random_state": 0,
     "n_jobs": -1,

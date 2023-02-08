@@ -1,8 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
+from mangum import Mangum
 
-from app.utils import map_score_to_emoji
 from music_flow import Predictor, SpotifyAPI, format_features, get_features
+from music_flow.app_utils import map_score_to_emoji
 
 model_folder = "2023-01-21--12-33-25"
 
@@ -16,17 +17,17 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/prediction/")
-def get_prediction(song: str, artist: str):
+# @app.get("/prediction/")
+# def get_prediction(song: str, artist: str):
 
-    predictor = Predictor(model_folder)
-    data = predictor.make_prediction(song=song, artist=artist)
-    if "error" in data:
-        return data
+#     predictor = Predictor(model_folder)
+#     data = predictor.make_prediction(song=song, artist=artist)
+#     if "error" in data:
+#         return data
 
-    user_message = map_score_to_emoji(data["prediction"])
-    data.update(user_message)
-    return data
+#     user_message = map_score_to_emoji(data["prediction"])
+#     data.update(user_message)
+#     return data
 
 
 @app.get("/raw_features/")
@@ -53,6 +54,9 @@ async def read_item(song: str, artist: str):
 
     audio_features = format_features(data=data, track_name=song, artist_name=artist)
     return audio_features
+
+
+handler = Mangum(app)
 
 
 if __name__ == "__main__":
