@@ -1,15 +1,13 @@
 import os
 
 import pandas as pd
-from track_recommender.core.get_playlist_tracks import get_playlist_tracks
-from track_recommender.core.spotify_api import SpotifyAPI
-from track_recommender.utils import path_data
 
-USER_ID = 1157239771
-# playlist_id = "6KOwiWg5zwrt83nEcx7HyI"
-# playlist_id = "37i9dQZF1DXbTxeAdrVG2l"
+from music_flow.core.get_playlist_tracks import get_playlist_tracks
+from music_flow.core.spotify_api import SpotifyAPI
+from music_flow.core.utils import path_data
 
-random_playlists = ["6p21dRudS9FmcyGvKWPq2R"]  # , "3ldvCZiQqreYp7sEuqQ6uO"
+random_playlists = ["6p21dRudS9FmcyGvKWPq2R"]
+
 spotifAPI = SpotifyAPI()
 
 

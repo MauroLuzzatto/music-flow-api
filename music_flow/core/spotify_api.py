@@ -7,7 +7,7 @@ from ratelimiter import RateLimiter
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from music_flow.utils import dotenv_path
+from music_flow.core.utils import dotenv_path
 
 load_dotenv(dotenv_path)
 

@@ -2,8 +2,6 @@
 .vscode/
 data/
 data_lake/
-data_lake_v/
-_archive/
 
 mlruns/
 reports/
@@ -12,8 +10,10 @@ workspace.code-workspace
 
 results/
 
+
 .aws-sam/
 .ruff_cache/
+.git/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -13,14 +13,14 @@ clean:
 
 
 build:
-	sam build --use-container -t template.yaml
+	sam build --use-container -t template.yaml --debug
 
 local:
-	sam local start-api
+	sam local start-api --debug
 
 deploy:
 	sam deploy \
 	--stack-name docker-sam-app \
 	--s3-bucket portfolio-on-lambda-2999-v3 \
 	--capabilities CAPABILITY_IAM \
-	--resolve-image-repos
+	--resolve-image-repos --debug

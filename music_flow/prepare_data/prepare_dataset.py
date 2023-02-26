@@ -2,11 +2,11 @@ import os
 
 import pandas as pd
 
-from music_flow.utils import path_data, path_dataset, path_features
+from music_flow.core.utils import path_data, path_dataset, path_features
 
 
 def get_dataset() -> None:
-    """_summary_"""
+    """Load target values and audio features and merge them into one dataset."""
 
     df_target_values = pd.read_csv(
         os.path.join(path_data, "target_values.csv"), sep=";", index_col=0
@@ -19,8 +19,11 @@ def get_dataset() -> None:
     )
     path_dataset_csv = os.path.join(path_dataset, "dataset.csv")
     df_dataset.to_csv(path_dataset_csv, sep=";")
+
     print(f"save to: {path_dataset_csv}")
+
     print(df_dataset.head())
+
     print(list(df_dataset))
     print(df_dataset.shape)
 

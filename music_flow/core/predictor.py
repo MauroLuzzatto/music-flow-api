@@ -5,30 +5,32 @@ from typing import Optional
 import pandas as pd
 
 from music_flow.core.get_playlist_tracks import get_playlist_tracks
+from music_flow.core.model_finder import get_model_folder
 from music_flow.core.spotify_api import SpotifyAPI
+from music_flow.core.utils import path_results
+from music_flow.features.create_audio_features_dataset import format_features
+from music_flow.features.get_audio_features import get_features
 from music_flow.model.preprocessing import feature_preprocessing, reverse_prediction
-from music_flow.prepare_data.features.create_audio_features_dataset import (
-    format_features,
-)
-from music_flow.prepare_data.features.get_audio_features import get_features
-from music_flow.utils import path_results
-
-# def get_model_folder(mode="latest"):
-#     list_folders = os.listdir(path_results)
-#     if mode == "latest":
-#         list_folders.sort()
-#     return list_folders[0]
 
 
 class Predictor(object):
-    def __init__(self, model_folder):
+    def __init__(self, model_folder=None, mode="latest", metric=None, path=None):
+
+        if not model_folder:
+            model_folder = get_model_folder(mode, metric, path)
+
         path_results_model = os.path.join(path_results, model_folder)
         self.path_model = os.path.join(path_results_model, "XGBRegressor.pickle")
         self.load_model()
 
     def load_model(self):
-        with open(self.path_model, "rb") as handle:
-            self.estimator = pickle.load(handle)
+        print(f"loading model from {self.path_model}")
+        try:
+            with open(self.path_model, "rb") as handle:
+                self.estimator = pickle.load(handle)
+        except FileNotFoundError:
+            raise Exception("Model not found")
+
         print("Model loaded")
 
     def load_model_metadata(self):
@@ -43,11 +45,12 @@ class Predictor(object):
 
         if data["status"] != "success":
             data_response = {
-                "error": {"code": status_code, "message": data["failure_type"]}
+                "error": {"code": status_code, "failure_type": data["failure_type"]}
             }
             return data_response
 
         features = format_features(data=data, track_name=song, artist_name=artist)
+        # TODO: remove pandas dependency
         sample = pd.DataFrame(features, index=[0])
         sample["plays"] = 0
 
@@ -61,6 +64,7 @@ class Predictor(object):
             "song": song,
             "artist": artist,
             "prediction": round(float(prediction[0]), 2),
+            "description": "The number of plays for a song.",
             "metadata": data["metadata"],
             "status": status,
         }

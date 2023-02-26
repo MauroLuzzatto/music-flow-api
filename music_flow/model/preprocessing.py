@@ -27,12 +27,20 @@ def get_one_hot_encoding(df, column):
     return df
 
 
-def map_keys_to_string(row):
+def map_keys_to_string(key: int) -> str:
+    """map keys to string
+
+    Args:
+        key (str): _description_
+
+    Returns:
+        _type_: _description_
+    """
     try:
-        key = key_mapping[int(row)]
+        string_key = key_mapping[int(key)]
     except ValueError:
-        key = "Unknown"
-    return key
+        string_key = "Unknown"
+    return string_key
 
 
 def reverse_prediction(value):

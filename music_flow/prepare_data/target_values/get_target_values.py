@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
-from music_flow.utils import dotenv_path, get_hash, path_data
+from music_flow.core.utils import dotenv_path, get_hash, path_data
 
 load_dotenv(dotenv_path)
 

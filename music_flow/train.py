@@ -3,9 +3,9 @@ import os
 import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
-from music_flow.model.ModelClass import ModelClass
+from music_flow.core.utils import path, path_dataset
 from music_flow.model.preprocessing import feature_preprocessing
-from music_flow.utils import path, path_dataset
+from music_flow.model.TrainingClass import TrainingClass
 
 path_model = os.path.join(path, "results")
 path_reports = os.path.join(path, "reports")
@@ -34,7 +34,7 @@ print(X.describe().T)
 
 # train model
 estimator = XGBRegressor()
-model = ModelClass(estimator, X, y, path_model)
+trainer = TrainingClass(estimator, X, y, path_model)
 
 
 param_distributions = {
@@ -48,7 +48,7 @@ param_distributions = {
 }
 
 cv_settings = {
-    "n_iter": 30,  # total combinations testes
+    "n_iter": 100,  # total combinations testes
     "scoring": "neg_mean_squared_error",
     "cv": 3,
     "random_state": 0,
@@ -56,4 +56,4 @@ cv_settings = {
     "verbose": 3,
 }
 
-model.train(param_distributions, cv_settings)
+trainer.train(param_distributions, cv_settings)

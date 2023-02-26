@@ -6,12 +6,14 @@ from typing import Optional, Tuple
 import pandas as pd
 from dotenv import load_dotenv
 
+from music_flow.core.utils import dotenv_path, path_data, path_data_lake, path_features
 from music_flow.file_handling import load_json
-from music_flow.utils import dotenv_path, path_data, path_data_lake, path_features
 
 load_dotenv(dotenv_path)
 
-INCLUDE_AUDIO_ANALYSIS_DATASET = os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")
+INCLUDE_AUDIO_ANALYSIS_DATASET = (
+    bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")) if not os.getenv("API") else False
+)
 
 
 def process_release_date(release_date: str) -> Tuple[int, int, int, bool]:
@@ -91,11 +93,15 @@ def format_features(
         "isrc": isrc,
     }
 
+    ## TODO: refactor to have three high level keys: track, audio_features, audio_analysis
+
     features.update(track_dict)
     features.update(audio_features)
-    if INCLUDE_AUDIO_ANALYSIS_DATASET:
+
+    if INCLUDE_AUDIO_ANALYSIS_DATASET and "audio_analysis" in data:
         audio_analysis = data["audio_analysis"]
         features.update(audio_analysis)
+
     return features
 
 

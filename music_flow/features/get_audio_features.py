@@ -7,11 +7,14 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from music_flow.core.spotify_api import SpotifyAPI
-from music_flow.utils import dotenv_path, path_data, path_data_lake
+from music_flow.core.utils import dotenv_path, path_data, path_data_lake
 
 load_dotenv(dotenv_path)
+INCLUDE_AUDIO_ANALYSIS = (
+    bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_API")) if not os.getenv("API") else False
+)
 
-INCLUDE_AUDIO_ANALYSIS = os.getenv("INCLUDE_AUDIO_ANALYSIS_API")
+
 spotify_api = SpotifyAPI()
 
 
@@ -21,7 +24,7 @@ def save_data(data, path, filename):
 
 
 def get_song_data_metadata(response: dict) -> dict:
-    """ """
+    """get the song data from the spotify api for a given track"""
     try:
         song = response["tracks"]["items"][0]["name"]
         artists = [
@@ -38,7 +41,7 @@ def get_song_data_metadata(response: dict) -> dict:
 def get_features(
     track_name: str, artist_name: str, track_id: Optional[str] = None
 ) -> Tuple[dict, int]:
-    """ """
+    """get the features from the sptofy api for a given track"""
 
     data = {
         "track_name": track_name,
@@ -69,6 +72,7 @@ def get_features(
     ]
 
     if INCLUDE_AUDIO_ANALYSIS:
+        print("Including audio analysis")
         endpoints.append(("audio_analysis", spotify_api.get_audio_analysis))
 
     for name, function_call in endpoints:
@@ -87,6 +91,7 @@ def get_features(
 
 
 def get_audio_features():
+    """This function will download the audio features from the spotify API and store them in a json file."""
 
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 
@@ -97,14 +102,13 @@ def get_audio_features():
     files_set = set(os.listdir(path_success))
     files_failed_set = set(os.listdir(path_success))
 
-    retry = True
+    retry = False
 
     print(f"Files to download: {len(df) - number_of_files}")
 
     success = 0.000001
     failed = 0
 
-    # TODO: refactor to only load data by api request
     for index, row in df.iterrows():
 
         if index % 1_000 == 0:  # type: ignore

@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt  # type: ignore
 import mlflow
 import pandas as pd  # type: ignore
 import sklearn  # type: ignore
-from LoggerClass import LoggerClass
 from sklearn.base import is_regressor  # type: ignore
 from sklearn.datasets import load_diabetes  # type: ignore
 from sklearn.metrics import f1_score  # type: ignore
@@ -28,9 +27,10 @@ from sklearn.model_selection import RandomizedSearchCV  # type: ignore
 from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from utils import create_folder
 from xgboost import XGBRegressor  # type: ignore
 
+from music_flow.core.utils import create_folder
+from music_flow.model.LoggerClass import LoggerClass
 from music_flow.model.preprocessing import reverse_prediction
 
 
@@ -65,6 +65,9 @@ class TrainingClass(object):
         self.column_names = list(X)
         self.path_model = path_model
         self.estimator = estimator
+
+        # update name to include
+        model_version = "0.0.1"
         self.save_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
 
@@ -207,7 +210,7 @@ class TrainingClass(object):
             n_jobs=param_cv["n_jobs"],
             verbose=param_cv["verbose"],
             random_state=param_cv["random_state"],
-            error_score="raise",
+            error_score="raise",  # type: ignore
         )
 
         return random_search
@@ -264,10 +267,6 @@ class TrainingClass(object):
         """
         Evaluate the model with the best performing hyperparamters,
         use the test set to the metrics for the model
-
-        Returns:
-            None: DESCRIPTION.
-
         """
         self.y_pred = self.best_estimator.predict(self.X_test)
 
@@ -281,12 +280,14 @@ class TrainingClass(object):
         else:
             methods = [accuracy_score, precision_score, f1_score]
 
-        results = {}
+        score_dict = {}
         for method in methods:
             score = method(self.y_test, self.y_pred)
-            results[method.__name__] = score
+            score_dict[method.__name__] = score
             self.logger.info(f"{method.__name__}: {score:.2f}")
 
+        results = {}
+        results["score"] = score_dict
         results["time_stamp"] = self.time_stamp
         results["column_names"] = self.column_names
         results["estimator_name"] = self.save_name
@@ -346,7 +347,6 @@ class TrainingClass(object):
             None.
 
         """
-
         self.y_pred_reversed = reverse_prediction(self.y_pred)
         self.y_test_reversed = reverse_prediction(self.y_test)
 
@@ -429,5 +429,5 @@ if __name__ == "__main__":
 
     estimator = XGBRegressor()
     config = {"target": list(y)[0], "features": list(X)}
-    model = ModelClass(estimator, X, y, path_model)
+    trainer = TrainingClass(estimator, X, y, path_model)
     # model.train(param_distributions, cv_settings, config)

@@ -1,7 +1,2 @@
-python-multipart
-python-dotenv
-pandas
-requests
 fastapi
-jinja2
 mangum
