@@ -3,24 +3,15 @@ import os
 import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
+from music_flow.__init__ import __version__ as model_version
 from music_flow.core.utils import path, path_dataset
 from music_flow.model.preprocessing import feature_preprocessing
-from music_flow.model.TrainingClass import TrainingClass
+from music_flow.model.Training import Training
 
 path_model = os.path.join(path, "results")
 path_reports = os.path.join(path, "reports")
+
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
-
-
-def limit_max_plays(max_value: int = 30) -> pd.DataFrame:
-    """limit the max value of plays to max_value"""
-    dataset["plays"] = dataset["plays"].apply(
-        lambda row: row if row < max_value else max_value
-    )
-    return dataset
-
-
-dataset = limit_max_plays()
 dataset, columns_scope = feature_preprocessing(dataset)
 
 
@@ -32,9 +23,15 @@ print(list(X))
 print(X.describe().T)
 
 
-# train model
 estimator = XGBRegressor()
-trainer = TrainingClass(estimator, X, y, path_model)
+
+trainer = Training(
+    estimator=estimator,
+    X=X,
+    y=y,
+    model_version=model_version,
+    path_model=path_model,
+)
 
 
 param_distributions = {

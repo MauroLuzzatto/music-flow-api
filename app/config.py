@@ -3,7 +3,7 @@ import sys
 from types import FrameType
 from typing import List, cast
 
-from loguru import logger
+# from loguru import logger
 from pydantic import AnyHttpUrl, BaseSettings
 
 
@@ -12,10 +12,14 @@ class LoggingSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    API_V1_STR: str = "/api/v1"
-
-    # Meta
     logging: LoggingSettings = LoggingSettings()
+
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "MusicFlow API"
+    DESCRIPTION: str = (
+        "This is a API that predicts the number of streams a song will get on Spotify,"
+        " based on my listining history."
+    )
 
     # BACKEND_CORS_ORIGINS is a comma-separated list of origins
     # e.g: http://localhost,http://localhost:4200,http://localhost:3000
@@ -25,8 +29,6 @@ class Settings(BaseSettings):
     #     "https://localhost:3000",
     #     "https://localhost:8000",
     # ]
-
-    PROJECT_NAME: str = "MusicFlow API"
 
     class Config:
         case_sensitive = True

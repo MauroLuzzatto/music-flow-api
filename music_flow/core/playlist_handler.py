@@ -28,13 +28,11 @@ class PlaylistHandler(object):
         return response, status_code
 
     def create_playlist(self, user_id, params):
-
         url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
         response, status_code = self.get_post(url, params)
         return response, status_code
 
     def add_tracks_to_playlist(self, playlist_id, track_ids):
-
         uris = [f"spotify:track:{track_id}" for track_id in track_ids]
         params = {"uris": uris}
 

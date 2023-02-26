@@ -11,7 +11,6 @@ NUMBER_OF_KAGGLE_DATASET_TRACKS = int(os.getenv("NUMBER_OF_KAGGLE_DATASET_TRACKS
 
 
 def get_df_streams():
-
     columns = {
         "artistName": "artist_name",
         "trackName": "track_name",
@@ -39,7 +38,6 @@ def get_df_streams():
 
 
 def get_df_random():
-
     columns = {"artists": "artist_name"}
 
     df_random = (
@@ -59,7 +57,6 @@ def get_df_random():
 
 
 def get_df_kaggle():
-
     df_kaggle = (
         (
             pd.read_csv(
@@ -78,7 +75,6 @@ def get_df_kaggle():
 
 
 def get_df_target_values():
-
     df_streams = get_df_streams()
     df_streams["source"] = "streams"
     print("df_streams", df_streams.shape)

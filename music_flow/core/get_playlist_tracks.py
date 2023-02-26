@@ -2,7 +2,6 @@ from typing import List
 
 
 def get_playlist_tracks(paylist) -> List[dict]:
-
     print([track["track"]["name"] for track in paylist["items"]])
     print(len(paylist["items"]))
 

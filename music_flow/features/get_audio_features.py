@@ -76,7 +76,6 @@ def get_features(
         endpoints.append(("audio_analysis", spotify_api.get_audio_analysis))
 
     for name, function_call in endpoints:
-
         response, status_code = function_call(track_id)
         if status_code == 200:
             data[name] = response
@@ -110,7 +109,6 @@ def get_audio_features():
     failed = 0
 
     for index, row in df.iterrows():
-
         if index % 1_000 == 0:  # type: ignore
             print(f"{index}/{len(df)}")
 
@@ -140,7 +138,6 @@ def get_audio_features():
 
 
 if __name__ == "__main__":
-
     retries = 0
     while retries < 20:
         try:

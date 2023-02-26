@@ -7,7 +7,6 @@ from music_flow.core.utils import path_data
 
 
 def collect_streams():
-
     path = os.path.join(path_data, "raw")
 
     output = []

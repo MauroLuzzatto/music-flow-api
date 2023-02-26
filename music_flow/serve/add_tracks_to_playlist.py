@@ -61,7 +61,6 @@ def callback(code):
 
 @app.get("/update_playlist")
 def update_playlist():
-
     playlist_handler = PlaylistHandler(headers=AUTH_TOKEN)
 
     playlist_items, status_code = playlist_handler.get_playlist_items(
@@ -73,7 +72,6 @@ def update_playlist():
 
     predictions = []
     for track in tracks:
-
         prediction = predictor.make_prediction(
             song=track["track_name"],
             artist=track["artists"],

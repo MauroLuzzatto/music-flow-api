@@ -4,7 +4,6 @@ import datetime
 import json
 import os
 import pickle
-import random
 from pprint import pprint
 from typing import Optional
 
@@ -24,17 +23,20 @@ from sklearn.metrics import (
     r2_score,
 )
 from sklearn.model_selection import RandomizedSearchCV  # type: ignore
-from sklearn.model_selection import train_test_split  # type: ignore
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor  # type: ignore
 
 from music_flow.core.utils import create_folder
-from music_flow.model.LoggerClass import LoggerClass
+from music_flow.model.Logger import Logger
 from music_flow.model.preprocessing import reverse_prediction
+from music_flow.model.TrainingData import TrainingData
+
+# enable autologging
+mlflow.sklearn.autolog()
 
 
-class TrainingClass(object):
+class Training(object):
     """
     This class provides the funktionality to train a model using
     a random grid search and evaluate the results
@@ -45,6 +47,7 @@ class TrainingClass(object):
         estimator: sklearn.base.BaseEstimator,
         X: pd.DataFrame,
         y: pd.Series,
+        model_version: str,
         path_model: str,
         folder: Optional[str] = None,
     ) -> None:
@@ -54,29 +57,30 @@ class TrainingClass(object):
         Args:
             estimator (sklearn.BaseEstimator): [description]
             X (pd.DataFrame): [description]
-            y (pd.DataFrame): [description]
+            y (pd.Series): [description]
             path_model (str): [description]
             folder (str): add a folder extension in the save folder
         """
 
-        self.X = X.values
-        self.y = y.values
-
-        self.column_names = list(X)
         self.path_model = path_model
         self.estimator = estimator
 
-        # update name to include
-        model_version = "0.0.1"
-        self.save_name = estimator.__class__.__name__
+        self.save_name = f"model_{model_version}"
+        self.estimator_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
 
         self.folder = folder
         self.set_paths()
-        Logger = LoggerClass()
-        self.logger = Logger(self.path_save, stage="training")
 
-        self.get_train_test_split()
+        logger = Logger()
+        self.logger = logger(self.path_save, stage="training")
+
+        data = TrainingData(X, y, self.path_save)
+        data.get_train_test_split()
+
+        self.X_train, self.y_train = data.get_training_data()
+        self.X_test, self.y_test = data.get_test_data()
+        self.column_names = data.get_column_names()
 
     def set_paths(self):
         """
@@ -91,34 +95,6 @@ class TrainingClass(object):
 
         self.path_model = create_folder(os.path.join(self.path_model, folder_name))
         self.path_save = create_folder(os.path.join(self.path_model, "results"))
-
-    def get_train_test_split(
-        self, test_size: float = 0.2, random_state: Optional[float] = None
-    ) -> None:
-        """
-        Get the train and test split of the features and target values
-
-        Args:
-            test_size (float, optional): [description]. Defaults to 0.2.
-            random_state ([type], optional): [description]. Defaults to None.
-        """
-
-        if not random_state:
-            random_state = random.randint(0, 1000)
-
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            self.X, self.y, random_state=random_state, test_size=test_size
-        )
-
-        self.logger.info(f"self.X: {self.X.shape}")
-        self.logger.info(f"self.y: {self.y.shape}")
-        self.logger.info(f"self.X_train: {self.X_train.shape}")  # type: ignore
-        self.logger.info(f"self.y_train: {self.y_train.shape}")  # type: ignore
-        self.logger.info(f"self.X_test: {self.X_test.shape}")  # type: ignore
-        self.logger.info(f"self.y_test: {self.y_test.shape}")  # type: ignore
-        self.logger.info(f"test_size: {test_size}")
-        self.logger.info(f"random_state: {test_size}")
-        self.logger.info(f"column_names: {self.column_names}")
 
     def hyperparamter_tuning(
         self, param_distributions: dict, cv_settings: dict
@@ -136,50 +112,57 @@ class TrainingClass(object):
         # tracking_uri = mlflow.get_tracking_uri()
         # print("Current tracking uri: {}".format(tracking_uri))
 
-        # enable autologging
-        mlflow.sklearn.autolog()
-
         random_search = self.build_CV_search(param_distributions, cv_settings)
 
         with mlflow.start_run() as run:
             random_search.fit(self.X_train, self.y_train)
 
-        self.get_mlflow_logs(run)
+        self.mlflow_logs = self.get_mlflow_logs(run)
+        self.logger.info(f"mlflow_logs: {self.mlflow_logs}")
 
         self.get_CV_results(random_search, sort_by="rank_test_score")
+
         self.best_estimator = random_search.best_estimator_
         self.best_params = random_search.best_params_
-        self.save_parameters(param_distributions, "param_distributions")
-        self.save_parameters(cv_settings, "cv_settings")
+
+        self.save_json(param_distributions, "param_distributions")
+        self.save_json(cv_settings, "cv_settings")
 
     @staticmethod
-    def get_mlflow_logs(run):
+    def get_mlflow_logs(run) -> dict:
+        """Get the mlflow logs from the run
+
+        Args:
+            run (mlflow.entities.Run): mlflow run object
+
+            Returns:
+                dict: dictionary with the mlflow logs
+        """
+
+        print(type(run))
 
         run_id = run.info.run_id
         client = mlflow.tracking.MlflowClient()
+
         data = client.get_run(run_id).data
         tags = {k: v for k, v in data.tags.items() if not k.startswith("mlflow.")}
         artifacts = [f.path for f in client.list_artifacts(run_id, "model")]
 
-        params = data.params
-        metrics = data.metrics
+        mlflow_logs = {
+            "run_id": run_id,
+            "params": data.params,
+            "metrics": data.metrics,
+            "tags": tags,
+            "artifacts": artifacts,
+        }
 
-        pprint(params)
-        pprint(metrics)
-        pprint(tags)
-        pprint(artifacts)
-
-    def save_parameters(self, variable: dict, name: str) -> None:
-        """
-        Save dictionary to json using the provided name
-        """
-        with open(os.path.join(self.path_save, f"{name}.json"), "w") as fp:
-            json.dump(variable, fp)
+        return mlflow_logs
 
     def build_pipeline(self, estimator=None):
         """
         Build the pipeline for processing the data before model training
         """
+        # TODO: this pipeline function is currently not used
         return Pipeline(
             steps=[
                 ("scale", StandardScaler(with_mean=True, with_std=True)),
@@ -252,7 +235,7 @@ class TrainingClass(object):
         self.logger.info(f"Training score: \n{random_search.best_score_:.2f}")
         self.logger.info(f"Best hyperparameters: \n{random_search.best_params_}")
 
-    def full_data_training(self) -> None:
+    def train_on_all_data(self) -> None:
         """
         Train the model on the the full dataset and on the best hyperparameters
 
@@ -278,23 +261,48 @@ class TrainingClass(object):
                 mean_absolute_percentage_error,
             ]
         else:
-            methods = [accuracy_score, precision_score, f1_score]
+            methods = [
+                accuracy_score,
+                precision_score,
+                f1_score,
+            ]
 
-        score_dict = {}
+        self.score_dict = {}
         for method in methods:
             score = method(self.y_test, self.y_pred)
-            score_dict[method.__name__] = score
+            self.score_dict[method.__name__] = score
             self.logger.info(f"{method.__name__}: {score:.2f}")
 
+    def save_metadata(self) -> None:
+        """
+        Save the metadata of the model
+        """
         results = {}
-        results["score"] = score_dict
+        results["score"] = self.score_dict
         results["time_stamp"] = self.time_stamp
-        results["column_names"] = self.column_names
-        results["estimator_name"] = self.save_name
+        results["features"] = self.column_names
 
-        path_score = os.path.join(self.path_save, "best_score.json")
-        with open(path_score, "w", encoding="utf-8") as f:
-            json.dump(results, f, ensure_ascii=False, indent=4)
+        model_metadata = {
+            "save_name": self.save_name,
+            "sklearn_version": sklearn.__version__,
+            "estimator_name": self.estimator_name,
+            "best_params": self.best_params,
+        }
+        results["model_metadata"] = model_metadata
+        results["mlflow_logs"] = self.mlflow_logs
+
+        self.save_json(results, "best_score.json")
+
+    def save_json(self, data: dict, name: str) -> None:
+        """
+        Save dictionary to json using the provided name
+        """
+
+        path = os.path.join(self.path_save, f"{name}.json")
+        with open(path, "w") as fp:
+            json.dump(data, fp, ensure_ascii=False, indent=4)
+
+        self.logger.info(f"Save: {path}")
 
     def save_pickle(self) -> None:
         """
@@ -305,36 +313,36 @@ class TrainingClass(object):
 
         """
         name = f"{self.save_name}.pickle"
-        with open(os.path.join(self.path_model, name), "wb") as handle:
+        path = os.path.join(self.path_model, name)
+        with open(path, "wb") as handle:
             pickle.dump(self.final_model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        self.logger.info(f"Save: {os.path.join(self.path_model, name)}")
+        self.logger.info(f"Save: {path}")
 
     def save_predictions(self):
-
         self.df_test = pd.DataFrame(self.X_test, columns=self.column_names)
-        self.df_test["predictoions"] = self.y_pred
+        self.df_test["predictions"] = self.y_pred
         self.df_test["targets"] = self.y_test
         self.df_test.to_csv(os.path.join(self.path_save, "df_test.csv"), sep=";")
 
-    def load_pickle(self, name: str) -> None:
-        """
-        Load the estimator from a pickle file
+    # def load_pickle(self, name: str) -> None:
+    #     """
+    #     Load the estimator from a pickle file
 
-        Args:
-            name (str): DESCRIPTION.
+    #     Args:
+    #         name (str): DESCRIPTION.
 
-        Returns:
-            None: DESCRIPTION.
+    #     Returns:
+    #         None: DESCRIPTION.
 
-        """
-        assert name.endswith(".pickle")
+    #     """
+    #     assert name.endswith(".pickle")
 
-        with open(os.path.join(self.path_model, name), "rb") as handle:
-            estimator = pickle.load(handle)
+    #     with open(os.path.join(self.path_model, name), "rb") as handle:
+    #         estimator = pickle.load(handle)
 
-        self.logger.info(f"Load: {os.path.join(self.path_model, name)}")
-        return estimator
+    #     self.logger.info(f"Load: {os.path.join(self.path_model, name)}")
+    #     return estimator
 
     def visualize(self):
         """
@@ -377,23 +385,7 @@ class TrainingClass(object):
         plt.show(block=False)
         fig.savefig(os.path.join(self.path_save, image_name))
 
-    def save_config(self, config):
-        """
-        save the configurations of the dataset
-
-        Args:
-            config (TYPE): DESCRIPTION.
-
-        Returns:
-            None.
-
-        """
-        with open(
-            os.path.join(self.path_save, "config.json"), "w", encoding="utf-8"
-        ) as f:
-            json.dump(config, f, ensure_ascii=False, indent=4)
-
-    def train(self, param_distributions, cv_settings, config=None):
+    def train(self, param_distributions, cv_settings, config=None, save=False):
         """
         wrapper function to execute the full training process end-to-end,
         including hyperparameter tuning, evaluation, visualization
@@ -411,17 +403,19 @@ class TrainingClass(object):
         self.hyperparamter_tuning(param_distributions, cv_settings)
         self.evaluate()
         self.visualize()
-        self.full_data_training()
+        self.train_on_all_data()
         self.save_pickle()
-        self.save_predictions()
+
+        if save:
+            self.save_predictions()
 
         if config:
-            self.save_config(config)
+            self.save_json(data=config, name="config")
 
 
 if __name__ == "__main__":
-
     path_model = r"model"
+    model_version = "0.0.1"
 
     diabetes = load_diabetes()
     X = diabetes.data  # type: ignore
@@ -429,5 +423,5 @@ if __name__ == "__main__":
 
     estimator = XGBRegressor()
     config = {"target": list(y)[0], "features": list(X)}
-    trainer = TrainingClass(estimator, X, y, path_model)
+    trainer = Training(estimator, X, y, model_version, path_model)
     # model.train(param_distributions, cv_settings, config)

@@ -97,11 +97,10 @@ def get_model_folder(
     elif mode == "best_score":
         folder = get_best_score_folder(folders, metric)
     else:
-        raise ValueError(f"Mode not found - options: latest, best_score")
+        raise ValueError("Mode not found - options: latest, best_score")
     return folder
 
 
 if __name__ == "__main__":
-
     folder = get_model_folder()
     folder = get_model_folder(metric="r2_score", mode="best_score")

@@ -5,7 +5,6 @@ import pandas as pd
 from music_flow.core.utils import path_data
 
 if __name__ == "__main__":
-
     df_kaggle = (
         (
             pd.read_csv(

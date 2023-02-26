@@ -17,6 +17,14 @@ key_mapping = {
 }
 
 
+def limit_max_plays(dataset, max_value: int = 30) -> pd.DataFrame:
+    """limit the max value of plays to max_value"""
+    dataset["plays"] = dataset["plays"].apply(
+        lambda row: row if row < max_value else max_value
+    )
+    return dataset
+
+
 def get_one_hot_encoding(df, column):
     """
     convert list of features into one hot encoded values
@@ -48,6 +56,7 @@ def reverse_prediction(value):
 
 
 def feature_preprocessing(dataset: pd.DataFrame):
+    dataset = limit_max_plays(dataset)
 
     drop_columns = [
         "type",

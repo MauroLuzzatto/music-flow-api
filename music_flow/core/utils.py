@@ -27,7 +27,6 @@ def create_folder(path):
 
 
 def map_score_to_emoji(score) -> Dict[str, str]:
-
     values = [
         (0.3, "😐", "This song needs to grow on me!"),
         (0.5, "🙂", "Nice track!"),
@@ -37,7 +36,7 @@ def map_score_to_emoji(score) -> Dict[str, str]:
     ]
     emoji = ""
     text = ""
-    for (threshold, emoji, text) in values:
+    for threshold, emoji, text in values:
         if score < threshold:
             break
 

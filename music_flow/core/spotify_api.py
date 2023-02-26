@@ -25,7 +25,6 @@ class SpotifyAPI(object):
         self.adapter = HTTPAdapter(max_retries=retry)
 
     def get_headers(self):
-
         grant_type = "client_credentials"
         body_params = {"grant_type": grant_type}
         auth = (CLIENT_ID, CLIENT_SECRET)

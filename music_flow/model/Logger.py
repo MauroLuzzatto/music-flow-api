@@ -2,7 +2,7 @@ import logging
 import os
 
 
-class LoggerClass:
+class Logger:
     """
     Logger class to log to a file and console output
     """
