@@ -4,7 +4,6 @@ import datetime
 import json
 import os
 import pickle
-from pprint import pprint
 from typing import Optional
 
 import matplotlib.pyplot as plt  # type: ignore

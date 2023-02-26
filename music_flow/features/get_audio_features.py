@@ -90,7 +90,8 @@ def get_features(
 
 
 def get_audio_features():
-    """This function will download the audio features from the spotify API and store them in a json file."""
+    """This function will download the audio features from the spotify API and store them in a json file.
+    """
 
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 

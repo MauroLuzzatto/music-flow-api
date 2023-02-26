@@ -1,13 +1,9 @@
-import os
-
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
-from mangum import Mangum
 
 from app.__init__ import __version__ as api_version
 from app.config import Settings
-from app.schemas import Features, Health, Prediction, RawFeatures
+from app.schemas import Health, Prediction, RawFeatures
 from music_flow import Predictor, format_features, get_features
 from music_flow.core.utils import map_score_to_emoji
 
