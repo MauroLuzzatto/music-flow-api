@@ -1,8 +1,8 @@
 import os
 from typing import List, Optional
 
+from music_flow.core.file_handling import read_json
 from music_flow.core.utils import path_results
-from music_flow.file_handling import load_json
 
 default_max = 1_000_000
 default_min = 0
@@ -53,7 +53,7 @@ def get_best_score_folder(folders: List[str], metric: Optional[str]) -> str:
     for folder in folders:
         try:
             path = os.path.join(path_results, folder, "results", "best_score.json")
-            data = load_json(path)
+            data = read_json(path)
         except FileNotFoundError:
             continue
         score = data["score"][metric]

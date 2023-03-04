@@ -1,8 +1,7 @@
 
 .vscode/
-data/
-data_lake/
-data_lake_v/
+data/*
+data_lake/*
 _archive/
 
 mlruns/

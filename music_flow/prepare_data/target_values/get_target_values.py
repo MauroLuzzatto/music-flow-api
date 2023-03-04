@@ -3,9 +3,9 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
-from music_flow.core.utils import dotenv_path, get_hash, path_data
+from music_flow.core.utils import get_hash, path_data, path_env
 
-load_dotenv(dotenv_path)
+load_dotenv(path_env)
 
 NUMBER_OF_KAGGLE_DATASET_TRACKS = int(os.getenv("NUMBER_OF_KAGGLE_DATASET_TRACKS"))  # type: ignore
 

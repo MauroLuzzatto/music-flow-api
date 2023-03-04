@@ -9,19 +9,54 @@ from music_flow.model.preprocessing import feature_preprocessing
 from music_flow.model.Training import Training
 
 path_model = os.path.join(path, "results")
-path_reports = os.path.join(path, "reports")
 
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
-dataset, columns_scope = feature_preprocessing(dataset)
+dataset = feature_preprocessing(dataset)
+
+target_column = "plays"
+columns_scope = [
+    "number_of_available_markets",
+    "num_artists",
+    "duration_ms",
+    "explicit",
+    "popularity",
+    "release_year",
+    "release_month",
+    "release_day",
+    "date_is_complete",
+    "danceability",
+    "energy",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "time_signature",
+    "A",
+    "A#/Bb",
+    "B",
+    "C",
+    "C#/Db",
+    "D",
+    "D#/Eb",
+    "E",
+    "F",
+    "F#/Gb",
+    "G",
+    "G#/Ab",
+    "Unknown",
+]
 
 
-columns_scope.remove("plays")
 X = dataset[columns_scope]
-y = dataset["plays"]
+y = dataset[target_column]
 
-print(list(X))
 print(X.describe().T)
 
+print(type(X))
 
 estimator = XGBRegressor()
 
@@ -45,7 +80,7 @@ param_distributions = {
 }
 
 cv_settings = {
-    "n_iter": 100,  # total combinations testes
+    "n_iter": 1,  # 100 total combinations testes
     "scoring": "neg_mean_squared_error",
     "cv": 3,
     "random_state": 0,

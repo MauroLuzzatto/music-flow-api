@@ -7,9 +7,9 @@ from ratelimiter import RateLimiter
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from music_flow.core.utils import dotenv_path
+from music_flow.core.utils import path_env
 
-load_dotenv(dotenv_path)
+load_dotenv(path_env)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -90,9 +90,7 @@ class SpotifyAPI(object):
     def search_track_url(self, track, artist=None):
         if not artist:
             artist = ""
-        return (
-            f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
-        )
+        return f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
 
     def get_audio_analysis(self, id):
         url = f"https://api.spotify.com/v1/audio-analysis/{id}"
@@ -103,9 +101,7 @@ class SpotifyAPI(object):
         artist = "" if not artist else artist
         track = self.clean_string(track)
         artist = self.clean_string(artist)
-        url = (
-            f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
-        )
+        url = f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
         response = requests.get(url=url, headers=self.headers)
         return json.loads(response.text)
 

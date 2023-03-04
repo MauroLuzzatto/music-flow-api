@@ -3,9 +3,9 @@ from typing import Optional, Tuple
 
 from dotenv import load_dotenv
 
-from music_flow.core.utils import dotenv_path
+from music_flow.core.utils import path_env
 
-load_dotenv(dotenv_path)
+load_dotenv(path_env)
 
 INCLUDE_AUDIO_ANALYSIS_DATASET = (
     bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")) if not os.getenv("API") else False

@@ -1,3 +1,4 @@
+
 import uvicorn
 from fastapi import FastAPI, HTTPException
 
@@ -11,7 +12,7 @@ settings = Settings()
 
 model_version = "0.1.0"
 predictor = Predictor(model_version)
-model_metadata = predictor.load_model_metadata()
+model_metadata = predictor.get_metdata()
 print(model_metadata)
 
 app = FastAPI(
@@ -23,7 +24,9 @@ app = FastAPI(
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the music flow API!"}
+    return {
+        "message": "Welcome to the music flow API! Go to '/docs' for more info.Here is an example: musicflow.link/prediction/?song=sun&artist=caribou "
+    }
 
 
 @app.get("/health", response_model=Health)
@@ -105,9 +108,7 @@ async def get_features_api(song: str, artist: str):
     Returns:
         Features: features object
     """
-
     features, _ = get_features(song, artist)
-
     if features["status"] != "success":
         raise HTTPException(
             status_code=404,

@@ -2,20 +2,6 @@ import hashlib
 import os
 from typing import Dict
 
-path = os.getcwd()
-path_base = os.path.join(path, "music_flow")
-
-path_data = os.path.join(path, "data")
-path_data_lake = os.path.join(path, "data_lake")
-path_features = os.path.join(path_data, "features")
-path_dataset = os.path.join(path_data, "dataset")
-path_results = os.path.join(path, "results")
-dotenv_path = os.path.join(path, ".env")
-
-
-def get_hash(name):
-    return hashlib.sha256(name.encode("utf-8")).hexdigest()
-
 
 def create_folder(path):
     """
@@ -24,6 +10,24 @@ def create_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
     return path
+
+
+path = os.getcwd()
+path_base = os.path.join(path, "music_flow")
+
+path_data_lake = create_folder(os.path.join(path, "data_lake"))
+
+path_data = create_folder(os.path.join(path, "data"))
+path_features = create_folder(os.path.join(path_data, "features"))
+path_dataset = create_folder(os.path.join(path_data, "dataset"))
+
+path_reports = os.path.join(path, "reports")
+path_results = create_folder(os.path.join(path, "results"))
+path_env = os.path.join(path, ".env")
+
+
+def get_hash(name):
+    return hashlib.sha256(name.encode("utf-8")).hexdigest()
 
 
 def map_score_to_emoji(score) -> Dict[str, str]:

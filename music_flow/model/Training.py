@@ -60,40 +60,44 @@ class Training(object):
             path_model (str): [description]
             folder (str): add a folder extension in the save folder
         """
-
+        self.X = X
+        self.y = y
         self.path_model = path_model
         self.estimator = estimator
+        self.model_version = model_version
+        self.column_names: List[str] = list(X)  # type: ignore
 
-        self.save_name = f"model_{model_version}"
+        self.save_name = "model"
         self.estimator_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
 
-        self.folder = folder
-        self.set_paths()
+        self.set_paths(folder)
 
-        logger = Logger()
-        self.logger = logger(self.path_save, stage="training")
-
-        data = TrainingData(X, y, self.path_save)
+        data = TrainingData(X, y, self.path_logs)
         data.get_train_test_split()
-
         self.X_train, self.y_train = data.get_training_data()
         self.X_test, self.y_test = data.get_test_data()
-        self.column_names = data.get_column_names()
+        self.data_version = "0.1.0"
 
-    def set_paths(self):
+        logger = Logger()
+        self.logger = logger(self.path_logs, stage="training")
+        self.logger.info(f"column_name: {self.column_names}")
+
+    def set_paths(self, folder):
         """
         Define the neceneeded paths for saving the results
         """
         self.time_stamp = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
 
-        if self.folder:
-            folder_name = f"{self.time_stamp} - {self.folder}"
+        if folder:
+            folder_name = f"{self.time_stamp} - {folder}"
         else:
             folder_name = self.time_stamp
 
         self.path_model = create_folder(os.path.join(self.path_model, folder_name))
         self.path_save = create_folder(os.path.join(self.path_model, "results"))
+        self.path_plots = create_folder(os.path.join(self.path_model, "plots"))
+        self.path_logs = create_folder(os.path.join(self.path_model, "logs"))
 
     def hyperparamter_tuning(
         self, param_distributions: dict, cv_settings: dict
@@ -116,16 +120,17 @@ class Training(object):
         with mlflow.start_run() as run:
             random_search.fit(self.X_train, self.y_train)
 
-        self.mlflow_logs = self.get_mlflow_logs(run)
-        self.logger.info(f"mlflow_logs: {self.mlflow_logs}")
+        mlflow_logs = self.get_mlflow_logs(run)
+        self.logger.info(f"mlflow_logs: {mlflow_logs}")
 
         self.get_CV_results(random_search, sort_by="rank_test_score")
 
         self.best_estimator = random_search.best_estimator_
         self.best_params = random_search.best_params_
 
-        self.save_json(param_distributions, "param_distributions")
-        self.save_json(cv_settings, "cv_settings")
+        self.save_json(name="param_distributions.json", data=param_distributions)
+        self.save_json(name="cv_settings.json", data=cv_settings)
+        self.save_json(name="mlflow_logs.json", data=mlflow_logs)
 
     @staticmethod
     def get_mlflow_logs(run) -> dict:
@@ -137,12 +142,9 @@ class Training(object):
             Returns:
                 dict: dictionary with the mlflow logs
         """
-
         print(type(run))
-
         run_id = run.info.run_id
         client = mlflow.tracking.MlflowClient()
-
         data = client.get_run(run_id).data
         tags = {k: v for k, v in data.tags.items() if not k.startswith("mlflow.")}
         artifacts = [f.path for f in client.list_artifacts(run_id, "model")]
@@ -277,31 +279,40 @@ class Training(object):
         Save the metadata of the model
         """
         results = {}
-        results["score"] = self.score_dict
-        results["time_stamp"] = self.time_stamp
-        results["features"] = self.column_names
+        results["timestamp"] = self.time_stamp
 
         model_metadata = {
-            "save_name": self.save_name,
+            "name": self.save_name,
+            "model_version": self.model_version,
             "sklearn_version": sklearn.__version__,
             "estimator_name": self.estimator_name,
             "best_params": self.best_params,
+            "score": self.score_dict,
         }
-        results["model_metadata"] = model_metadata
-        results["mlflow_logs"] = self.mlflow_logs
+        data_metadata = {"features": self.column_names, "version": self.data_version}
+        results["model"] = model_metadata
+        results["data"] = data_metadata
 
-        self.save_json(results, "best_score.json")
+        self.save_json(
+            name="metadata.json",
+            data=results,
+            path=self.path_model,
+        )
 
-    def save_json(self, data: dict, name: str) -> None:
+    def save_json(self, name, data: dict, path=None) -> None:
         """
         Save dictionary to json using the provided name
         """
+        assert name.endswith(".json"), "name must end with .json"
 
-        path = os.path.join(self.path_save, f"{name}.json")
-        with open(path, "w") as fp:
+        if not path:
+            path = self.path_save
+
+        full_path = os.path.join(path, name)
+        with open(full_path, "w") as fp:
             json.dump(data, fp, ensure_ascii=False, indent=4)
 
-        self.logger.info(f"Save: {path}")
+        self.logger.info(f"Save: {full_path}")
 
     def save_pickle(self) -> None:
         """
@@ -323,25 +334,6 @@ class Training(object):
         self.df_test["predictions"] = self.y_pred
         self.df_test["targets"] = self.y_test
         self.df_test.to_csv(os.path.join(self.path_save, "df_test.csv"), sep=";")
-
-    # def load_pickle(self, name: str) -> None:
-    #     """
-    #     Load the estimator from a pickle file
-
-    #     Args:
-    #         name (str): DESCRIPTION.
-
-    #     Returns:
-    #         None: DESCRIPTION.
-
-    #     """
-    #     assert name.endswith(".pickle")
-
-    #     with open(os.path.join(self.path_model, name), "rb") as handle:
-    #         estimator = pickle.load(handle)
-
-    #     self.logger.info(f"Load: {os.path.join(self.path_model, name)}")
-    #     return estimator
 
     def visualize(self):
         """
@@ -365,7 +357,7 @@ class Training(object):
         plt.xlabel("predictions")
         plt.ylabel("test values")
         plt.show(block=False)
-        fig.savefig(os.path.join(self.path_save, image_name))
+        fig.savefig(os.path.join(self.path_plots, image_name))
 
         image_name = "residuals_versus_predictions.png"
         fig = plt.figure(figsize=(4, 5))
@@ -375,14 +367,14 @@ class Training(object):
         plt.ylabel("residuals")
         plt.xlabel("predictions")
         plt.show(block=False)
-        fig.savefig(os.path.join(self.path_save, image_name))
+        fig.savefig(os.path.join(self.path_plots, image_name))
 
         image_name = "residuals_histogram.png"
         fig = plt.figure(figsize=(4, 5))
         plt.hist(self.y_pred_reversed - self.y_test_reversed, alpha=0.5)
         plt.ylabel("residuals")
         plt.show(block=False)
-        fig.savefig(os.path.join(self.path_save, image_name))
+        fig.savefig(os.path.join(self.path_plots, image_name))
 
     def train(self, param_distributions, cv_settings, config=None, save=False):
         """
@@ -401,6 +393,7 @@ class Training(object):
         """
         self.hyperparamter_tuning(param_distributions, cv_settings)
         self.evaluate()
+        self.save_metadata()
         self.visualize()
         self.train_on_all_data()
         self.save_pickle()
@@ -409,7 +402,7 @@ class Training(object):
             self.save_predictions()
 
         if config:
-            self.save_json(data=config, name="config")
+            self.save_json(name="config.json", data=config)
 
 
 if __name__ == "__main__":

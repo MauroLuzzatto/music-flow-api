@@ -1,6 +1,33 @@
 # music-flow
 
-Use your spotify streaming history to create a machine learning model that predicts the number of future plays of a song using the spotify audio features.
+MusicFlow is a project that uses a personal spotify streaming history to train a machine learning model that predicts the number of streams of a song using the spotify audio features and track metadata.
+
+## Test it
+
+
+```
+musicflow.link
+```
+
+```
+musicflow.link/health
+```
+
+```
+musicflow.link/raw_features/?song=sun&artist=caribou
+```
+
+```
+musicflow.link/features/?song=sun&artist=caribou
+```
+
+```
+musicflow.link/prediction/?song=sun&artist=caribou
+```
+
+
+
+
 
 
 ## Plan

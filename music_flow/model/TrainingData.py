@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -12,7 +12,6 @@ class TrainingData:
     def __init__(self, X: pd.DataFrame, y: pd.Series, path_log) -> None:
         self.X = X.values
         self.y = y.values
-        self.column_names: List[str] = list(X)  # type: ignore
 
         logger = Logger()
         self.logger = logger(path_log, stage="data")
@@ -53,7 +52,6 @@ class TrainingData:
             "self.y_test": self.y_test.shape,  # type: ignore
             "test_size": test_size,
             "random_state": random_state,
-            "column_names": self.column_names,
         }
 
         self.logger.info(f"data_log: {self.data_log}")
@@ -63,6 +61,3 @@ class TrainingData:
 
     def get_test_data(self) -> Tuple[np.ndarray, np.ndarray]:
         return self.X_test, self.y_test
-
-    def get_column_names(self) -> List[str]:
-        return self.column_names

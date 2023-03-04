@@ -7,9 +7,9 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from music_flow.core.spotify_api import SpotifyAPI
-from music_flow.core.utils import dotenv_path, path_data, path_data_lake
+from music_flow.core.utils import path_data, path_data_lake, path_env
 
-load_dotenv(dotenv_path)
+load_dotenv(path_env)
 INCLUDE_AUDIO_ANALYSIS = (
     bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_API")) if not os.getenv("API") else False
 )
@@ -90,8 +90,7 @@ def get_features(
 
 
 def get_audio_features():
-    """This function will download the audio features from the spotify API and store them in a json file.
-    """
+    """This function will download the audio features from the spotify API and store them in a json file."""
 
     df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
 

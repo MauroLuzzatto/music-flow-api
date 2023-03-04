@@ -56,6 +56,7 @@ def reverse_prediction(value):
 
 
 def feature_preprocessing(dataset: pd.DataFrame):
+    """feature preprocessing"""
     dataset = limit_max_plays(dataset)
 
     drop_columns = [
@@ -103,5 +104,5 @@ def feature_preprocessing(dataset: pd.DataFrame):
             dataset[col] = 0
 
     columns_scope = list(dataset)
-    columns_scope.extend(list(key_mapping.values()))
-    return dataset, columns_scope
+    print(columns_scope)
+    return dataset

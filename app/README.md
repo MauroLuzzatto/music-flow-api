@@ -3,6 +3,8 @@ endpoints:
 - info
 - predict
 
+https://jsontopydantic.com/
+
 
 # Testing
 

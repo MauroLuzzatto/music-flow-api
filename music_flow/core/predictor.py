@@ -4,13 +4,13 @@ from typing import Optional
 
 import pandas as pd
 
+from music_flow.core.features.format_features import format_features
+from music_flow.core.features.get_audio_features import get_features
+from music_flow.core.file_handling import read_json
 from music_flow.core.get_playlist_tracks import get_playlist_tracks
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.spotify_api import SpotifyAPI
 from music_flow.core.utils import path_results
-from music_flow.features.format_features import format_features
-from music_flow.features.get_audio_features import get_features
-from music_flow.file_handling import read_json
 from music_flow.model.preprocessing import feature_preprocessing, reverse_prediction
 
 
@@ -22,7 +22,10 @@ class Predictor(object):
             model_folder = get_model_folder(mode, metric, path)
 
         self.path_model_folder = os.path.join(path_results, model_folder)
-        self.path_model = os.path.join(self.path_model_folder, "XGBRegressor.pickle")
+        self.load_metadata()
+        self.features = self.metadata["data"]["features"]
+        self.model_name = self.metadata["model"]["name"]
+        self.path_model = os.path.join(self.path_model_folder, self.model_name)
         self.load_model()
 
     def load_model(self) -> None:
@@ -37,21 +40,24 @@ class Predictor(object):
             with open(self.path_model, "rb") as handle:
                 self.estimator = pickle.load(handle)
         except FileNotFoundError:
-            raise Exception("Model not found")
+            raise Exception("Model not found!")
         print("Model loaded")
 
-    def load_model_metadata(self) -> dict:
+    def load_metadata(self) -> None:
         """_summary_
 
         Returns:
             dict: _description_
         """
-        path = os.path.join(self.path_model_folder, "results", "best_score.json")
+        path = os.path.join(self.path_model_folder, "metdata.json")
         try:
-            data = read_json(path)
+            metadata = read_json(path)
         except FileNotFoundError:
-            return {}
-        return data
+            raise Exception("metadata not found!")
+        self.metadata = metadata
+
+    def get_metdata(self):
+        return self.metadata
 
     def make_prediction(
         self, song: str, artist: str, track_id: Optional[str] = None
@@ -71,8 +77,8 @@ class Predictor(object):
         sample = pd.DataFrame(features, index=[0])
         sample["plays"] = 0
 
-        sample_formated, columns_scope = feature_preprocessing(sample)
-        input_sample = sample_formated[columns_scope]
+        sample_formated = feature_preprocessing(sample)
+        input_sample = sample_formated[self.features]
 
         scaled_prediction = self.estimator.predict(input_sample)
         prediction = reverse_prediction(scaled_prediction)

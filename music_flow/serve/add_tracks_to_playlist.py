@@ -9,9 +9,9 @@ from fastapi.responses import HTMLResponse
 from music_flow.core.get_playlist_tracks import get_playlist_tracks
 from music_flow.core.playlist_handler import PlaylistHandler
 from music_flow.core.predictor import Predictor
-from music_flow.core.utils import dotenv_path
+from music_flow.core.utils import path_env
 
-load_dotenv(dotenv_path)
+load_dotenv(path_env)
 
 
 user_id = "1157239771"
@@ -48,9 +48,7 @@ def get_access_token(auth_code: str):
 @app.get("/")
 def auth():
     scope = ["playlist-modify-private", "playlist-modify-public"]
-    auth_url = (
-        f"https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={' '.join(scope)}"
-    )
+    auth_url = f"https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&scope={' '.join(scope)}"
     return HTMLResponse(content=f'<a href="{auth_url}">Authorize</a>')
 
 
