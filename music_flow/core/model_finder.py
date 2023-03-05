@@ -1,8 +1,7 @@
 import os
 from typing import List, Optional
 
-from music_flow.core.file_handling import read_json
-from music_flow.core.utils import path_results
+from music_flow.core.utils import path_results, read_json
 
 default_max = 1_000_000
 default_min = 0

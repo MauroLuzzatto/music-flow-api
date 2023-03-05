@@ -6,14 +6,14 @@ import pandas as pd
 
 from music_flow.core.features.format_features import format_features
 from music_flow.core.features.get_audio_features import get_features
-from music_flow.core.file_handling import read_json
+from music_flow.core.features.preprocessing import (
+    feature_preprocessing,
+    reverse_prediction,
+)
 from music_flow.core.get_playlist_tracks import get_playlist_tracks
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.spotify_api import SpotifyAPI
-from music_flow.core.utils import path_results
-
-from music_flow.core.features.preprocessing import feature_preprocessing, reverse_prediction
-
+from music_flow.core.utils import path_results, read_json
 
 description = "The number of predicted future streams of the song"
 
@@ -24,6 +24,8 @@ class Predictor(object):
     ):
         if not model_folder:
             model_folder = get_model_folder(mode, metric, path)
+
+        # TODO: allow model to be loaded from .env file
 
         self.path_model_folder = os.path.join(path_results, model_folder)
         self.path_metadata = os.path.join(self.path_model_folder, "metadata.json")
@@ -64,7 +66,10 @@ class Predictor(object):
         return self.metadata
 
     def make_prediction(
-        self, song: str, artist: str, track_id: Optional[str] = None
+        self,
+        song: str,
+        artist: str,
+        track_id: Optional[str] = None,
     ) -> dict:
         data, status_code = get_features(song, artist, track_id)
         status = data["status"]

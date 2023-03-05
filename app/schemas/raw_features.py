@@ -5,16 +5,6 @@ from typing import Any, List
 from pydantic import BaseModel
 
 
-class RawFeatures(BaseModel):
-    track_name: str
-    artist_name: str
-    metadata: Metadata
-    audio_features: AudioFeatures
-    track: Track
-    status: str
-    failure_type: Any
-
-
 class Metadata(BaseModel):
     song: str
     artist: List[str]
@@ -66,6 +56,7 @@ class Image(BaseModel):
 
 
 class Album(BaseModel):
+    album_group: str
     album_type: str
     artists: List[Artist]
     available_markets: List[str]
@@ -73,6 +64,7 @@ class Album(BaseModel):
     href: str
     id: str
     images: List[Image]
+    is_playable: bool
     name: str
     release_date: str
     release_date_precision: str
@@ -120,3 +112,13 @@ class Track(BaseModel):
     track_number: int
     type: str
     uri: str
+
+
+class RawFeatures(BaseModel):
+    track_name: str
+    artist_name: str
+    metadata: Metadata
+    audio_features: AudioFeatures
+    track: Track
+    status: str
+    failure_type: Any

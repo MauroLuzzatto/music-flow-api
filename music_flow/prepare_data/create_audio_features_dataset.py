@@ -5,8 +5,7 @@ from pprint import pprint
 import pandas as pd
 
 from music_flow.core.features.format_features import format_features
-from music_flow.core.file_handling import read_json
-from music_flow.core.utils import path_data, path_data_lake, path_features
+from music_flow.core.utils import path_data, path_data_lake, path_features, read_json
 
 
 def create_audio_features_dataset():

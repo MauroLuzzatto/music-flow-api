@@ -1,13 +1,11 @@
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
-from music_flow import Predictor
 from app.core.forms import SongRequestForm
+from music_flow import Predictor
 from music_flow.core.utils import map_score_to_emoji
-
-
-from pathlib import Path
 
 base_path = Path("/home/maurol/track-recommender/app").absolute()
 templates = Jinja2Templates(directory=str(base_path / "templates"))
@@ -19,9 +17,11 @@ router = APIRouter(
     prefix="/form", tags=["form"], responses={404: {"description": "Not found"}}
 )
 
+
 @router.get("/about/")
 async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
+
 
 @router.get("/")
 def get_lyrics(request: Request):
@@ -36,7 +36,7 @@ async def post_lyrics(request: Request):
 
     model_version = "0.1.0"
     predictor = Predictor(model_version)
-    model_metadata = predictor.get_metdata()
+    predictor.get_metdata()
 
     prediction = predictor.make_prediction(song=form.song, artist=form.artist)
     print(prediction)
@@ -48,7 +48,6 @@ async def post_lyrics(request: Request):
 
     user_message = map_score_to_emoji(prediction["prediction"])
     prediction["message"] = user_message
-  
 
     if form.is_valid():
         try:
@@ -61,10 +60,10 @@ async def post_lyrics(request: Request):
                 },
             )
         except Exception as e:
-            form.__dict__.get("errors").append(
+            form.errors.append(
                 "You might not be logged in, In case problem persists please contact us."
             )
             print(e)
             return templates.TemplateResponse("lyrics.html", form.__dict__)
 
-    return templates.TemplateResponse("lyrics.html", form.__dict__)
+    return templates.TemplateResponse("prediction.html", form.__dict__)

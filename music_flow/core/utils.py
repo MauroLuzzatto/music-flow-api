@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 from typing import Dict
 
@@ -10,20 +11,6 @@ def create_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
     return path
-
-
-path = os.getcwd()
-path_base = os.path.join(path, "music_flow")
-
-path_data_lake = create_folder(os.path.join(path, "data_lake"))
-
-path_data = create_folder(os.path.join(path, "data"))
-path_features = create_folder(os.path.join(path_data, "features"))
-path_dataset = create_folder(os.path.join(path_data, "dataset"))
-
-path_reports = os.path.join(path, "reports")
-path_results = create_folder(os.path.join(path, "results"))
-path_env = os.path.join(path, ".env")
 
 
 def get_hash(name):
@@ -45,3 +32,23 @@ def map_score_to_emoji(score) -> Dict[str, str]:
             break
 
     return {"emoji": emoji, "text": text}
+
+
+def read_json(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
+path = os.getcwd()
+path_base = os.path.join(path, "music_flow")
+
+path_data_lake = create_folder(os.path.join(path, "data_lake"))
+
+path_data = create_folder(os.path.join(path, "data"))
+path_features = create_folder(os.path.join(path_data, "features"))
+path_dataset = create_folder(os.path.join(path_data, "dataset"))
+
+path_reports = os.path.join(path, "reports")
+path_results = create_folder(os.path.join(path, "results"))
+path_env = os.path.join(path, ".env")

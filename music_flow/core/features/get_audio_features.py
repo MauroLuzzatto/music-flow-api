@@ -39,7 +39,9 @@ def get_song_data_metadata(response: dict) -> dict:
 
 
 def get_features(
-    track_name: str, artist_name: str, track_id: Optional[str] = None
+    track_name: str,
+    artist_name: str,
+    track_id: Optional[str] = None,
 ) -> Tuple[dict, int]:
     """get the features from the sptofy api for a given track"""
 

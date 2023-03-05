@@ -1,4 +1,3 @@
-import html
 from typing import List, Optional
 
 from fastapi import Request
@@ -17,7 +16,6 @@ class SongRequestForm:
         self.artist = form.get("artist")
 
     def is_valid(self):
-        
         if not self.song or self.number_of_tokens(self.song) > 10:
             self.errors.append("A valid song is required")
         if not self.artist or self.number_of_tokens(self.artist) > 5:

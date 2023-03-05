@@ -1,33 +1,63 @@
 # music-flow
 
-MusicFlow is a project that uses a personal spotify streaming history to train a machine learning model that predicts the number of streams of a song using the spotify audio features and track metadata.
+MusicFlow is a machine learning-based API that predicts the hypothetical number of song streams on Spotify using the Spotify audio features and track metadata. This API uses a personal Spotify streaming history to train a machine learning model that predicts the number of streams for a given song.
 
+The MusicFlow API is built using the FastAPI framework, which makes it fast, easy to use, and well-documented. The API is based on the OpenAPI standard, which allows for easy integration with other applications.
 
-This API predicts the hypothetical number of song streams on Spotify based on a personal streaming history. The API is part of the MusicFlow project, where the personal streaming history on Spotify is used to train a machine learning model that predicts the number of song streams using the Spotify audio features and track metadata.
+<!-- ## Features
 
-## Test it
+The MusicFlow API provides the following endpoints:
 
+- `musicflow.link` - The home page of the MusicFlow API.
+- `musicflow.link/health` - Returns the health status of the API.
+- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the raw audio features of a given song on Spotify.
+- `musicflow.link/features/?song={song}&artist={artist}` - Returns the processed audio features of a given song on Spotify.
+- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the hypothetical number of song streams for a given song based on the Spotify audio features and track metadata. -->
 
+## Usage
+
+Once the server is running, you can send a GET request to any of the above endpoints to get the desired output.
+
+This endpoint returns the home page of the MusicFlow API:
 ```
 musicflow.link
 ```
 
+
+This endpoint returns the health status of the MusicFlow API. If the API is running and healthy, it will return a JSON response with the status ok.
 ```
 musicflow.link/health
 ```
 
-```
-musicflow.link/raw_features/?song=sun&artist=caribou
-```
+This endpoint returns the raw audio features of a given song on Spotify. The input parameters song and artist should be the name of the song and the name of the artist, respectively.
+
+The API will return a JSON response with the raw audio features of the song on Spotify.
 
 ```
-musicflow.link/features/?song=sun&artist=caribou
+musicflow.link/raw_features/?song={song}&artist={artist}
+```
+This endpoint returns the processed audio features of a given song on Spotify. The input parameters song and artist should be the name of the song and the name of the artist, respectively.
+
+The API will return a JSON response with the processed audio features of the song on Spotify.
+```
+musicflow.link/features/?song={song}&artist={artist}
 ```
 
+This endpoint predicts the hypothetical number of song streams for a given song based on the Spotify audio features and track metadata. The input parameters song and artist should be the name of the song and the name of the artist, respectively.
+
+The API will return a JSON response with the predicted number of streams for the given song.
 ```
-musicflow.link/prediction/?song=sun&artist=caribou
+musicflow.link/prediction/?song={song}&artist={artist}
 ```
 
+
+## Getting started
+
+- get spotify API access client id and client secret
+- request spotify streaming history
+- download data and create dataset
+- train ml model
+- setup API using aws
 
 
 

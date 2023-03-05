@@ -1,22 +1,17 @@
-
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
 
 from app.__init__ import __version__ as api_version
 from app.config import Settings
-from app.schemas import Health, Prediction, RawFeatures
-from app.routers import lyrics
+from app.schemas import Features, Health, Prediction, RawFeatures
 from music_flow import Predictor, format_features, get_features
 from music_flow.core.utils import map_score_to_emoji
-
 
 settings = Settings()
 
 model_version = "0.1.0"
 predictor = Predictor(model_version)
 model_metadata = predictor.get_metdata()
-print(model_metadata)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -24,17 +19,19 @@ app = FastAPI(
     version=api_version,
 )
 
-from pathlib import Path
-base_path = Path("/home/maurol/track-recommender/app").absolute()
-app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
-app.include_router(lyrics.router)
+# from pathlib import Path
+# base_path = Path("/home/maurol/track-recommender/app").absolute()
+# app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
+# app.include_router(lyrics.router)
 
 
 @app.get("/")
-async def root():
-    return {
-        "message": "Welcome to the music flow API! Go to '/docs' for more info. Here is an example: musicflow.link/prediction/?song=sun&artist=caribou "
-    }
+async def root() -> dict:
+    message = (
+        "Welcome to the music flow API! Go to '/docs' for more info. "
+        "Here is an example: musicflow.link/prediction/?song=sun&artist=caribou"
+    )
+    return {"message": message}
 
 
 @app.get("/health", response_model=Health)
@@ -64,13 +61,11 @@ async def get_prediction(song: str, artist: str) -> Prediction:
         Prediction: prediction object
     """
     data = predictor.make_prediction(song=song, artist=artist)
-
     if "error" in data:
         raise HTTPException(
             status_code=404,
-            detail=f"failure_type: {data['error']['failure_type']}",
+            detail=f"failure information: {data['error']['failure_type']}",
         )
-
     user_message = map_score_to_emoji(data["prediction"])
     data["message"] = user_message
     return Prediction(**data)
@@ -90,19 +85,17 @@ async def get_raw_features(song: str, artist: str) -> RawFeatures:
     Returns:
         RawFeatures: raw features object
     """
-
     features, _ = get_features(song, artist)
-
     if features["status"] != "success":
         raise HTTPException(
             status_code=404,
-            detail=f"failure_type: {features['failure_type']}",
+            detail=f"failure information: {features['failure_type']}",
         )
     return RawFeatures(**features)
 
 
 @app.get("/features/")
-async def get_features_api(song: str, artist: str):
+async def get_features_api(song: str, artist: str) -> Features:
     """
     Get the audio features of a song
 
@@ -120,7 +113,7 @@ async def get_features_api(song: str, artist: str):
     if features["status"] != "success":
         raise HTTPException(
             status_code=404,
-            detail=f"failure_type: {features['failure_type']}",
+            detail=f"failure information: {features['failure_type']}",
         )
 
     formatted_features = format_features(
@@ -129,8 +122,7 @@ async def get_features_api(song: str, artist: str):
         artist_name=artist,
         flattened=False,
     )
-    # return
-    return formatted_features
+    return Features(**formatted_features)
 
 
 # handler = Mangum(app)

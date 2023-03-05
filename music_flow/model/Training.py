@@ -26,9 +26,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor  # type: ignore
 
+from music_flow.core.features.preprocessing import reverse_prediction
 from music_flow.core.utils import create_folder
 from music_flow.model.Logger import Logger
-from music_flow.core.features.preprocessing import reverse_prediction
 from music_flow.model.TrainingData import TrainingData
 
 # enable autologging

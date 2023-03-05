@@ -4,8 +4,8 @@ import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
 from music_flow.__init__ import __version__ as model_version
-from music_flow.core.utils import path, path_dataset
 from music_flow.core.features.preprocessing import feature_preprocessing
+from music_flow.core.utils import path, path_dataset
 from music_flow.model.Training import Training
 
 path_model = os.path.join(path, "results")
@@ -80,7 +80,7 @@ param_distributions = {
 }
 
 cv_settings = {
-    "n_iter": 1,  # 100 total combinations testes
+    "n_iter": 100,  # 100 total combinations testes
     "scoring": "neg_mean_squared_error",
     "cv": 3,
     "random_state": 0,

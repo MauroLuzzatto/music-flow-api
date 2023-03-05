@@ -1,11 +1,11 @@
 
 # files
-README.md  
-makefile  
+README.md
+makefile
 workspace.code-workspace
 
 # folders
-model/             
+model/
 tests/
 data/
 data_lake/
