@@ -1,0 +1,32 @@
+{% extends "shared/base.html" %} {% block layout_base %} {% block title %}
+<title>Get song lyrics</title>
+{% endblock %}
+
+<div class="container">
+    <div class="row">
+        <div class="text-danger font-weight-bold">
+            {% for error in errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row my-5">
+        <h3 class="text-left display-4">Which song do you want to translate?</h3>
+        <form method="POST">
+
+            <div class="mb-3">
+                <input type="text" required placeholder="choose a song e.g Don't stop me now" name="song"
+                    value="{{song}}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <input type="text" required placeholder="choose an artist e.g Queen" name="artist" value="{{artist}}"
+                    class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

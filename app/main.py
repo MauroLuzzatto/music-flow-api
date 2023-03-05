@@ -1,12 +1,15 @@
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 
 from app.__init__ import __version__ as api_version
 from app.config import Settings
 from app.schemas import Health, Prediction, RawFeatures
+from app.routers import lyrics
 from music_flow import Predictor, format_features, get_features
 from music_flow.core.utils import map_score_to_emoji
+
 
 settings = Settings()
 
@@ -21,11 +24,16 @@ app = FastAPI(
     version=api_version,
 )
 
+from pathlib import Path
+base_path = Path("/home/maurol/track-recommender/app").absolute()
+app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
+app.include_router(lyrics.router)
+
 
 @app.get("/")
 async def root():
     return {
-        "message": "Welcome to the music flow API! Go to '/docs' for more info.Here is an example: musicflow.link/prediction/?song=sun&artist=caribou "
+        "message": "Welcome to the music flow API! Go to '/docs' for more info. Here is an example: musicflow.link/prediction/?song=sun&artist=caribou "
     }
 
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="icon" href="/favicon.png" /> -->
+    <title>👋 Mauro's personal website</title>
+    <meta name="description" content="Mauro's personal website" />
+    <meta name="nofoobar.com" content="Nofoobar">
+    <!-- we are using bootstrap 5 as a framework -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- custom changes to the style sheet can be done in the file below -->
+    <!-- <link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet"> -->
+    <!-- I am not sure, if this style sheet is used -->
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <!-- menu -->
+    {% include "components/navbar.html" %} {% block content %} {% endblock %}
+    <!-- content from other html files -->
+
+    <main>
+        {% block layout_base %} {% endblock %}
+    </main>
+
+    <!-- footer -->
+    {% include "components/footer.html" %} {% block footer %} {% endblock %}
+
+</body>
+
+</html>

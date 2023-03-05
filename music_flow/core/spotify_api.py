@@ -88,22 +88,15 @@ class SpotifyAPI(object):
         return response, status_code
 
     def search_track_url(self, track, artist=None):
-        if not artist:
-            artist = ""
+        artist = "" if not artist else artist
+        track = self.clean_string(track)
+        artist = self.clean_string(artist)
         return f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
 
     def get_audio_analysis(self, id):
         url = f"https://api.spotify.com/v1/audio-analysis/{id}"
         response, status_code = self.get_request(url)
         return response, status_code
-
-    def search_track(self, track, artist=None):
-        artist = "" if not artist else artist
-        track = self.clean_string(track)
-        artist = self.clean_string(artist)
-        url = f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
-        response = requests.get(url=url, headers=self.headers)
-        return json.loads(response.text)
 
     @staticmethod
     def clean_string(string):
@@ -115,4 +108,5 @@ class SpotifyAPI(object):
             .replace("#", "")
             .replace("-", "")
             .replace("&", "")
+            .replace("'", "")
         )

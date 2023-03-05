@@ -5,7 +5,7 @@ from xgboost import XGBRegressor  # type: ignore
 
 from music_flow.__init__ import __version__ as model_version
 from music_flow.core.utils import path, path_dataset
-from music_flow.model.preprocessing import feature_preprocessing
+from music_flow.core.features.preprocessing import feature_preprocessing
 from music_flow.model.Training import Training
 
 path_model = os.path.join(path, "results")

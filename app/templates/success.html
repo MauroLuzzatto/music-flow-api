@@ -1,0 +1,33 @@
+{% extends "shared/base.html" %} {% block layout_base %}
+<div class="container">
+    <div class="row">
+        <div class="text-danger font-weight-bold">
+            {% for error in errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row my-5">
+        <h3 class="text-left display-4">{{header}}</h3>
+
+        <h3 class="text-left display-10">{{prediction["description"]}}: {{prediction["prediction"]}}</h3>
+
+        <h2 class="text-left display-10">{{prediction["message"]["text"]}} {{prediction["message"]["emoji"]}}</h2>
+
+        <div class="text-left display-20"></div>
+
+        <!-- <div class="container">
+
+            <div class="container">
+                {% for key, value in prediction.items() %}
+                <div class="container">
+                    {{key}} -- {{value}}
+                </div>
+
+                {% endfor %}
+            </div>
+        </div> -->
+
+    </div>
+    {% endblock %}

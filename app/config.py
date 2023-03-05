@@ -14,8 +14,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "MusicFlow API"
     DESCRIPTION: str = (
-        "This is a API that predicts the number of streams a song will get on Spotify,"
-        " based on my listining history."
+          "This API predicts the hypothetical number of song streams on Spotify based on a personal streaming history. The API is part of the MusicFlow project, where the personal streaming history on Spotify is used to train a machine learning model that predicts the number of song streams using the Spotify audio features and track metadata."
     )
 
     # BACKEND_CORS_ORIGINS is a comma-separated list of origins

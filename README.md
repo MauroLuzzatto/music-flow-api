@@ -2,6 +2,9 @@
 
 MusicFlow is a project that uses a personal spotify streaming history to train a machine learning model that predicts the number of streams of a song using the spotify audio features and track metadata.
 
+
+This API predicts the hypothetical number of song streams on Spotify based on a personal streaming history. The API is part of the MusicFlow project, where the personal streaming history on Spotify is used to train a machine learning model that predicts the number of song streams using the Spotify audio features and track metadata.
+
 ## Test it
 
 

@@ -28,7 +28,7 @@ from xgboost import XGBRegressor  # type: ignore
 
 from music_flow.core.utils import create_folder
 from music_flow.model.Logger import Logger
-from music_flow.model.preprocessing import reverse_prediction
+from music_flow.core.features.preprocessing import reverse_prediction
 from music_flow.model.TrainingData import TrainingData
 
 # enable autologging
@@ -67,7 +67,7 @@ class Training(object):
         self.model_version = model_version
         self.column_names: List[str] = list(X)  # type: ignore
 
-        self.save_name = "model"
+        self.save_name = "model.pickle"
         self.estimator_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
 
@@ -121,7 +121,7 @@ class Training(object):
             random_search.fit(self.X_train, self.y_train)
 
         mlflow_logs = self.get_mlflow_logs(run)
-        self.logger.info(f"mlflow_logs: {mlflow_logs}")
+        self.logger.info(f"mlflow_logs: {dict(mlflow_logs)}")
 
         self.get_CV_results(random_search, sort_by="rank_test_score")
 
@@ -204,7 +204,7 @@ class Training(object):
         random_search: sklearn.model_selection.RandomizedSearchCV,  # type: ignore
         sort_by: str,
         ascending: bool = True,
-        n_rows: int = 1000,
+        n_rows: int = 10,
     ) -> None:
         """
         Extract the results from the random search Cross Validation
@@ -322,8 +322,7 @@ class Training(object):
             None: DESCRIPTION.
 
         """
-        name = f"{self.save_name}.pickle"
-        path = os.path.join(self.path_model, name)
+        path = os.path.join(self.path_model, self.save_name)
         with open(path, "wb") as handle:
             pickle.dump(self.final_model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

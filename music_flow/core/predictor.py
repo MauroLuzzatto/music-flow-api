@@ -11,7 +11,11 @@ from music_flow.core.get_playlist_tracks import get_playlist_tracks
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.spotify_api import SpotifyAPI
 from music_flow.core.utils import path_results
-from music_flow.model.preprocessing import feature_preprocessing, reverse_prediction
+
+from music_flow.core.features.preprocessing import feature_preprocessing, reverse_prediction
+
+
+description = "The number of predicted future streams of the song"
 
 
 class Predictor(object):
@@ -22,6 +26,8 @@ class Predictor(object):
             model_folder = get_model_folder(mode, metric, path)
 
         self.path_model_folder = os.path.join(path_results, model_folder)
+        self.path_metadata = os.path.join(self.path_model_folder, "metadata.json")
+
         self.load_metadata()
         self.features = self.metadata["data"]["features"]
         self.model_name = self.metadata["model"]["name"]
@@ -49,12 +55,10 @@ class Predictor(object):
         Returns:
             dict: _description_
         """
-        path = os.path.join(self.path_model_folder, "metdata.json")
         try:
-            metadata = read_json(path)
+            self.metadata = read_json(self.path_metadata)
         except FileNotFoundError:
             raise Exception("metadata not found!")
-        self.metadata = metadata
 
     def get_metdata(self):
         return self.metadata
@@ -87,7 +91,7 @@ class Predictor(object):
             "song": song,
             "artist": artist,
             "prediction": round(float(prediction[0]), 2),
-            "description": "The number of plays for a song.",
+            "description": description,
             "metadata": data["metadata"],
             "status": status,
         }

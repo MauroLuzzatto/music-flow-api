@@ -98,8 +98,9 @@ def feature_preprocessing(dataset: pd.DataFrame):
 
     for column in ["key"]:
         dataset = get_one_hot_encoding(dataset, column=column)
-
-    for col in key_mapping.values():
+    
+    all_keys = list(key_mapping.values()) + ["Unknown"]
+    for col in all_keys:
         if col not in dataset:
             dataset[col] = 0
 
