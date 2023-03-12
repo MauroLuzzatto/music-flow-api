@@ -6,3 +6,4 @@ fastapi
 jinja2
 mangum
 uvicorn
+loguru

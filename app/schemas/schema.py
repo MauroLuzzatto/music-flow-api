@@ -10,7 +10,7 @@ class Health(BaseModel):
     model_version: str
 
 
-class MetadataModel(BaseModel):
+class SongMetadataModel(BaseModel):
     song: str
     artist: List[str]
     album: str
@@ -26,8 +26,7 @@ class Prediction(BaseModel):
     artist: str
     prediction: float
     description: str
-    metadata: MetadataModel
-    status: str
+    song_metadata: SongMetadataModel
     message: Message
 
 

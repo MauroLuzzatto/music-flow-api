@@ -41,15 +41,20 @@ async def post_lyrics(request: Request):
     prediction = predictor.make_prediction(song=form.song, artist=form.artist)
     print(prediction)
 
-    if not prediction:
-        raise HTTPException(status_code=404, detail="song not found")
+    # if not prediction:
+    #     raise HTTPException(status_code=404, detail="song not found")
 
     header = f"{form.song.capitalize()} by {form.artist.capitalize()}"
 
-    user_message = map_score_to_emoji(prediction["prediction"])
-    prediction["message"] = user_message
+    if "error" in prediction:
+        form.errors.append("Song not found.")
+        return templates.TemplateResponse("prediction.html", form.__dict__)
 
     if form.is_valid():
+
+        user_message = map_score_to_emoji(prediction["prediction"])
+        prediction["message"] = user_message
+
         try:
             return templates.TemplateResponse(
                 "success.html",
@@ -64,6 +69,6 @@ async def post_lyrics(request: Request):
                 "You might not be logged in, In case problem persists please contact us."
             )
             print(e)
-            return templates.TemplateResponse("lyrics.html", form.__dict__)
+            return templates.TemplateResponse("prediction.html", form.__dict__)
 
     return templates.TemplateResponse("prediction.html", form.__dict__)

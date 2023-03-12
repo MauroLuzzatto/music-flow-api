@@ -12,19 +12,21 @@
     </div>
 
     <div class="row my-5">
-        <h3 class="text-left display-4">Which song do you want to translate?</h3>
+        <h4 class="text-left display-7">Which song do you want to know the number of streams for?</h4>
         <form method="POST">
 
+
             <div class="mb-3">
-                <input type="text" required placeholder="choose a song e.g Don't stop me now" name="song"
+                <input type="text" required placeholder="Choose an artist e.g Queen" name="artist" value="{{artist}}"
+                    class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <input type="text" required placeholder="Choose a song e.g Don't stop me now" name="song"
                     value="{{song}}" class="form-control">
             </div>
 
-            <div class="mb-3">
-                <input type="text" required placeholder="choose an artist e.g Queen" name="artist" value="{{artist}}"
-                    class="form-control">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
     </div>
 </div>
