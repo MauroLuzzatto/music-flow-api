@@ -12,7 +12,7 @@ INCLUDE_AUDIO_ANALYSIS_DATASET = (
 )
 
 
-def format_features(
+def get_features(
     data: dict,
     track_name: str,
     artist_name: str,

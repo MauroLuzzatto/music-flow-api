@@ -1,4 +1,6 @@
 import json
+import logging
+import logging.config
 import os
 import time
 from typing import Optional, Tuple
@@ -15,10 +17,15 @@ INCLUDE_AUDIO_ANALYSIS = (
 )
 
 
+logger = logging.getLogger(__name__)
+
 spotify_api = SpotifyAPI()
 
 
-def save_data(data, path, filename):
+def save_dict_to_json(data: dict, path: str, filename: str):
+
+    assert filename.endswith(".json"), "filename must be a json file"
+
     with open(os.path.join(path, filename), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
@@ -27,9 +34,8 @@ def get_song_data_metadata(response: dict) -> dict:
     """get the song data from the spotify api for a given track"""
     try:
         song = response["tracks"]["items"][0]["name"]
-        artists = [
-            artist["name"] for artist in response["tracks"]["items"][0]["artists"]
-        ]
+        artists_dict = response["tracks"]["items"][0]["artists"]
+        artists = [artist["name"] for artist in artists_dict]
         album = response["tracks"]["items"][0]["album"]["name"]
     except (IndexError, KeyError):
         return {}
@@ -38,12 +44,10 @@ def get_song_data_metadata(response: dict) -> dict:
     return metadata
 
 
-def get_features(
-    track_name: str,
-    artist_name: str,
-    track_id: Optional[str] = None,
+def get_raw_features(
+    track_name: str, artist_name: str, track_id: Optional[str] = None
 ) -> Tuple[dict, int]:
-    """get the features from the sptofy api for a given track"""
+    """get the features from the Spotify API for a given track"""
 
     data = {
         "track_name": track_name,
@@ -54,6 +58,7 @@ def get_features(
     if not track_id:
         url = spotify_api.search_track_url(track_name, artist_name)
         response, status_code = spotify_api.get_request(url)
+        logger.info(f"status_code: {status_code}")
 
         try:
             track_id = response["tracks"]["items"][0]["id"]
@@ -64,30 +69,48 @@ def get_features(
         if status_code != 200 or failed:
             data["status"] = "failed"
             data["failure_type"] = "search_track_url"
+            data["description"] = "Failed to fetched track_id from Spotfiy API."
             return data, status_code
 
         data["metadata"] = get_song_data_metadata(response)  # type: ignore
 
     endpoints = [
-        ("audio_features", spotify_api.get_audio_features),
-        ("track", spotify_api.get_track),
+        (
+            "audio_features",
+            spotify_api.get_audio_features,
+            "Failed to fetched data from Spotify API audio features endpoint.",
+        ),
+        (
+            "track",
+            spotify_api.get_track,
+            "Failed to fetched data from Sptofiy API track endpoint.",
+        ),
     ]
 
     if INCLUDE_AUDIO_ANALYSIS:
         print("Including audio analysis")
-        endpoints.append(("audio_analysis", spotify_api.get_audio_analysis))
+        endpoints.append(
+            (
+                "audio_analysis",
+                spotify_api.get_audio_analysis,
+                "Failed to fetched data from Spotify API audio analysis endpoint.",
+            )
+        )
 
-    for name, function_call in endpoints:
+    for name, function_call, error_description in endpoints:
         response, status_code = function_call(track_id)
         if status_code == 200:
             data[name] = response
         else:
             data["status"] = "failed"
             data["failure_type"] = name
+            data["description"] = error_description
+
             return data, status_code
 
     data["status"] = "success"
     data["failure_type"] = None  # type: ignore
+    data["description"] = "Raw audio features from Spotify API fetched successfully."
     return data, status_code  # type: ignore
 
 
@@ -123,14 +146,14 @@ def get_audio_features():
         track_name = row["track_name"]
         artist_name = row["artist_name"]
 
-        data, _ = get_features(track_name, artist_name)
+        data, _ = get_raw_features(track_name, artist_name)
         data["hash"] = hash
 
         if data["status"] == "success":
-            save_data(data, path_success, filename)
+            save_dict_to_json(data, path_success, filename)
             success += 1
         else:
-            save_data(data, path_failed, filename)
+            save_dict_to_json(data, path_failed, filename)
             failed += 1
 
         print(f"Success: {success}, Failed: {failed}, Ratio: {failed/success:.2f}")

@@ -1,11 +1,12 @@
+import logging
 import os
 import pickle
 from typing import Optional
 
 import pandas as pd
 
-from music_flow.core.features.format_features import format_features
-from music_flow.core.features.get_audio_features import get_features
+from music_flow.core.features.format_features import get_features
+from music_flow.core.features.get_audio_features import get_raw_features
 from music_flow.core.features.preprocessing import (
     feature_preprocessing,
     reverse_prediction,
@@ -17,24 +18,29 @@ from music_flow.core.utils import path_results, read_json
 
 description = "The number of predicted future streams of the song"
 
+logger = logging.getLogger(__name__)
 
-class Predictor(object):
+
+class ModelLoader(object):
     def __init__(
-        self, model_version, model_folder=None, mode="latest", metric=None, path=None
+        self, model_version=None, model_folder=None, mode="latest", metric=None
     ):
+
         if not model_folder:
-            model_folder = get_model_folder(mode, metric, path)
+            model_folder = get_model_folder(mode, metric)
 
         # TODO: allow model to be loaded from .env file
-
         self.path_model_folder = os.path.join(path_results, model_folder)
         self.path_metadata = os.path.join(self.path_model_folder, "metadata.json")
 
+    def load(self):
+        # wrap into function
         self.load_metadata()
         self.features = self.metadata["data"]["features"]
         self.model_name = self.metadata["model"]["name"]
         self.path_model = os.path.join(self.path_model_folder, self.model_name)
         self.load_model()
+        return self.metadata
 
     def load_model(self) -> None:
         """
@@ -43,13 +49,15 @@ class Predictor(object):
         Raises:
             Exception: _description_
         """
-        print(f"loading model from {self.path_model}")
+        logger.info(f"loading model from {self.path_model}")
         try:
             with open(self.path_model, "rb") as handle:
                 self.estimator = pickle.load(handle)
         except FileNotFoundError:
             raise Exception("Model not found!")
-        print("Model loaded")
+        logger.info("Model loaded")
+
+        return
 
     def load_metadata(self) -> None:
         """_summary_
@@ -62,25 +70,84 @@ class Predictor(object):
         except FileNotFoundError:
             raise Exception("metadata not found!")
 
+    def get_features(self):
+        return self.features
+
+    def get_estimator(self):
+        return self.estimator
+
+
+class Predictor(object):
+    def __init__(
+        self,
+        model_version=None,
+        model_folder=None,
+        mode="latest",
+        metric=None,
+        path=None,
+    ):
+
+        model_loader = ModelLoader(
+            model_version, model_folder=model_folder, mode=mode, metric=metric
+        )
+        self.metadata = model_loader.load()
+        self.features = model_loader.get_features()
+        self.estimator = model_loader.get_estimator()
+
     def get_metdata(self):
         return self.metadata
 
-    def make_prediction(
-        self,
-        song: str,
-        artist: str,
-        track_id: Optional[str] = None,
-    ) -> dict:
-        data, status_code = get_features(song, artist, track_id)
-        status = data["status"]
+    def get_features(self):
+        return self.features
 
-        if data["status"] != "success":
-            data_response = {
-                "error": {"code": status_code, "failure_type": data["failure_type"]}
+    def get_estimator(self):
+        return self.estimator
+
+    def predict(self, song: str, artist: str, track_id: Optional[str] = None) -> dict:
+        """
+        Predict the number of streams for a given song
+
+        Args:
+            song (str): _description_
+            artist (str): _description_
+            track_id (Optional[str], optional): _description_. Defaults to None.
+
+        Returns:
+            dict: _description_
+        """
+        raw_features, _ = get_raw_features(song, artist)
+
+        if raw_features["status"] != "success":
+            keys = ["status", "failure_type", "description"]
+            detail = {key: raw_features[key] for key in keys}
+            raise Exception(detail)
+
+        features = get_features(
+            data=raw_features,
+            track_name=song,
+            artist_name=artist,
+            flattened=False,
+        )
+
+        if not features:
+            detail = {
+                "status": "failure",
+                "failure_type": "formatting",
+                "description": "Could not format the features",
             }
-            return data_response
+            raise Exception(detail)
 
-        features = format_features(data=data, track_name=song, artist_name=artist)
+        prediction = self.predict_from_features(features)
+
+        data_response = {
+            "song": song,
+            "artist": artist,
+            "prediction": round(prediction, 2),
+            "metadata": raw_features["metadata"],
+        }
+        return data_response
+
+    def predict_from_features(self, features) -> float:
 
         # TODO: remove pandas dependency
         sample = pd.DataFrame(features, index=[0])
@@ -91,16 +158,7 @@ class Predictor(object):
 
         scaled_prediction = self.estimator.predict(input_sample)
         prediction = reverse_prediction(scaled_prediction)
-
-        data_response = {
-            "song": song,
-            "artist": artist,
-            "prediction": round(float(prediction[0]), 2),
-            "description": description,
-            "metadata": data["metadata"],
-            "status": status,
-        }
-        return data_response
+        return float(prediction[0])
 
 
 if __name__ == "__main__":
@@ -122,5 +180,5 @@ if __name__ == "__main__":
         track_id = track["track_id"]
         print(song, artist, track_id)
 
-        data = predictor.make_prediction(song=song, artist=artist, track_id=track_id)
+        data = predictor.predict(song=song, artist=artist, track_id=track_id)
         print(data)
