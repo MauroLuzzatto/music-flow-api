@@ -1,8 +1,8 @@
 # MusicFlow API
 
-MusicFlow is a music recommendation system that uses Spotify's API to predict the hypothetical number of song streams on Spotify using the Spotify audio features and track metadata.
+MusicFlow is an API that use the Spotify's API to predict the number of song streams using the Spotify audio features and track metadata.
 
-This API uses a personal Spotify streaming history to train a machine learning model that predicts the number of streams for a given song. The training dataset uses number of stream values between 0 and 30.
+The MusicFlow API uses the personal Spotify streaming history to train a machine learning model that predicts the number of streams for a given song. The training dataset uses number of stream values between 0 and 30.
 
 The MusicFlow API is built using the FastAPI framework, which makes it fast, easy to use, and well-documented.
 
@@ -65,33 +65,39 @@ Response:
 Response:
 ```
 {
-  "track_name":"The Less I know the better",
-  "artist_name":"Tame Impala",
-  "album":"Currents",
-  "number_of_available_markets":183,
-  "release_date_precision":"day",
-  "release_year":2015,
-  "release_month":7,
-  "release_day":17,
-  "date_is_complete":true,
-  "num_artists":1,
-  "duration_ms":216320,
-  "explicit":true,
-  "popularity":83,
-  "isrc":"AUUM71500303",
-  "danceability":0.64,
-  "energy":0.74,
-  "key":4,
-  "loudness":-4.083,
-  "mode":1,
-  "speechiness":0.0284,
-  "acousticness":0.0115,
-  "instrumentalness":0.00678,
-  "liveness":0.167,
-  "valence":0.785,
-  "tempo":116.879,
-  "id":"6K4t31amVTZDgR3sKmwUJJ",
-  "time_signature":4
+  "track":{
+    "track_name":"The less I know the better",
+    "artist_name":"Tame Impala",
+    "number_of_available_markets":183,
+    "num_artists":1,
+    "duration_ms":216320,
+    "explicit":true,
+    "popularity":83,
+    "isrc":"AUUM71500303"
+  },
+  "album":{
+    "release_date_precision":"day",
+    "release_year":2015,
+    "release_month":7,
+    "release_day":17,
+    "date_is_complete":true,
+    "album":"Currents"
+  },
+  "audio_features":{
+    "danceability":0.64,
+    "energy":0.74,
+    "key":4,
+    "loudness":-4.083,
+    "mode":1,
+    "speechiness":0.0284,
+    "acousticness":0.0115,
+    "instrumentalness":0.00678,
+    "liveness":0.167,
+    "valence":0.785,
+    "tempo":116.879,
+    "id":"6K4t31amVTZDgR3sKmwUJJ",
+    "time_signature":4
+  }
 }
 ```
 
