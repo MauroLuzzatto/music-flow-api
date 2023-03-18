@@ -11,13 +11,11 @@ The number of streams in the dataset are are between X and Z streams.
 
 
 
-## Example
-
 ### Prediction
 
 Let's predict the number of streams for "The Less I know the better" from "Tame Impala":
 
-[musicflow.link/prediction/?song=The Less I know the better&artist=Tame Impala](musicflow.link/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/.link/prediction/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
 
 Response:
@@ -42,7 +40,48 @@ Response:
 
 ### Features
 
-[musicflow.link/features/?song=The Less I know the better&artist=Tame Impala](musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/.link/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+
+
+Response:
+```
+{
+  "track_name":"The Less I know the better",
+  "artist_name":"Tame Impala",
+  "id_hash":null,
+  "album":"Currents",
+  "number_of_available_markets":183,
+  "release_date_precision":"day",
+  "release_date":"2015-07-17",
+  "release_year":2015,
+  "release_month":7,
+  "release_day":17,
+  "date_is_complete":true,
+  "num_artists":1,
+  "duration_ms":216320,
+  "explicit":true,
+  "popularity":83,
+  "isrc":"AUUM71500303",
+  "danceability":0.64,
+  "energy":0.74,
+  "key":4,
+  "loudness":-4.083,
+  "mode":1,
+  "speechiness":0.0284,
+  "acousticness":0.0115,
+  "instrumentalness":0.00678,
+  "liveness":0.167,
+  "valence":0.785,
+  "tempo":116.879,
+  "type":"audio_features",
+  "id":"6K4t31amVTZDgR3sKmwUJJ",
+  "uri":"spotify:track:6K4t31amVTZDgR3sKmwUJJ",
+  "track_href":"https://api.spotify.com/v1/tracks/6K4t31amVTZDgR3sKmwUJJ",
+  "analysis_url":"https://api.spotify.com/v1/audio-analysis/6K4t31amVTZDgR3sKmwUJJ",
+  "time_signature":4
+}
+```
+
 
 ## Available Endpoints
 
@@ -58,9 +97,9 @@ The MusicFlow API provides the following endpoints:
 ## Model Features derived from the Spotify API
 
 ### used Spotify API endpoints
-- tracks
-- audio_features
-- audio_anaysis (currenly not used)
+- `tracks`
+- `audio_features`
+- `audio_anaysis` (currenly not used)
 
 ### Features
 
@@ -101,14 +140,13 @@ The MusicFlow API provides the following endpoints:
 | G#/Ab | The key of the track with pitch class G#/Ab | integer | 0 = not present, 1 = present |
 | Unknown | The key of the track is unknown | integer | 0 = not present, 1 = present |
 
-
+<!--
 
 ## How to create your own musicflow API?
 
-
 This repository provides instructions on how to request Spotify streaming history data, download it and create a dataset using music_flow, train a machine learning model, and set up an API using an AWS account.
 
-### Getting Spotify API Access Client ID and Client Secret
+### Get Spotify API Access Client ID and Client Secret
 
 To access the Spotify API, you need to create a Spotify Developer account and obtain a Client ID and Client Secret. Follow these steps:
 
@@ -116,7 +154,7 @@ To access the Spotify API, you need to create a Spotify Developer account and ob
 - Click on "Create an app" and fill out the required information.
 - Once you have created the app, you will see your Client ID and Client Secret on the app dashboard.
 
-### Requesting Spotify Streaming History
+### Request Spotify Streaming History
 
 To request your Spotify streaming history, you need to follow these steps:
 
@@ -124,7 +162,7 @@ To request your Spotify streaming history, you need to follow these steps:
 - Scroll down to "Download your data" and click on "Request".
 - You will receive an email from Spotify when your data is ready to be downloaded.
 
-### Downloading the Data and Creating a Dataset Using music_flow
+### Download the Data and Creating a Dataset Using `music_flow`
 
 Once you have received the email from Spotify, you can download your data and create a dataset using music_flow by following these steps:
 
@@ -132,7 +170,7 @@ Once you have received the email from Spotify, you can download your data and cr
 - Install music_flow by running pip install music-flow.
 - Create a Python script and use the music_flow library to load the data and create a dataset. Refer to the music_flow documentation for more information on how to do this.
 
-### Training a Machine Learning Model
+### Train a Machine Learning Model
 
 Once you have created your dataset, you can train a machine learning model by following these steps:
 
@@ -141,7 +179,7 @@ Once you have created your dataset, you can train a machine learning model by fo
 - Choose a machine learning algorithm and train the model.
 - Test the model and evaluate its performance.
 
-### Setting Up API Using an AWS Account
+### Set Up API Using an AWS Account
 
 To set up an API with AWS SAM, follow these steps:
 
@@ -150,15 +188,7 @@ To set up an API with AWS SAM, follow these steps:
 - Write the code for your Lambda function and API gateway in the appropriate files (e.g., app.py and template.yaml).
 - Build and package your SAM application using the sam build and sam package commands.
 - Deploy your SAM application using the sam deploy command.
-
-
-
-## Train your own model
-- get spotify API access client id and client secret
-- request spotify streaming history
-- download the data and create dataset using `music_flow`
-- train machine learning model using `music_flow`
-- setup API using an AWS account (needs to be setup)
+ -->
 
 
 

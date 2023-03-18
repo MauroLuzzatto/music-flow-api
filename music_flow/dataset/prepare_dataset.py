@@ -5,7 +5,7 @@ import pandas as pd
 from music_flow.core.utils import path_data, path_dataset, path_features
 
 
-def merge_dataset() -> None:
+def merge_dataset() -> pd.DataFrame:
     """Load target values and audio features and merge them into one dataset."""
 
     previous_dataset = pd.read_csv(
@@ -32,6 +32,7 @@ def merge_dataset() -> None:
     print(df_dataset.shape)
 
     print("New rows: ", df_dataset.shape[0] - previous_dataset.shape[0])
+    return df_dataset
 
 
 if __name__ == "__main__":

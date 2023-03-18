@@ -20,8 +20,7 @@ def save_dict_to_json(data: dict, path: str, filename: str):
 
 
 def download_audio_features(df=None):
-    """This function will download the audio features from the spotify API and store them in a json file.
-    """
+    """This function will download the audio features from the spotify API and store them in a json file."""
     retry = False
 
     if not df:
