@@ -1,7 +1,8 @@
 import logging
 import logging.config
 import os
-from typing import Optional, Tuple
+from dataclasses import dataclass
+from typing import Callable, Optional, Tuple
 
 from dotenv import load_dotenv
 
@@ -17,6 +18,15 @@ INCLUDE_AUDIO_ANALYSIS = (
 logger = logging.getLogger(__name__)
 
 spotify_api = SpotifyAPI()
+
+
+@dataclass
+class Endpoint:
+    """Class for defintion the API endpoints that called."""
+
+    name: str
+    func: Callable
+    descripton: str
 
 
 def get_song_data_metadata(response: dict) -> dict:
@@ -64,37 +74,36 @@ def get_raw_features(
         data["metadata"] = get_song_data_metadata(response)  # type: ignore
 
     endpoints = [
-        (
-            "audio_features",
-            spotify_api.get_audio_features,
-            "Failed to fetched data from Spotify API audio features endpoint.",
+        Endpoint(
+            name="audio_features",
+            func=spotify_api.get_audio_features,
+            descripton="Failed to fetched data from Spotify API audio features endpoint.",
         ),
-        (
-            "track",
-            spotify_api.get_track,
-            "Failed to fetched data from Sptofiy API track endpoint.",
+        Endpoint(
+            name="track",
+            func=spotify_api.get_track,
+            descripton="Failed to fetched data from Sptofiy API track endpoint.",
         ),
     ]
 
     if INCLUDE_AUDIO_ANALYSIS:
         print("Including audio analysis")
         endpoints.append(
-            (
-                "audio_analysis",
-                spotify_api.get_audio_analysis,
-                "Failed to fetched data from Spotify API audio analysis endpoint.",
-            )
+            Endpoint(
+                name="audio_analysis",
+                func=spotify_api.get_audio_analysis,
+                descripton="Failed to fetched data from Spotify API audio analysis endpoint.",
+            ),
         )
-
-    for name, function_call, error_description in endpoints:
-        response, status_code = function_call(track_id)
+    for endpoint in endpoints:
+        name = endpoint.name
+        response, status_code = endpoint.func(track_id)
         if status_code == 200:
             data[name] = response
         else:
             data["status"] = "failed"
             data["failure_type"] = name
-            data["description"] = error_description
-
+            data["description"] = endpoint.descripton
             return data, status_code
 
     data["status"] = "success"

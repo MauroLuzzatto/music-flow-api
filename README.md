@@ -1,21 +1,40 @@
 # MusicFlow API
 
-
-
 MusicFlow is a music recommendation system that uses Spotify's API to predict the hypothetical number of song streams on Spotify using the Spotify audio features and track metadata.
-This API uses a personal Spotify streaming history to train a machine learning model that predicts the number of streams for a given song.
+
+This API uses a personal Spotify streaming history to train a machine learning model that predicts the number of streams for a given song. The training dataset uses number of stream values between 0 and 30.
 
 The MusicFlow API is built using the FastAPI framework, which makes it fast, easy to use, and well-documented.
 
-The number of streams in the dataset are are between X and Z streams.
 
 
+## Endpoints
 
-### Prediction
+The MusicFlow API provides the following endpoints:
+
+- `musicflow.link` - The home page of the MusicFlow API.
+- `musicflow.link/health` - Returns the health status of the API.
+- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the "raw" audio features of a given song on Spotify.
+- `musicflow.link/features/?song={song}&artist={artist}` - Returns the processed audio features of a given song on Spotify.
+- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the hypothetical number of song streams for a given song based on the Spotify audio features and track metadata.
+
+
+## Examples
+
+### Root
+
+[https://musicflow.link/](https://musicflow.link)
+
+```
+{"message":"Welcome to MusicFlow!"}
+```
+
+
+### `/prediction` Endpoint
 
 Let's predict the number of streams for "The Less I know the better" from "Tame Impala":
 
-[https://musicflow.link/.link/prediction/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/prediction/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
 
 Response:
@@ -38,9 +57,9 @@ Response:
 ```
 
 
-### Features
+### `/features` Endpoint
 
-[https://musicflow.link/.link/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
 
 Response:
@@ -83,25 +102,19 @@ Response:
 ```
 
 
-## Available Endpoints
-
-The MusicFlow API provides the following endpoints:
-
-- `musicflow.link` - The home page of the MusicFlow API.
-<!-- - `musicflow.link/health` - Returns the health status of the API. -->
-- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the "raw" audio features of a given song on Spotify.
-- `musicflow.link/features/?song={song}&artist={artist}` - Returns the processed audio features of a given song on Spotify.
-- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the hypothetical number of song streams for a given song based on the Spotify audio features and track metadata.
 
 
 ## Model Features derived from the Spotify API
 
-### used Spotify API endpoints
+### Used Spotify API endpoints
+
+The model features are created based on the responses from the endpoints below.
+
 - `tracks`
 - `audio_features`
 - `audio_anaysis` (currenly not used)
 
-### Features
+### Model Features
 
 | Column Name | Description | Data Type | Allowed Value Ranges |
 |-------------|-------------|----------|----------------------|

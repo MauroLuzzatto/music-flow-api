@@ -1,13 +1,14 @@
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
 from app.core.forms import SongRequestForm
+from app.utils import map_score_to_emoji
 from music_flow import Predictor
-from music_flow.core.utils import map_score_to_emoji
+from music_flow.core.utils import path_app
 
-base_path = Path("/home/maurol/track-recommender/app").absolute()
+base_path = Path(path_app).absolute()
 templates = Jinja2Templates(directory=str(base_path / "templates"))
 
 
@@ -37,13 +38,13 @@ async def post_lyrics(request: Request):
     predictor = Predictor(model_version)
     predictor.get_metdata()
 
-    prediction = predictor.make_prediction(song=form.song, artist=form.artist)
+    prediction = predictor.predict(song=form.song, artist=form.artist)  # noqa
     print(prediction)
 
     # if not prediction:
     #     raise HTTPException(status_code=404, detail="song not found")
 
-    header = f"{form.song.capitalize()} by {form.artist.capitalize()}"
+    header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # noqa
 
     if "error" in prediction:
         form.errors.append("Song not found.")

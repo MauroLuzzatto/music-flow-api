@@ -19,6 +19,7 @@ def merge_dataset() -> pd.DataFrame:
     df_audio_features = pd.read_csv(
         os.path.join(path_features, "audio_features.csv"), sep=";", index_col=0
     )
+
     df_dataset = df_target_values.merge(
         df_audio_features, how="inner", on=["track_name", "artist_name"]
     )

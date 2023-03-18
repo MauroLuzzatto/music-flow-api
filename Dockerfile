@@ -4,11 +4,10 @@ FROM public.ecr.aws/lambda/python:3.9
 COPY ./requirements.txt ./requirements.txt
 
 # Copy the required files to the image
-# remove core
 COPY ./music_flow/ ./music_flow/
 COPY ./.env ./.env
 COPY ./results/ ./results/
-# COPY ./app ./app
+COPY ./app ./app
 COPY ./main.py ./main.py
 
 
