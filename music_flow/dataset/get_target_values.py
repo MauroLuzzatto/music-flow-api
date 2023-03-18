@@ -74,33 +74,41 @@ def get_df_kaggle():
     return df_kaggle
 
 
-def get_df_target_values():
+def get_df_target_values(include_kaggle=True, include_random=True):
+    list_of_dfs = []
+
     df_streams = get_df_streams()
     df_streams["source"] = "streams"
     print("df_streams", df_streams.shape)
+    list_of_dfs.append(df_streams)
 
-    df_random = get_df_random()
-    df_random["source"] = "random"
-    print("df_random", df_random.shape)
+    if include_random:
+        df_random = get_df_random()
+        df_random["source"] = "random"
+        print("df_random", df_random.shape)
+        list_of_dfs.append(df_random)
 
-    df_kaggle = get_df_kaggle()
-    df_kaggle["source"] = "kaggle"
-    print("df_kaggle", df_kaggle.shape)
+    if include_kaggle:
+        df_kaggle = get_df_kaggle()
+        df_kaggle["source"] = "kaggle"
+        print("df_kaggle", df_kaggle.shape)
+        list_of_dfs.append(df_kaggle)
 
-    df = pd.concat([df_streams, df_random, df_kaggle], axis=0).reset_index(drop=True)
+    df = pd.concat(list_of_dfs, axis=0).reset_index(drop=True)
 
     print("df_target_values", df.shape)
 
     df["hash"] = df.apply(
         lambda row: get_hash(f"{row['track_name']}-{row['artist_name']}"), axis=1
     )
-    df = df.drop_duplicates(subset=["hash"], keep="first")
-    print("df_target_values (dropped duplicates)", df.shape)
+    df_target_values = df.drop_duplicates(subset=["hash"], keep="first")
+    print("df_target_values (dropped duplicates)", df_target_values.shape)
 
     path_target_values_csv = os.path.join(path_data, "target_values.csv")
-    df.to_csv(path_target_values_csv, sep=";")
+    df_target_values.to_csv(path_target_values_csv, sep=";")
     print(f"save to: {path_target_values_csv}")
-    print(df.shape)
+    print(df_target_values.shape)
+    return df_target_values
 
 
 if __name__ == "__main__":

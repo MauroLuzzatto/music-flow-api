@@ -12,7 +12,7 @@ data_lake/
 mlruns/
 reports/
 notebooks/
-results/
+
 
 .vscode/
 .aws-sam/

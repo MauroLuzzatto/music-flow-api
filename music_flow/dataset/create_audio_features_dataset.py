@@ -64,6 +64,7 @@ def create_audio_features_dataset():
     df_audio_features = pd.DataFrame(dataset)
     df_audio_features.to_csv(path_audio_features, sep=";")
     print(f"saved: {path_audio_features}")
+    return df_audio_features
 
 
 if __name__ == "__main__":

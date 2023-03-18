@@ -30,7 +30,6 @@ def get_lyrics(request: Request):
 
 @router.post("/")
 async def post_lyrics(request: Request):
-
     form = SongRequestForm(request)
     await form.load_data()
 
@@ -51,7 +50,6 @@ async def post_lyrics(request: Request):
         return templates.TemplateResponse("prediction.html", form.__dict__)
 
     if form.is_valid():
-
         user_message = map_score_to_emoji(prediction["prediction"])
         prediction["message"] = user_message
 
@@ -66,7 +64,8 @@ async def post_lyrics(request: Request):
             )
         except Exception as e:
             form.errors.append(
-                "You might not be logged in, In case problem persists please contact us."
+                "You might not be logged in, In case problem persists please"
+                " contact us."
             )
             print(e)
             return templates.TemplateResponse("prediction.html", form.__dict__)

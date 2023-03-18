@@ -1,2 +1,13 @@
+python-multipart
+python-dotenv
+pandas
+requests
 fastapi
+jinja2
 mangum
+ratelimiter
+uvicorn
+xgboost==1.6.1
+scikit-learn==1.1.2
+loguru
+pytest

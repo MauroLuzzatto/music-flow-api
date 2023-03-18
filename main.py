@@ -3,20 +3,20 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from mangum import Mangum
 
-from app.__init__ import __version__ as api_version
-from app.config import settings, setup_app_logging
-from app.schemas import Features, Health, Prediction, RawFeatures
-from app.utils import map_score_to_emoji, prepare_raw_features_response
+# from app.__init__ import __version__ as api_version
+# from app.config import settings, setup_app_logging
+# from app.schemas import Features, Health, Prediction, RawFeatures
+# from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
 
-# setup logging as early as possible
-# setup_app_logging(config=settings)
+# # setup logging as early as possible
+# # setup_app_logging(config=settings)
 
 logger = logging.getLogger(__name__)
 
 model_version = "0.1.0"
-
 
 ml_model = {}
 
@@ -39,10 +39,14 @@ async def lifespan(app: FastAPI):
     ml_model.clear()
 
 
+# app = FastAPI(
+#     title=settings.PROJECT_NAME,
+#     description=settings.DESCRIPTION,
+#     version=api_version,
+#     lifespan=lifespan,  # type: ignore
+# )
+
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    description=settings.DESCRIPTION,
-    version=api_version,
     lifespan=lifespan,  # type: ignore
 )
 
@@ -54,6 +58,30 @@ app = FastAPI(
 # app.include_router(lyrics.router)
 
 
+def prepare_raw_features_response(raw_features, status_code):
+    keys = ["status", "failure_type", "description"]
+    detail = {key: raw_features[key] for key in keys}
+    detail["status_code"] = status_code
+    return detail
+
+
+def map_score_to_emoji(score):
+    values = [
+        (0.3, "😐", "This song needs to grow on me!"),
+        (0.5, "🙂", "Nice track!"),
+        (1.0, "😃", "Cool track!"),
+        (2.0, "😄", "OMG, how did I not know this song?"),
+        (100.0, "😍", "What a banger!"),
+    ]
+    emoji = ""
+    text = ""
+    for threshold, emoji, text in values:
+        if score < threshold:
+            break
+
+    return {"emoji": emoji, "text": text}
+
+
 @app.get("/")
 async def root() -> dict:
     message = (
@@ -63,20 +91,20 @@ async def root() -> dict:
     return {"message": message}
 
 
-@app.get("/health")
-async def health() -> Health:
-    """Get the health of the API"""
-    health = Health(
-        name=settings.PROJECT_NAME,
-        description=settings.DESCRIPTION,
-        api_version=api_version,
-        model_version=model_version,
-    )
-    return health
+# @app.get("/health")
+# async def health() -> Health:
+#     """Get the health of the API"""
+#     health = Health(
+#         name=settings.PROJECT_NAME,
+#         description=settings.DESCRIPTION,
+#         api_version=api_version,
+#         model_version=model_version,
+#     )
+#     return health
 
 
 @app.get("/prediction/")
-async def get_prediction(song: str, artist: str):
+async def get_prediction_api(song: str, artist: str):
     """Get the model predictions
 
     Args:
@@ -118,6 +146,7 @@ async def get_prediction(song: str, artist: str):
     try:
         prediction = ml_model["predict"](features)
     except Exception as e:
+        logging.debug(e)
         status_code = 500
         detail = {
             "status": "failure",
@@ -128,7 +157,10 @@ async def get_prediction(song: str, artist: str):
         raise HTTPException(status_code=status_code, detail=detail)
 
     user_message = map_score_to_emoji(prediction)
-    description = "The number of predicted future streams of the song based on the Spotify API audio features."
+    description = (
+        "The predicted number of future streams of the song based on the Spotify API"
+        " audio features."
+    )
 
     data_response = {
         "song": song,
@@ -138,11 +170,12 @@ async def get_prediction(song: str, artist: str):
         "song_metadata": raw_features["metadata"],
         "message": user_message,
     }
-    return Prediction(**data_response)
+    # return Prediction(**data_response)
+    return data_response
 
 
 @app.get("/raw_features/")
-async def get_raw_features_api(song: str, artist: str) -> RawFeatures:
+async def get_raw_features_api(song: str, artist: str) -> dict:
     """
     Get the raw audio features of a song from the Spotify API
 
@@ -163,11 +196,11 @@ async def get_raw_features_api(song: str, artist: str) -> RawFeatures:
         detail = prepare_raw_features_response(raw_features, status_code)
         raise HTTPException(status_code=status_code, detail=detail)
 
-    return RawFeatures(**raw_features)
+    return raw_features
 
 
 @app.get("/features/")
-async def get_features_api(song: str, artist: str) -> Features:
+async def get_features_api(song: str, artist: str) -> dict:
     """
     Get the preprocessed audio features that are used for making predictions
 
@@ -205,11 +238,11 @@ async def get_features_api(song: str, artist: str) -> Features:
         }
         raise HTTPException(status_code=status_code, detail=detail)
 
-    return Features(**features)
+    # return Features(**features)
+    return features
 
 
-# handler = Mangum(app)
-
+handler = Mangum(app)
 
 if __name__ == "__main__":
-    uvicorn.run(app="app.main:app", reload=True)
+    uvicorn.run(app="main:app", reload=True)

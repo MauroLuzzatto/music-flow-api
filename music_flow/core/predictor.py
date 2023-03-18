@@ -25,7 +25,6 @@ class ModelLoader(object):
     def __init__(
         self, model_version=None, model_folder=None, mode="latest", metric=None
     ):
-
         if not model_folder:
             model_folder = get_model_folder(mode, metric)
 
@@ -43,8 +42,7 @@ class ModelLoader(object):
         return self.metadata
 
     def load_model(self) -> None:
-        """
-        Load the model from the path_model
+        """Load the model from the path_model path
 
         Raises:
             Exception: _description_
@@ -60,7 +58,7 @@ class ModelLoader(object):
         return
 
     def load_metadata(self) -> None:
-        """_summary_
+        """Load the metadata of the model
 
         Returns:
             dict: _description_
@@ -86,7 +84,6 @@ class Predictor(object):
         metric=None,
         path=None,
     ):
-
         model_loader = ModelLoader(
             model_version, model_folder=model_folder, mode=mode, metric=metric
         )
@@ -147,8 +144,7 @@ class Predictor(object):
         }
         return data_response
 
-    def predict_from_features(self, features) -> float:
-
+    def predict_from_features(self, features: dict) -> float:
         # TODO: remove pandas dependency
         sample = pd.DataFrame(features, index=[0])
         sample["plays"] = 0
