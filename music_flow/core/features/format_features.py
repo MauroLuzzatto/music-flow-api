@@ -13,14 +13,19 @@ INCLUDE_AUDIO_ANALYSIS_DATASET = (
 
 
 def get_features(
-    data: dict,
-    track_name: str,
-    artist_name: str,
-    flattened: Optional[bool] = True,
-    hash: Optional[str] = None,
+    data: dict, track_name: str, artist_name: str, flattened: Optional[bool] = True
 ) -> dict:
-    """format the features from the spotify api for a given track"""
+    """format the features from the spotify api for a given track
 
+    Args:
+        data (dict): [description]
+        track_name (str): [description]
+        artist_name (str): [description]
+        flattened (Optional[bool], optional): [description]. Defaults to True.
+
+    Returns:
+        dict: [description]
+    """
     features = {}
 
     try:
@@ -60,7 +65,7 @@ def get_features(
 
     album_dict = {
         "release_date_precision": release_date_precision,
-        "release_date": release_date,
+        # "release_date": release_date,
         "release_year": year,
         "release_month": month,
         "release_day": day,
@@ -83,17 +88,27 @@ def get_features(
         features["audio_analysis"] = audio_analysis
 
     if flattened:
-        features_flattend = {}
-        for _, sub_value in features.items():
-            for key, value in sub_value.items():
-                features_flattend[key] = value
-        features = features_flattend
+        features = flatten_nessted_dict(features)
+
+    exclude_keys = ["id_hash", "type", "uri", "track_href", "analysis_url"]
+    for key in exclude_keys:
+        if key in features:
+            del features[key]
 
     return features
 
 
+def flatten_nessted_dict(features: dict) -> dict:
+    features_flattend = {}
+    for _, sub_value in features.items():
+        for key, value in sub_value.items():
+            features_flattend[key] = value
+    return features_flattend
+
+
 def process_release_date(release_date: str) -> Tuple[int, int, int, bool]:
-    """_summary_
+    """
+    extract the year, month and day from the release date
 
     Args:
         release_date (str): _description_

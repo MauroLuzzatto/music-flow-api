@@ -16,7 +16,6 @@ class Track(BaseModel):
 
 class Album(BaseModel):
     release_date_precision: str
-    release_date: str
     release_year: int
     release_month: int
     release_day: int
@@ -36,12 +35,7 @@ class AudioFeatures(BaseModel):
     liveness: float
     valence: float
     tempo: float
-    type: str
     id: str
-    uri: str
-    track_href: str
-    analysis_url: str
-    duration_ms: int
     time_signature: int
 
 

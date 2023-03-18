@@ -8,29 +8,29 @@ The MusicFlow API is built using the FastAPI framework, which makes it fast, eas
 
 
 
-## Endpoints
+## Available Endpoints
 
 The MusicFlow API provides the following endpoints:
 
-- `musicflow.link` - The home page of the MusicFlow API.
+- `musicflow.link/` - The root page of the MusicFlow API.
 - `musicflow.link/health` - Returns the health status of the API.
-- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the "raw" audio features of a given song on Spotify.
-- `musicflow.link/features/?song={song}&artist={artist}` - Returns the processed audio features of a given song on Spotify.
-- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the hypothetical number of song streams for a given song based on the Spotify audio features and track metadata.
+- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song using the Spotify API.
+- `musicflow.link/features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song.
+- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the number of streams for a given song based on the Spotify audio features and track metadata.
 
 
 ## Examples
 
-### Root
+### root
 
 [https://musicflow.link/](https://musicflow.link)
 
 ```
-{"message":"Welcome to MusicFlow!"}
+{"message":"Welcome to the music flow API! Here is an example: https://musicflow.link/prediction/?song=sun&artist=caribou"}
 ```
 
 
-### `/prediction` Endpoint
+### `/prediction`
 
 Let's predict the number of streams for "The Less I know the better" from "Tame Impala":
 
@@ -57,7 +57,7 @@ Response:
 ```
 
 
-### `/features` Endpoint
+### `/features`
 
 [https://musicflow.link/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
@@ -67,11 +67,9 @@ Response:
 {
   "track_name":"The Less I know the better",
   "artist_name":"Tame Impala",
-  "id_hash":null,
   "album":"Currents",
   "number_of_available_markets":183,
   "release_date_precision":"day",
-  "release_date":"2015-07-17",
   "release_year":2015,
   "release_month":7,
   "release_day":17,
@@ -92,11 +90,7 @@ Response:
   "liveness":0.167,
   "valence":0.785,
   "tempo":116.879,
-  "type":"audio_features",
   "id":"6K4t31amVTZDgR3sKmwUJJ",
-  "uri":"spotify:track:6K4t31amVTZDgR3sKmwUJJ",
-  "track_href":"https://api.spotify.com/v1/tracks/6K4t31amVTZDgR3sKmwUJJ",
-  "analysis_url":"https://api.spotify.com/v1/audio-analysis/6K4t31amVTZDgR3sKmwUJJ",
   "time_signature":4
 }
 ```
@@ -131,7 +125,6 @@ The model features are created based on the responses from the endpoints below.
 | energy | The energy of the track | float | 0 <= energy <= 1 |
 | loudness | The loudness of the track in decibels (dB) | float | -60 <= loudness <= 0 |
 | mode | The modality (major or minor) of the track | integer | 0 = minor, 1 = major |
-| Column Name | Description | Data Type | Allowed Value Ranges |
 | speechiness | The presence of spoken words in the track | float | 0 <= speechiness <= 1 |
 | acousticness | The acousticness of the track | float | 0 <= acousticness <= 1 |
 | instrumentalness | The instrumentalness of the track | float | 0 <= instrumentalness <= 1 |
@@ -210,10 +203,10 @@ To set up an API with AWS SAM, follow these steps:
 - Version model
 - Add logging
 - Allow for continous training
-- Use data classes for sample
-- Make better feature processing pipeline
-- Improve api reponse for formatted feature
-- Deep learning
+<!-- - Use data classes for sample -->
+- Improve feature processing pipeline
+<!-- - Improve api reponse for formatted feature -->
+- Aadd Deep learning models
 
 
 

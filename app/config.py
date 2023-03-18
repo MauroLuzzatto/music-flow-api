@@ -17,10 +17,11 @@ class Settings(BaseSettings):
         "https://musicflow.link/prediction/?song=sun&artist=caribou"
     )
 
-    PREDICTION_DESCRIPTION = str(
-        "The predicted number of future streams of the song based on the Spotify API"
-        " audio features."
+    PREDICTION_DESCRIPTION: str = (
+        "The predicted number of streams based on the Spotify API audio features."
     )
+
+    GITHUB_URL: str = "https://github.com/MauroLuzzatto/music-flow"
 
     class Config:
         case_sensitive = True

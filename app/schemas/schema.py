@@ -8,6 +8,7 @@ class Health(BaseModel):
     description: str
     api_version: str
     model_version: str
+    project_url: str
 
 
 class SongMetadataModel(BaseModel):

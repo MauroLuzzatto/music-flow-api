@@ -13,6 +13,9 @@ mlruns/
 reports/
 notebooks/
 
+music_flow/dataset/
+music_flow/model/
+
 
 .vscode/
 .aws-sam/

@@ -7,10 +7,15 @@ from mangum import Mangum
 
 from app.__init__ import __version__ as api_version
 from app.config import settings
-from app.failures import formating_failure, prediction_failure
+from app.response_messages import formating_failure, prediction_failure
 from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
+
+# from pathlib import Path
+# from fastapi.staticfiles import StaticFiles
+# from app.routers import lyrics
+# from music_flow.core.utils import path_app
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +50,6 @@ app = FastAPI(
 )
 
 
-# from pathlib import Path
-# from fastapi.staticfiles import StaticFiles
-# from app.routers import lyrics
-# from music_flow.core.utils import path_app
 # base_path = Path(path_app).absolute()
 # app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
 # app.include_router(lyrics.router)
@@ -68,6 +69,7 @@ async def health_api() -> Health:
         description=settings.API_DESCRIPTION,
         api_version=api_version,
         model_version=model_version,
+        project_url=settings.GITHUB_URL,
     )
     return health
 
@@ -189,7 +191,6 @@ async def get_features_api(song: str, artist: str) -> Features:
         artist_name=artist,
         flattened=False,
     )
-
     if not features:
         status_code = 500
         detail = {
