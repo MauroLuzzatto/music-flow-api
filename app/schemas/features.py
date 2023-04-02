@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pydantic import BaseModel
-
+from app.schemas.raw_features import Metadata
 
 class Track(BaseModel):
     track_name: str
@@ -43,3 +43,4 @@ class Features(BaseModel):
     track: Track
     album: Album
     audio_features: AudioFeatures
+    metadata:Metadata

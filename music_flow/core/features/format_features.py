@@ -76,16 +76,13 @@ def get_features(
     features["album"] = album_dict
 
     try:
-        audio_features = data["audio_features"]
+        features["audio_features"] = data["audio_features"]
     except KeyError as e:
         print(e)
         return {}
 
-    features["audio_features"] = audio_features
-
     if INCLUDE_AUDIO_ANALYSIS_DATASET and "audio_analysis" in data:
-        audio_analysis = data["audio_analysis"]
-        features["audio_analysis"] = audio_analysis
+        features["audio_analysis"] = data["audio_analysis"]
 
     if flattened:
         features = flatten_nessted_dict(features)
@@ -94,7 +91,9 @@ def get_features(
     for key in exclude_keys:
         if key in features:
             del features[key]
-
+    
+    # add the metadata dict
+    features["metadata"] = data["metadata"]
     return features
 
 

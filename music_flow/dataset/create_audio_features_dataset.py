@@ -48,6 +48,7 @@ def create_audio_features_dataset():
             and not data["failure_reason"] == "audio_analysis"
         ):
             count_failing_tracks += 1
+            pprint(data["track_name"])
             os.remove(path_file)
             continue
 

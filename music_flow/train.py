@@ -75,12 +75,12 @@ param_distributions = {
     "min_child_weight": [1, 3, 5, 7, 9],
     "subsample": [0.25, 0.5, 0.8, 1.0],
     "colsample_bytree": [0.25, 0.5, 0.7],
-    "n_estimators": [100, 200, 300],
+    "n_estimators": [100, 200],
     "objective": ["reg:squarederror"],
 }
 
 cv_settings = {
-    "n_iter": 100,  # 100 total combinations testes
+    "n_iter": 50,  # 100 total combinations testes
     "scoring": "neg_mean_squared_error",
     "cv": 3,
     "random_state": 0,

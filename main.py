@@ -12,10 +12,10 @@ from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
 
-# from pathlib import Path
-# from fastapi.staticfiles import StaticFiles
-# from app.routers import lyrics
-# from music_flow.core.utils import path_app
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from app.routers import song_form
+from music_flow.core.utils import path_app
 
 logger = logging.getLogger(__name__)
 
@@ -47,12 +47,13 @@ app = FastAPI(
     description=settings.API_DESCRIPTION,
     version=api_version,
     lifespan=lifespan,  # type: ignore
+    # openapi_prefix="/Prod"
 )
 
 
-# base_path = Path(path_app).absolute()
-# app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
-# app.include_router(lyrics.router)
+base_path = Path(path_app).absolute()
+app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
+app.include_router(song_form.router)
 
 
 @app.get("/")
@@ -72,71 +73,6 @@ async def health_api() -> Health:
         project_url=settings.GITHUB_URL,
     )
     return health
-
-
-@app.get("/prediction/")
-async def get_prediction_api(song: str, artist: str) -> Prediction:
-    """Get the model predictions
-
-    Args:
-        song (str): name of the song
-        artist (str): artist of the song
-
-    Raises:
-        HTTPException: if the song or audio features could not be found or fetched from Spotify API
-                or if formatting of the features failed
-                or if the prediction failed
-
-    Returns:
-        Prediction: prediction object
-    """
-
-    raw_features, status_code = get_raw_features(song, artist)
-    if raw_features["status"] != "success":
-        detail = prepare_raw_features_response(raw_features, status_code)
-        raise HTTPException(status_code=status_code, detail=detail)
-
-    features = get_features(
-        data=raw_features,
-        track_name=song,
-        artist_name=artist,
-        flattened=True,
-    )
-
-    if not features:
-        status_code = 500
-        detail = {
-            "status": "failure",
-            "failure_type": formating_failure.failure_type,
-            "description": formating_failure.description,
-            "status_code": status_code,
-        }
-        raise HTTPException(status_code=status_code, detail=detail)
-
-    try:
-        prediction = ml_model["predict"](features)
-    except Exception as e:
-        logging.debug(e)
-        status_code = 500
-        detail = {
-            "status": "failure",
-            "failure_type": prediction_failure.failure_type,
-            "description": prediction_failure.description,
-            "status_code": status_code,
-        }
-        raise HTTPException(status_code=status_code, detail=detail)
-
-    user_message = map_score_to_emoji(prediction)
-
-    data_response = {
-        "song": song,
-        "artist": artist,
-        "prediction": round(prediction, 2),
-        "description": settings.PREDICTION_DESCRIPTION,
-        "song_metadata": raw_features["metadata"],
-        "message": user_message,
-    }
-    return Prediction(**data_response)
 
 
 @app.get("/raw_features/")
@@ -164,7 +100,7 @@ async def get_raw_features_api(song: str, artist: str) -> dict:
 
 
 @app.get("/features/")
-async def get_features_api(song: str, artist: str) -> Features:
+async def get_features_api(song: str, artist: str): # -> Features:
     """
     Get the preprocessed audio features that are used for making predictions
 
@@ -179,11 +115,7 @@ async def get_features_api(song: str, artist: str) -> Features:
     Returns:
         Features: features object
     """
-    raw_features, status_code = get_raw_features(song, artist)
-
-    if raw_features["status"] != "success":
-        detail = prepare_raw_features_response(raw_features, status_code)
-        raise HTTPException(status_code=status_code, detail=detail)
+    raw_features = await get_raw_features_api(song, artist)
 
     features = get_features(
         data=raw_features,
@@ -202,6 +134,72 @@ async def get_features_api(song: str, artist: str) -> Features:
         raise HTTPException(status_code=status_code, detail=detail)
 
     return Features(**features)
+    # return features
+
+
+@app.get("/prediction/")
+async def get_prediction_api(song: str, artist: str) -> Prediction:
+    """Get the model predictions
+
+    Args:
+        song (str): name of the song
+        artist (str): artist of the song
+
+    Raises:
+        HTTPException: if the song or audio features could not be found or fetched from Spotify API
+                or if formatting of the features failed
+                or if the prediction failed
+
+    Returns:
+        Prediction: prediction object
+    """
+
+    raw_features = await get_raw_features_api(song, artist)
+
+    features = get_features(
+        data=raw_features,
+        track_name=song,
+        artist_name=artist,
+        flattened=True,
+    )
+
+    if not features:
+        status_code = 500
+        detail = {
+            "status": "failure",
+            "failure_type": formating_failure.failure_type,
+            "description": formating_failure.description,
+            "status_code": status_code,
+        }
+        raise HTTPException(status_code=status_code, detail=detail)
+
+    metadata = features["metadata"]
+    del features["metadata"]
+
+    try:
+        prediction = ml_model["predict"](features)
+    except Exception as e:
+        logging.debug(e)
+        status_code = 500
+        detail = {
+            "status": "failure",
+            "failure_type": prediction_failure.failure_type,
+            "description": prediction_failure.description,
+            "status_code": status_code,
+        }
+        raise HTTPException(status_code=status_code, detail=detail)
+
+    user_message = map_score_to_emoji(prediction)
+
+    data_response = {
+        "song": song,
+        "artist": artist,
+        "prediction": round(prediction, 2),
+        "description": settings.PREDICTION_DESCRIPTION,
+        "song_metadata":metadata,
+        "message": user_message,
+    }
+    return Prediction(**data_response)
 
 
 handler = Mangum(app)

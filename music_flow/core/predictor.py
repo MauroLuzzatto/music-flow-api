@@ -123,7 +123,7 @@ class Predictor(object):
             data=raw_features,
             track_name=song,
             artist_name=artist,
-            flattened=False,
+            flattened=True,
         )
 
         if not features:
