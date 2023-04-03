@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Union
 
 from pydantic import BaseModel
 
@@ -29,6 +29,7 @@ class Prediction(BaseModel):
     description: str
     song_metadata: SongMetadataModel
     message: Message
+    preview_url: Union[str, None]
 
 
 class Metadata(BaseModel):

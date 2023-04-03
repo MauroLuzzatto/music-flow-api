@@ -12,17 +12,17 @@ class SongRequestForm:
 
     async def load_data(self):
         form = await self.request.form()
-        self.song = form.get("song")        # type: ignore
-        self.artist = form.get("artist")     # type: ignore
+        self.song = form.get("song")  # type: ignore
+        self.artist = form.get("artist")  # type: ignore
 
     def is_valid(self):
 
         if not self.song or self.number_of_tokens(self.song) > 10:
             self.errors.append("A valid song is required")
-        
+
         if not self.artist or self.number_of_tokens(self.artist) > 5:
             self.errors.append("A valid artist is required")
-        
+
         if not self.errors:
             return True
         return False

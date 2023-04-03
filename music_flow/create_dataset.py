@@ -3,10 +3,9 @@ from music_flow.dataset.create_audio_features_dataset import (
     create_audio_features_dataset,
 )
 from music_flow.dataset.download_audio_features import download_audio_features
+from music_flow.dataset.folder_setup import setup_folders
 from music_flow.dataset.get_target_values import get_df_target_values
 from music_flow.dataset.prepare_dataset import merge_dataset
-from music_flow.dataset.folder_setup import setup_folders
-
 
 setup_folders()
 

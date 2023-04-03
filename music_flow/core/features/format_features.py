@@ -91,7 +91,7 @@ def get_features(
     for key in exclude_keys:
         if key in features:
             del features[key]
-    
+
     # add the metadata dict
     features["metadata"] = data["metadata"]
     return features

@@ -1,20 +1,19 @@
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from mangum import Mangum
 
 from app.__init__ import __version__ as api_version
 from app.config import settings
 from app.response_messages import formating_failure, prediction_failure
+from app.routers import song_form
 from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
-
-from pathlib import Path
-from fastapi.staticfiles import StaticFiles
-from app.routers import song_form
 from music_flow.core.utils import path_app
 
 logger = logging.getLogger(__name__)
@@ -100,7 +99,7 @@ async def get_raw_features_api(song: str, artist: str) -> dict:
 
 
 @app.get("/features/")
-async def get_features_api(song: str, artist: str): # -> Features:
+async def get_features_api(song: str, artist: str) -> Features:
     """
     Get the preprocessed audio features that are used for making predictions
 
@@ -134,7 +133,6 @@ async def get_features_api(song: str, artist: str): # -> Features:
         raise HTTPException(status_code=status_code, detail=detail)
 
     return Features(**features)
-    # return features
 
 
 @app.get("/prediction/")
@@ -196,9 +194,11 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         "artist": artist,
         "prediction": round(prediction, 2),
         "description": settings.PREDICTION_DESCRIPTION,
-        "song_metadata":metadata,
+        "song_metadata": metadata,
         "message": user_message,
+        "preview_url": raw_features["track"]["preview_url"],
     }
+    print(Prediction(**data_response))
     return Prediction(**data_response)
 
 

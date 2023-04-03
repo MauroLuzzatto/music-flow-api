@@ -1,12 +1,10 @@
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, HTTPException
 
 from app.core.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app
-
 
 base_path = Path(path_app).absolute()
 templates = Jinja2Templates(directory=str(base_path / "templates"))
@@ -42,34 +40,31 @@ async def post_form(request: Request):
     Returns:
         _type_: _description_
     """
-    
+
     form = SongRequestForm(request)
     await form.load_data()
-   
+
     from main import get_prediction_api
 
     try:
-        output = await get_prediction_api(song=form.song, artist=form.artist) # type: ignore
-    except HTTPException as e:
+        output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
+    except HTTPException:
         form.errors.append(failed_to_fetch_song_error)
         return templates.TemplateResponse("prediction.html", form.__dict__)
 
-  
     if form.is_valid():
 
         header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # type: ignore
         prediction = output.dict()
 
-        payload =             {
-                    "request": request,
-                    "header": header,
-                    "prediction": prediction,
-                }
+        payload = {
+            "request": request,
+            "header": header,
+            "prediction": prediction,
+        }
 
         try:
-            return templates.TemplateResponse(
-                "success.html",payload
-            )
+            return templates.TemplateResponse("success.html", payload)
         except Exception as e:
             form.errors.append(generic_error)
             print(e)

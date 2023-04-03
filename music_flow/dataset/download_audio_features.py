@@ -3,6 +3,7 @@ import logging
 import os
 import time
 from pprint import pprint
+
 import pandas as pd
 
 from music_flow.core.features.get_audio_features import get_raw_features
@@ -46,7 +47,9 @@ def download_audio_features(df=None) -> bool:
     files_set = set(os.listdir(path_success))
     number_of_files_success = len(os.listdir(path_success))
 
-    print(f"Files missing: {len(df) - number_of_files_failed - number_of_files_success}")
+    print(
+        f"Files missing: {len(df) - number_of_files_failed - number_of_files_success}"
+    )
 
     success = 0.000001
     failed = 0
@@ -58,7 +61,9 @@ def download_audio_features(df=None) -> bool:
         hash = row["hash"]
         filename = f"{hash}.json"
 
-        if (filename in files_set) or (filename in files_failed_set or retry_failed_files):
+        if (filename in files_set) or (
+            filename in files_failed_set or retry_failed_files
+        ):
             continue
 
         track_name = row["track_name"]
@@ -81,7 +86,7 @@ def download_audio_features(df=None) -> bool:
 
         if success > 150 and failed / success > 5.0:
             raise Exception("Too many failed requests")
-        
+
     return True
 
 
@@ -96,7 +101,6 @@ def main(max_retries=5):
             time.sleep(60 * 3)
 
         retries += 1
-
 
 
 if __name__ == "__main__":

@@ -1,15 +1,15 @@
 from music_flow.core.utils import (
+    create_folder,
     path_data,
-    path_features,
-    path_dataset,
-    path_results,
-    path_reports,
     path_data_lake,
-    path_raw,
-    path_data_lake_success,
     path_data_lake_failed,
+    path_data_lake_success,
+    path_dataset,
+    path_features,
+    path_raw,
+    path_reports,
+    path_results,
 )
-from music_flow.core.utils import create_folder
 
 
 def setup_folders():

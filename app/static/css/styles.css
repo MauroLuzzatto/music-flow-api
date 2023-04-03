@@ -468,6 +468,8 @@ pre code {
     color: #999
 }
 
+
+
 .container {
     margin: 0 auto;
     max-width: 800px;
@@ -487,6 +489,11 @@ pre code {
     width: 100%;
 }
 
+.container-audio {
+    margin: 40px auto;
+    max-width: 800px;
+    width: 100%;
+}
 
 /* main, */
 
@@ -582,6 +589,7 @@ footer,
     .nav-container {
         text-align: left
     }
+
     .nav ul {
         bottom: 0;
         position: absolute;
