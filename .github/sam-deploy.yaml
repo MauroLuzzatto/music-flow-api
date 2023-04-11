@@ -8,6 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+        AWS_REGION: eu-west-1
+        STACK_NAME: musicflow-sam-app
+        S3_BUCKET: portfolio-on-lambda-2999-v3
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/setup-sam@v2
@@ -17,13 +21,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: ${{env.AWS_REGION}}
       # Build inside Docker containers
-      - run: sam build --use-container
+      - run: sam build --use-container -t template.yaml
       # Prevent prompts and failure when the stack is unchanged
       - run: sam deploy \
-              --stack-name musicflow-sam-app \
-              --s3-bucket portfolio-on-lambda-2999-v3 \
+              --stack-name  ${{env.STACK_NAME}} \
+              --s3-bucket  ${{env.S3_BUCKET}} \
               --capabilities CAPABILITY_IAM \
               --resolve-image-repos \
               --no-confirm-changeset \

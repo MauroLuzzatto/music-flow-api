@@ -86,7 +86,7 @@ class SpotifyAPI(object):
         url = f"https://api.spotify.com/v1/audio-features/{id}"
         response, status_code = self.get_request(url)
         return response, status_code
-    
+
     def get_albums(self, id):
         url = f"https://api.spotify.com/v1/albums/{id}"
         response, status_code = self.get_request(url)

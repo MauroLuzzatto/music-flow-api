@@ -108,7 +108,6 @@ def get_raw_features(
     data["description"] = "Raw audio features from Spotify API fetched successfully."
     data["metadata"] = get_song_data_metadata(data["track"])  # type: ignore
 
-    
     return data, status_code  # type: ignore
 
 
