@@ -55,6 +55,7 @@ print(f"Base path: {base_path}")
 print(f"static: {str(base_path / 'static')}")
 
 import os
+
 path_static = os.path.join(os.path.abspath(os.getcwd()), "app", "static")
 print(f"static: {path_static}")
 
