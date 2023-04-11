@@ -93,7 +93,7 @@ def download_audio_features(df=None) -> bool:
 def main(max_retries=5):
     retries = 0
     has_finished = False
-    while retries < max_retries or not has_finished:
+    while retries < max_retries:
         try:
             has_finished = download_audio_features()
         except Exception as e:
@@ -101,6 +101,8 @@ def main(max_retries=5):
             time.sleep(60 * 3)
 
         retries += 1
+        if has_finished:
+            break
 
 
 if __name__ == "__main__":

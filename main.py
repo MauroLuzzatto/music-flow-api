@@ -51,7 +51,14 @@ app = FastAPI(
 
 
 base_path = Path(path_app).absolute()
-app.mount("/static", StaticFiles(directory=str(base_path / "static")), name="static")
+print(f"Base path: {base_path}")
+print(f"static: {str(base_path / 'static')}")
+
+import os
+path_static = os.path.join(os.path.abspath(os.getcwd()), "app", "static")
+print(f"static: {path_static}")
+
+app.mount("/static", StaticFiles(directory=path_static), name="static")
 app.include_router(song_form.router)
 
 

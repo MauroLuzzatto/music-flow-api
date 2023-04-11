@@ -92,8 +92,10 @@ def get_features(
         if key in features:
             del features[key]
 
-    # add the metadata dict
-    features["metadata"] = data["metadata"]
+    if "metadata" in data:
+        features["metadata"] = data["metadata"]
+    else:
+        features["metadata"] = {}
     return features
 
 

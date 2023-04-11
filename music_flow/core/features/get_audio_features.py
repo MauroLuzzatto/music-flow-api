@@ -51,7 +51,6 @@ def get_raw_features(
     data = {
         "track_name": track_name,
         "artist_name": artist_name,
-        "metadata": {},
     }
 
     if not track_id:
@@ -70,8 +69,6 @@ def get_raw_features(
             data["failure_type"] = "search_track_url"
             data["description"] = "Failed to fetched track_id from Spotfiy API."
             return data, status_code
-
-        data["metadata"] = get_song_data_metadata(response)  # type: ignore
 
     endpoints = [
         Endpoint(
@@ -109,6 +106,9 @@ def get_raw_features(
     data["status"] = "success"
     data["failure_type"] = None  # type: ignore
     data["description"] = "Raw audio features from Spotify API fetched successfully."
+    data["metadata"] = get_song_data_metadata(data["track"])  # type: ignore
+
+    
     return data, status_code  # type: ignore
 
 
