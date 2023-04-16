@@ -13,6 +13,7 @@ path_model = os.path.join(path, "results")
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
 dataset = feature_preprocessing(dataset)
 
+# move to settings
 target_column = "plays"
 columns_scope = [
     "number_of_available_markets",
