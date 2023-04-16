@@ -1,19 +1,10 @@
 import logging
 import logging.config
-import os
 from dataclasses import dataclass
 from typing import Callable, Optional, Tuple
 
-from dotenv import load_dotenv
-
+from music_flow.config.core import settings
 from music_flow.core.spotify_api import SpotifyAPI
-from music_flow.core.utils import path_env
-
-load_dotenv(path_env)
-INCLUDE_AUDIO_ANALYSIS = (
-    bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_API")) if not os.getenv("API") else False
-)
-
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +65,9 @@ def get_raw_features(
         Endpoint(
             name="audio_features",
             func=spotify_api.get_audio_features,
-            descripton="Failed to fetched data from Spotify API audio features endpoint.",
+            descripton=(
+                "Failed to fetched data from Spotify API audio features endpoint."
+            ),
         ),
         Endpoint(
             name="track",
@@ -83,13 +76,15 @@ def get_raw_features(
         ),
     ]
 
-    if INCLUDE_AUDIO_ANALYSIS:
-        print("Including audio analysis")
+    if settings.INCLUDE_AUDIO_ANALYSIS_API:
+        logger.info("Including audio analysis")
         endpoints.append(
             Endpoint(
                 name="audio_analysis",
                 func=spotify_api.get_audio_analysis,
-                descripton="Failed to fetched data from Spotify API audio analysis endpoint.",
+                descripton=(
+                    "Failed to fetched data from Spotify API audio analysis endpoint."
+                ),
             ),
         )
     for endpoint in endpoints:

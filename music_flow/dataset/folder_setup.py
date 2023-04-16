@@ -13,7 +13,6 @@ from music_flow.core.utils import (
 
 
 def setup_folders():
-
     path_folders = [
         path_data,
         path_features,

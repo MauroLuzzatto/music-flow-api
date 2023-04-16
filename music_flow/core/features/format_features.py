@@ -1,15 +1,6 @@
-import os
 from typing import Optional, Tuple
 
-from dotenv import load_dotenv
-
-from music_flow.core.utils import path_env
-
-load_dotenv(path_env)
-
-INCLUDE_AUDIO_ANALYSIS_DATASET = (
-    bool(os.getenv("INCLUDE_AUDIO_ANALYSIS_DATASET")) if not os.getenv("API") else False
-)
+from music_flow.config.core import settings
 
 
 def get_features(
@@ -81,7 +72,7 @@ def get_features(
         print(e)
         return {}
 
-    if INCLUDE_AUDIO_ANALYSIS_DATASET and "audio_analysis" in data:
+    if settings.INCLUDE_AUDIO_ANALYSIS_DATASET and "audio_analysis" in data:
         features["audio_analysis"] = data["audio_analysis"]
 
     if flattened:
