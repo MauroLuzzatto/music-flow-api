@@ -22,8 +22,17 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{env.AWS_REGION}}
+
+      - name: Create env file
+        run: |
+          touch .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+          cat .env
+
       # Build inside Docker containers
       - run: sam build --use-container -t template.yaml
+
       # Prevent prompts and failure when the stack is unchanged
       - run: sam deploy \
               --stack-name  ${{env.STACK_NAME}} \

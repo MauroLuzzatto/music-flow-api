@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-from music_flow.core.get_playlist_tracks import get_playlist_tracks
-from music_flow.core.playlist_handler import PlaylistHandler
+from music_flow.core.playlists.get_playlist_tracks import get_playlist_tracks
+from music_flow.core.playlists.playlist_handler import PlaylistHandler
 from music_flow.core.predictor import Predictor
 from music_flow.core.utils import path_env
 
