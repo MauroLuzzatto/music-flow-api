@@ -1,13 +1,9 @@
 import os
 
 import pandas as pd
-from dotenv import load_dotenv
 
-from music_flow.core.utils import get_hash, path_data, path_env
-
-load_dotenv(path_env)
-
-NUMBER_OF_KAGGLE_DATASET_TRACKS = int(os.getenv("NUMBER_OF_KAGGLE_DATASET_TRACKS"))  # type: ignore
+from music_flow.config.core import settings
+from music_flow.core.utils import get_hash, path_data
 
 
 def get_df_streams():
@@ -68,7 +64,7 @@ def get_df_kaggle():
         )
         .drop_duplicates(keep="first")
         .reset_index()
-    ).head(NUMBER_OF_KAGGLE_DATASET_TRACKS)
+    ).head(settings.NUMBER_OF_KAGGLE_DATASET_TRACKS)
 
     df_kaggle["plays"] = 0
     return df_kaggle

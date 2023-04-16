@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from music_flow.config.core import model_settings
+
 key_mapping = {
     0: "C",
     1: "C#/Db",
@@ -17,11 +19,9 @@ key_mapping = {
 }
 
 
-def limit_max_plays(dataset, max_value: int = 30) -> pd.DataFrame:
+def limit_max_plays(dataset) -> pd.DataFrame:
     """limit the max value of plays to max_value"""
-    dataset["plays"] = dataset["plays"].apply(
-        lambda row: row if row < max_value else max_value
-    )
+    dataset["plays"] = dataset["plays"].clip(upper=model_settings.MAX_PREDICTION_VALUE)
     return dataset
 
 

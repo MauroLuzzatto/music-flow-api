@@ -23,7 +23,6 @@ def create_audio_features_dataset():
     dataset = []
     start = time.time()
     for index, row in df.iterrows():
-
         if int(index) % 800 == 0:  # type: ignore
             time_passed = time.time() - start
             print(f"{index}/{len(df)} - {time_passed/60.:.1f} min")

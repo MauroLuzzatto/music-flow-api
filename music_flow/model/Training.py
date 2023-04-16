@@ -26,6 +26,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor  # type: ignore
 
+from music_flow.config.core import model_settings
 from music_flow.core.features.preprocessing import reverse_prediction
 from music_flow.core.utils import create_folder
 from music_flow.model.Logger import Logger
@@ -67,7 +68,7 @@ class Training(object):
         self.model_version = model_version
         self.column_names: List[str] = list(X)  # type: ignore
 
-        self.save_name = "model.pickle"
+        self.save_name = f"{model_settings.MODEL_NAME}.pickle"
         self.estimator_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
 
