@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     INCLUDE_AUDIO_ANALYSIS_DATASET: bool = False
     INCLUDE_AUDIO_ANALYSIS_API: bool = True
     API_MODE: bool = True
+    # model registry s3 bucket name
+    BUCKET_NAME: str = "musicflow-registry-398212703914"
 
 
 model_settings = ModelSettings()
