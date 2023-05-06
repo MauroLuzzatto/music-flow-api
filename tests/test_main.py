@@ -7,25 +7,26 @@ client = TestClient(app)
 
 def test_read_main():
     response = client.get("/")
+    print(response.json())
     assert response.status_code == 200
     assert response.json() == {
-        "message": (
-            "Welcome to the music flow API! Here is an example:"
-            " musicflow.link/prediction/?song=sun&artist=caribou"
-        )
+        "message": "Welcome to the music flow API! Here is an example: https://musicflow.link/prediction/?song=sun&artist=caribou"
     }
 
 
 def test_read_health():
     response = client.get("/health")
     assert response.status_code == 200
-    # assert response.json() == {"msg": "Hello World"}
 
 
 def test_read_features():
     song = "The Less I Know The Better"
     artist = "Tame Impala"
     response = client.get(f"/features/?song={song}&artist={artist}")
+
+    from pprint import pprint
+
+    pprint(response.json())
 
     target_response = {
         "track": {
@@ -105,5 +106,9 @@ def test_read_prediction():
 
     with TestClient(app) as client:
         response = client.get(f"/prediction/?song={song}&artist={artist}")
+
+        from pprint import pprint
+
+        pprint(response)
         assert response.status_code == 200
         assert response.json() == target_response

@@ -139,7 +139,6 @@ async def get_features_api(song: str, artist: str) -> Features:
             "status_code": status_code,
         }
         raise HTTPException(status_code=status_code, detail=detail)
-
     return Features(**features)
 
 
@@ -180,8 +179,8 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         raise HTTPException(status_code=status_code, detail=detail)
 
     metadata = features["metadata"]
+    logger.debug(metadata)
     del features["metadata"]
-
     try:
         prediction = ml_model["predict"](features)
     except Exception as e:
@@ -206,11 +205,11 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         "message": user_message,
         "preview_url": raw_features["track"]["preview_url"],
     }
-    print(Prediction(**data_response))
     return Prediction(**data_response)
 
 
 handler = Mangum(app)
 
 if __name__ == "__main__":
+    logger.warning("Running in development mode. Do not run like this in production.")
     uvicorn.run(app="main:app", reload=True)

@@ -11,12 +11,8 @@ from music_flow.core.features.preprocessing import (
     feature_preprocessing,
     reverse_prediction,
 )
-from music_flow.core.get_playlist_tracks import get_playlist_tracks
 from music_flow.core.model_finder import get_model_folder
-from music_flow.core.spotify_api import SpotifyAPI
 from music_flow.core.utils import path_results, read_json
-
-description = "The number of predicted future streams of the song"
 
 logger = logging.getLogger(__name__)
 
@@ -159,22 +155,7 @@ class Predictor(object):
 
 if __name__ == "__main__":
     model_folder = "2023-01-21--12-33-25"
-
-    user_id = "1157239771"
-    playlist_id = "37i9dQZEVXcJlIMuDHGHCM"
-
-    spotifAPI = SpotifyAPI()
-    paylist, status_code = spotifAPI.get_playlist_items(playlist_id=playlist_id)
-    tracks = get_playlist_tracks(paylist)
-
     predictor = Predictor(model_folder)
-
-    predictions = []
-    for track in tracks[:4]:
-        song = track["track_name"]
-        artist = track["artists"]
-        track_id = track["track_id"]
-        print(song, artist, track_id)
-
-        data = predictor.predict(song=song, artist=artist, track_id=track_id)
-        print(data)
+    song = "one more time"
+    artist = "daft punk"
+    data = predictor.predict(song=song, artist=artist)

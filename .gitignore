@@ -10,6 +10,7 @@ notebooks/
 workspace.code-workspace
 
 results/
+registry/
 
 .aws-sam/
 .ruff_cache/
