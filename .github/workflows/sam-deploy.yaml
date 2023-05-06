@@ -1,9 +1,12 @@
 name: Deploy API to AWS
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+
+on: [push, pull_request]
+
 
 jobs:
   deploy:
@@ -35,8 +38,8 @@ jobs:
 
       # Prevent prompts and failure when the stack is unchanged
       - run: sam deploy \
-              --stack-name  ${{env.STACK_NAME}} \
-              --s3-bucket  ${{env.S3_BUCKET}} \
+              --stack-name ${{env.STACK_NAME}} \
+              --s3-bucket ${{env.S3_BUCKET}} \
               --capabilities CAPABILITY_IAM \
               --resolve-image-repos \
               --no-confirm-changeset \
