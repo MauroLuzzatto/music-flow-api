@@ -83,8 +83,6 @@ def get_features(
         if key in features:
             del features[key]
 
-    print(1, data["metadata"])
-
     if "metadata" in data:
         features["metadata"] = data["metadata"]
     else:

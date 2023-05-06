@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
+import os
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -53,8 +54,6 @@ app = FastAPI(
 base_path = Path(path_app).absolute()
 print(f"Base path: {base_path}")
 print(f"static: {str(base_path / 'static')}")
-
-import os
 
 path_static = os.path.join(os.path.abspath(os.getcwd()), "app", "static")
 print(f"static: {path_static}")

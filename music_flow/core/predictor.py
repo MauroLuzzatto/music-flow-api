@@ -13,6 +13,8 @@ from music_flow.core.features.preprocessing import (
 )
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.utils import path_results, read_json
+from music_flow.model.model_registry import ModelRegistry
+from music_flow.config.core import settings
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +25,18 @@ class ModelLoader(object):
     ):
         if not model_folder:
             model_folder = get_model_folder(mode, metric)
+            logger.info(f"model found: {model_folder}")
 
-        # TODO: allow model to be loaded from .env file
+        if model_folder not in os.listdir(path_results):
+            logger.info(f"downloading model from s3 bucket: {model_folder}")
+            registry = ModelRegistry(settings.BUCKET_NAME)
+            registry.download_folder(model_folder)
+        else:
+            logger.info(f"model found locally: {model_folder}")
+
+        # TODO: allow model to be loaded from "config" file
         self.path_model_folder = os.path.join(path_results, model_folder)
-        self.path_metadata = os.path.join(self.path_model_folder, "metadata.json")
+        self.path_metadata = os.path.join(path_results, model_folder, "metadata.json")
 
     def load(self):
         # wrap into function
@@ -158,4 +168,4 @@ if __name__ == "__main__":
     predictor = Predictor(model_folder)
     song = "one more time"
     artist = "daft punk"
-    data = predictor.predict(song=song, artist=artist)
+    data = predictor.predict(song=song, artist=artist)  # type: ignore

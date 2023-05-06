@@ -15,7 +15,7 @@ class ModelRegistry:
 
     def __init__(self, bucket_name):
         self.bucket_name = bucket_name
-        self.path_registry = path_registry
+        self.path_registry = path_results
         self.path_results = path_results
 
     def upload_folder(
