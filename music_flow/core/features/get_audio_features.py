@@ -23,13 +23,13 @@ class Endpoint:
 def get_song_data_metadata(response: dict) -> dict:
     """get the song data from the spotify api for a given track"""
     try:
-        song = response["tracks"]["items"][0]["name"]
-        artists_dict = response["tracks"]["items"][0]["artists"]
+        song = response["name"]
+        album = response["album"]["name"]
+        artists_dict = response["album"]["artists"]
         artists = [artist["name"] for artist in artists_dict]
-        album = response["tracks"]["items"][0]["album"]["name"]
-    except (IndexError, KeyError):
+    except (IndexError, KeyError) as e:
+        print(f"Error: could not get the metadata - {e}")
         return {}
-
     metadata = {"song": song, "artist": artists, "album": album}
     return metadata
 
@@ -48,7 +48,6 @@ def get_raw_features(
         url = spotify_api.search_track_url(track_name, artist_name)
         response, status_code = spotify_api.get_request(url)
         logger.info(f"status_code: {status_code}")
-
         try:
             track_id = response["tracks"]["items"][0]["id"]
             failed = False
@@ -90,6 +89,7 @@ def get_raw_features(
     for endpoint in endpoints:
         name = endpoint.name
         response, status_code = endpoint.func(track_id)
+        logger.info(f"endpoint: {endpoint.name} - status_code: {status_code}")
         if status_code == 200:
             data[name] = response
         else:
@@ -102,7 +102,6 @@ def get_raw_features(
     data["failure_type"] = None  # type: ignore
     data["description"] = "Raw audio features from Spotify API fetched successfully."
     data["metadata"] = get_song_data_metadata(data["track"])  # type: ignore
-
     return data, status_code  # type: ignore
 
 
