@@ -11,6 +11,7 @@ from pydantic import BaseSettings
 class ModelSettings(BaseSettings):
     MODEL_NAME: str = "model"
     MAX_PREDICTION_VALUE: int = 30
+    MODEL_FOLDER: str = "2023-03-24--22-58-57"
 
 
 class Settings(BaseSettings):

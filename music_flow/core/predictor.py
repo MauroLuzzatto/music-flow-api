@@ -14,7 +14,7 @@ from music_flow.core.features.preprocessing import (
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.utils import path_results, read_json
 from music_flow.model.model_registry import ModelRegistry
-from music_flow.config.core import settings
+from music_flow.config.core import settings, model_settings
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,12 @@ class ModelLoader(object):
         self, model_version=None, model_folder=None, mode="latest", metric=None
     ):
         if not model_folder:
-            model_folder = get_model_folder(mode, metric)
+            try:
+                model_folder = get_model_folder(mode, metric)
+            except Exception as e:
+                print(e)
+                model_folder = model_settings.MODEL_FOLDER
+
             logger.info(f"model found: {model_folder}")
 
         if model_folder not in os.listdir(path_results):
