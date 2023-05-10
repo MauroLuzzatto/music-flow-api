@@ -13,7 +13,6 @@ mlruns/
 reports/
 notebooks/
 registry/
-results/
 
 music_flow/dataset/
 music_flow/model/

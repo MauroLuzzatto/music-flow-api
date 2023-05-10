@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class ModelRegistry:
-    """Model Registry class, upload and download models to s3 bucket"""
+    """Model Registry class, uploads and downloads models to a s3 bucket"""
 
     def __init__(self, bucket_name):
         self.bucket_name = bucket_name

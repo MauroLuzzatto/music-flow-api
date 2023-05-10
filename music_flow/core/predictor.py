@@ -13,7 +13,7 @@ from music_flow.core.features.preprocessing import (
 )
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.utils import path_results, read_json
-from music_flow.model.model_registry import ModelRegistry
+from music_flow.core.model_registry import ModelRegistry
 from music_flow.config.core import settings, model_settings
 
 logger = logging.getLogger(__name__)
@@ -24,20 +24,23 @@ class ModelLoader(object):
         self, model_version=None, model_folder=None, mode="latest", metric=None
     ):
         if not model_folder:
-            try:
-                model_folder = get_model_folder(mode, metric)
-            except Exception as e:
-                print(e)
-                model_folder = model_settings.MODEL_FOLDER
+
+            model_folder = get_model_folder(mode, metric)
+
+            # try:
+            #     model_folder = get_model_folder(mode, metric)
+            # except Exception as e:
+            #     print(e)
+            #     model_folder = model_settings.MODEL_FOLDER
 
             logger.info(f"model found: {model_folder}")
 
-        if model_folder not in os.listdir(path_results):
-            logger.info(f"downloading model from s3 bucket: {model_folder}")
-            registry = ModelRegistry(settings.BUCKET_NAME)
-            registry.download_folder(model_folder)
-        else:
-            logger.info(f"model found locally: {model_folder}")
+        # if model_folder not in os.listdir(path_results):
+        #     logger.info(f"downloading model from s3 bucket: {model_folder}")
+        #     registry = ModelRegistry(settings.BUCKET_NAME)
+        #     registry.download_folder(model_folder)
+        # else:
+        #     logger.info(f"model found locally: {model_folder}")
 
         # TODO: allow model to be loaded from "config" file
         self.path_model_folder = os.path.join(path_results, model_folder)
@@ -174,3 +177,4 @@ if __name__ == "__main__":
     song = "one more time"
     artist = "daft punk"
     data = predictor.predict(song=song, artist=artist)  # type: ignore
+    print(data)

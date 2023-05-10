@@ -5,7 +5,7 @@ name: Deploy API to AWS
 #     branches:
 #       - main
 
-on: [push, pull_request]
+on: [push]
 
 
 jobs:
