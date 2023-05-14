@@ -65,12 +65,16 @@ class Training(object):
         self.y = y
         self.path_model = path_model
         self.estimator = estimator
+        # TODO: add model versioning
         self.model_version = model_version
         self.column_names: List[str] = list(X)  # type: ignore
 
         self.save_name = f"{model_settings.MODEL_NAME}.pickle"
         self.estimator_name = estimator.__class__.__name__
         self.is_regressor = is_regressor(self.estimator)
+
+        self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
+        self.folder_name = f"{self.timestamp} - {folder}" if folder else self.timestamp
 
         self.set_paths(folder)
 
@@ -88,13 +92,6 @@ class Training(object):
         """
         Define the neceneeded paths for saving the results
         """
-        self.time_stamp = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
-
-        if folder:
-            folder_name = f"{self.time_stamp} - {folder}"
-        else:
-            folder_name = self.time_stamp
-
         self.path_model = create_folder(os.path.join(self.path_model, folder_name))
         self.path_save = create_folder(os.path.join(self.path_model, "results"))
         self.path_plots = create_folder(os.path.join(self.path_model, "plots"))
@@ -280,7 +277,7 @@ class Training(object):
         Save the metadata of the model
         """
         results = {}
-        results["timestamp"] = self.time_stamp
+        results["timestamp"] = self.timestamp
 
         model_metadata = {
             "name": self.save_name,

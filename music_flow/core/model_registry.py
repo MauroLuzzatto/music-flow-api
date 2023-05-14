@@ -43,13 +43,13 @@ class ModelRegistry:
             directory_name = path.replace(path_upload, "")
 
             if directory_name[1:] in exclude_folders:
-                print(f"Skipping: {directory_name}")
+                logger.debug(f"Skipping: {directory_name}")
                 continue
 
             for file in files:
                 local_file_name = os.path.join(path, file)
                 s3_object_name = f"{folder_name}{directory_name}/{file}"
-                print(f"upload: {s3_object_name}")
+                logger.info(f"upload: {s3_object_name}")
                 try:
                     s3_bucket.upload_file(local_file_name, s3_object_name)
                 except ClientError as e:
@@ -68,14 +68,13 @@ class ModelRegistry:
         for result in paginator.paginate(
             Bucket=self.bucket_name, Delimiter="/", Prefix=folder_name
         ):
-
             if result.get("CommonPrefixes"):
                 for subdir in result.get("CommonPrefixes"):
                     self.download_folder(subdir.get("Prefix"))
 
             for file in result.get("Contents", []):
                 path_destination = os.path.join(self.path_registry, file.get("Key"))
-                print(f"download: {path_destination}")
+                logger.info(f"download: {path_destination}")
                 if not os.path.exists(os.path.dirname(path_destination)):
                     os.makedirs(os.path.dirname(path_destination))
 
@@ -86,7 +85,6 @@ class ModelRegistry:
 
 
 if __name__ == "__main__":
-
     registry = ModelRegistry(bucket_name=settings.BUCKET_NAME)
     for folder_name in os.listdir(path_results):
         registry.upload_folder(folder_name)

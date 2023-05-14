@@ -18,31 +18,27 @@ from music_flow.config.core import settings, model_settings
 
 logger = logging.getLogger(__name__)
 
+# TODO: split up the clases
+
 
 class ModelLoader(object):
-    def __init__(
-        self, model_version=None, model_folder=None, mode="latest", metric=None
-    ):
+    def __init__(self, model_folder=None, mode="latest", metric=None):
+
         if not model_folder:
-
-            model_folder = get_model_folder(mode, metric)
-
-            # try:
-            #     model_folder = get_model_folder(mode, metric)
-            # except Exception as e:
-            #     print(e)
-            #     model_folder = model_settings.MODEL_FOLDER
+            try:
+                model_folder = get_model_folder(mode, metric)
+            except Exception as e:
+                print(e)
+                model_folder = model_settings.MODEL_FOLDER
 
             logger.info(f"model found: {model_folder}")
 
-        # if model_folder not in os.listdir(path_results):
-        #     logger.info(f"downloading model from s3 bucket: {model_folder}")
-        #     registry = ModelRegistry(settings.BUCKET_NAME)
-        #     registry.download_folder(model_folder)
-        # else:
-        #     logger.info(f"model found locally: {model_folder}")
+        if model_folder not in os.listdir(path_results):
+            logger.info(f"downloading model from s3 bucket: {model_folder}")
+            registry = ModelRegistry(settings.BUCKET_NAME)
+            registry.download_folder(model_folder)
 
-        # TODO: allow model to be loaded from "config" file
+        self.model_folder = model_folder
         self.path_model_folder = os.path.join(path_results, model_folder)
         self.path_metadata = os.path.join(path_results, model_folder, "metadata.json")
 
@@ -92,18 +88,16 @@ class ModelLoader(object):
 class Predictor(object):
     def __init__(
         self,
-        model_version=None,
         model_folder=None,
         mode="latest",
         metric=None,
         path=None,
     ):
-        model_loader = ModelLoader(
-            model_version, model_folder=model_folder, mode=mode, metric=metric
-        )
+        model_loader = ModelLoader(model_folder=model_folder, mode=mode, metric=metric)
         self.metadata = model_loader.load()
         self.features = model_loader.get_features()
         self.estimator = model_loader.get_estimator()
+        self.model_version = self.get_model_version()
 
     def get_metdata(self):
         return self.metadata
@@ -113,6 +107,11 @@ class Predictor(object):
 
     def get_estimator(self):
         return self.estimator
+
+    def get_model_version(self):
+        model_info = self.metadata.get("model", {})
+        model_version = model_info.get("model_version", None)
+        return model_version
 
     def predict(self, song: str, artist: str, track_id: Optional[str] = None) -> dict:
         """
