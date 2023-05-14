@@ -51,11 +51,11 @@ def get_best_score_folder(folders: List[str], metric: Optional[str]) -> str:
     best_folder = None
     for folder in folders:
         try:
-            path = os.path.join(path_results, folder, "results", "best_score.json")
+            path = os.path.join(path_results, folder, "metadata.json")
             data = read_json(path)
         except FileNotFoundError:
             continue
-        score = data["score"][metric]
+        score = data["model"]["score"][metric]
         if direction == "higher" and score > max_score:
             max_score = score
             best_folder = folder
@@ -102,4 +102,7 @@ def get_model_folder(
 
 if __name__ == "__main__":
     folder = get_model_folder()
+    print(folder)
+
     folder = get_model_folder(metric="r2_score", mode="best_score")
+    print(folder)

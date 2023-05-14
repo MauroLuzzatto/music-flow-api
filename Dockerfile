@@ -13,5 +13,7 @@ COPY ./.env ./.env
 COPY ./app ./app
 COPY ./main.py ./main.py
 
+RUN mkdir -v ./results/
+
 # Run the FastAPI application
 CMD ["main.handler"]

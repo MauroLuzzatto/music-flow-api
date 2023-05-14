@@ -16,12 +16,14 @@ from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
 from music_flow.core.utils import path_app
+from music_flow.config.core import model_settings
 
 logger = logging.getLogger(__name__)
 
-model_version = "0.1.0"
 
 ml_model = {}
+model_version = ""
+model_folder = model_settings.MODEL_FOLDER
 
 
 @asynccontextmanager
@@ -32,10 +34,15 @@ async def lifespan(app: FastAPI):
     Args:
         app (FastAPI): fastapi app object
     """
-    predictor = Predictor(model_version)
+    predictor = Predictor(model_folder)
     model_metadata = predictor.get_metdata()
+
     ml_model["predict"] = predictor.predict_from_features
     ml_model["metadata"] = model_metadata
+
+    global model_version
+    model_version = predictor.get_model_version()
+
     yield
 
     # Clean up the ML models and release the resources
@@ -52,11 +59,11 @@ app = FastAPI(
 
 
 base_path = Path(path_app).absolute()
-print(f"Base path: {base_path}")
-print(f"static: {str(base_path / 'static')}")
+logger.debug(f"Base path: {base_path}")
+logger.debug(f"static: {str(base_path / 'static')}")
 
 path_static = os.path.join(os.path.abspath(os.getcwd()), "app", "static")
-print(f"static: {path_static}")
+logger.debug(f"static: {path_static}")
 
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 app.include_router(song_form.router)

@@ -5,10 +5,10 @@ from xgboost import XGBRegressor  # type: ignore
 
 from music_flow.__init__ import __version__ as model_version
 from music_flow.core.features.preprocessing import feature_preprocessing
-from music_flow.core.utils import path, path_dataset
+from music_flow.core.utils import path, path_dataset, path_results
 from music_flow.model.Training import Training
-
-path_model = os.path.join(path, "results")
+from music_flow.core.model_registry import ModelRegistry
+from music_flow.config.core import settings
 
 dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
 dataset = feature_preprocessing(dataset)
@@ -66,7 +66,7 @@ trainer = Training(
     X=X,
     y=y,
     model_version=model_version,
-    path_model=path_model,
+    path_model=path_results,
 )
 
 
@@ -90,3 +90,6 @@ cv_settings = {
 }
 
 trainer.train(param_distributions, cv_settings)
+
+registry = ModelRegistry(bucket_name=settings.BUCKET_NAME)
+registry.upload_folder(trainer.folder_name)
