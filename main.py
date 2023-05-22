@@ -15,8 +15,11 @@ from app.routers import song_form
 from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
-from music_flow.core.utils import path_app
+from music_flow.core.utils import path_app, path_results
 from music_flow.config.core import model_settings
+
+from music_flow.core.model_registry import ModelRegistry
+from music_flow.config.core import settings as mf_settings
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +70,18 @@ logger.debug(f"static: {path_static}")
 
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 app.include_router(song_form.router)
+
+
+# @app.get("/download")
+# async def download_model() -> dict:
+#     """testing the model download"""
+#     model_folder = model_settings.MODEL_FOLDER
+#     logger.info(f"downloading model from s3 bucket: {model_folder}")
+#     logger.info(f"(mf_settings.BUCKET_NAME: {mf_settings.BUCKET_NAME}")
+#     logger.debug(path_results)
+#     registry = ModelRegistry(mf_settings.BUCKET_NAME)
+#     registry.download_folder(model_folder)
+#     return {"message": "success"}
 
 
 @app.get("/")

@@ -18,12 +18,16 @@ from music_flow.config.core import settings, model_settings
 
 logger = logging.getLogger(__name__)
 
-# TODO: split up the clases
+# TODO: split up the classes in two file
 
 
 class ModelLoader(object):
-    def __init__(self, model_folder=None, mode="latest", metric=None):
-
+    def __init__(
+        self,
+        model_folder: Optional[str] = None,
+        mode: str = "latest",
+        metric: Optional[str] = None,
+    ):
         if not model_folder:
             try:
                 model_folder = get_model_folder(mode, metric)
@@ -31,7 +35,8 @@ class ModelLoader(object):
                 print(e)
                 model_folder = model_settings.MODEL_FOLDER
 
-            logger.info(f"model found: {model_folder}")
+        logger.info(f"model_folder: {model_folder}")
+        logger.debug(f"list of models: {os.listdir(path_results)}")
 
         if model_folder not in os.listdir(path_results):
             logger.info(f"downloading model from s3 bucket: {model_folder}")

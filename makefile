@@ -17,7 +17,7 @@ build:
 	sam build --use-container -t template.yaml --debug
 
 local:
-	sam local start-api --debug
+	sam local start-api --debug --port 5858
 
 deploy:
 	sam deploy \
@@ -25,3 +25,6 @@ deploy:
 	--s3-bucket portfolio-on-lambda-2999-v3 \
 	--capabilities CAPABILITY_IAM \
 	--resolve-image-repos --debug
+
+ci-deploy:
+	sam deploy --stack-name ${{env.STACK_NAME}} --s3-bucket ${{env.S3_BUCKET}} --capabilities CAPABILITY_IAM --resolve-image-repos --no-confirm-changeset --no-fail-on-empty-changeset 

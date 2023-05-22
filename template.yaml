@@ -9,7 +9,7 @@ Description: FastAPI on Lambda for MusicFlow
 Globals:
   Function:
     Timeout: 30
-    MemorySize: 1024
+    MemorySize: 4096
 
 Resources:
 

@@ -9,11 +9,11 @@ RUN python3.9 -m pip install -r requirements.txt -t .
 # Copy the required files to the image
 COPY ./music_flow/ ./music_flow/
 COPY ./.env ./.env
-# COPY ./results/ ./results/
 COPY ./app ./app
 COPY ./main.py ./main.py
+# COPY ./results/ ./results/
 
-RUN mkdir -v ./results/
+RUN mkdir -v -p ./results/
 
 # Run the FastAPI application
 CMD ["main.handler"]

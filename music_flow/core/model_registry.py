@@ -13,10 +13,18 @@ logger = logging.getLogger(__name__)
 class ModelRegistry:
     """Model Registry class, uploads and downloads models to a s3 bucket"""
 
-    def __init__(self, bucket_name):
+    def __init__(self, bucket_name, path_registry=None, path_upload=None):
         self.bucket_name = bucket_name
-        self.path_registry = path_results
-        self.path_results = path_results
+
+        if not path_registry:
+            self.path_registry = path_results
+        else:
+            self.path_registry = path_registry
+
+        if not path_upload:
+            self.path_results = path_results
+        else:
+            self.path_results = path_upload
 
     def upload_folder(
         self, folder_name: str, exclude_folders: Optional[list[str]] = None
