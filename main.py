@@ -1,7 +1,8 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
-import os
+from typing import Optional
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -15,15 +16,42 @@ from app.routers import song_form
 from app.schemas import Features, Health, Prediction
 from app.utils import map_score_to_emoji, prepare_raw_features_response
 from music_flow import Predictor, get_features, get_raw_features
-from music_flow.core.utils import path_app
 from music_flow.config.core import model_settings
+from music_flow.core.utils import path_app
 
 logger = logging.getLogger(__name__)
-
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 ml_model = {}
 model_version = ""
 model_folder = model_settings.MODEL_FOLDER
+
+
+def setup() -> Optional[str]:
+    """_summary_
+
+    Returns:
+        Optional[str]: _description_
+    """
+
+    AWS_EXECUTION_ENV = os.environ.get("AWS_EXECUTION_ENV")
+    is_lambda_runtime = bool(AWS_EXECUTION_ENV)
+
+    if is_lambda_runtime:
+        # lambda can only write to the "/tmp" folder, if we want to download
+        # the model from s3 bucket we need to set the path to "/tmp"
+        path_registry = "/tmp"
+    else:
+        path_registry = None
+
+    logger.info(f"AWS_EXECUTION_ENV: {AWS_EXECUTION_ENV}")
+    logger.debug(f"is_lambda_runtime: {is_lambda_runtime}")
+    logger.debug(f"path_registry: {path_registry}")
+    return path_registry
+
+
+path_registry = setup()
 
 
 @asynccontextmanager
@@ -34,7 +62,10 @@ async def lifespan(app: FastAPI):
     Args:
         app (FastAPI): fastapi app object
     """
-    predictor = Predictor(model_folder)
+    predictor = Predictor(
+        model_folder=model_folder,
+        path_registry=path_registry,
+    )
     model_metadata = predictor.get_metdata()
 
     ml_model["predict"] = predictor.predict_from_features
@@ -62,8 +93,8 @@ base_path = Path(path_app).absolute()
 logger.debug(f"Base path: {base_path}")
 logger.debug(f"static: {str(base_path / 'static')}")
 
-path_static = os.path.join(os.path.abspath(os.getcwd()), "app", "static")
-logger.debug(f"static: {path_static}")
+path_static = os.path.join(path_app, "static")
+logger.debug(f"static_v2: {path_static}")
 
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 app.include_router(song_form.router)
