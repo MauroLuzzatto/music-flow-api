@@ -1,5 +1,6 @@
-from music_flow.core.spotify_api import SpotifyAPI
 from pprint import pprint
+
+from music_flow.core.spotify_api import SpotifyAPI
 
 spotify_api = SpotifyAPI()
 

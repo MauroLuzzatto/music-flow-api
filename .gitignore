@@ -3,6 +3,7 @@
 data/*
 data_lake/*
 _archive/
+tmp/
 
 mlruns/
 reports/

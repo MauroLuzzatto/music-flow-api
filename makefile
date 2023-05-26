@@ -23,7 +23,7 @@ deploy:
 	sam deploy \
 	--stack-name musicflow-sam-app \
 	--s3-bucket portfolio-on-lambda-2999-v3 \
-	--capabilities CAPABILITY_IAM \
+	--capabilities CAPABILITY_NAMED_IAM \
 	--resolve-image-repos --debug
 
 ci-deploy:

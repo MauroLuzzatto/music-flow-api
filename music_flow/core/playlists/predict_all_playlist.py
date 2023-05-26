@@ -1,6 +1,6 @@
 from music_flow.core.playlists.get_playlist_tracks import get_playlist_tracks
-from music_flow.core.spotify_api import SpotifyAPI
 from music_flow.core.predictor import Predictor
+from music_flow.core.spotify_api import SpotifyAPI
 
 model_folder = "2023-01-21--12-33-25"
 user_id = "1157239771"

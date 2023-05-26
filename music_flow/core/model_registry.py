@@ -1,13 +1,16 @@
-import boto3
-import os
-from botocore.exceptions import ClientError
-from typing import Optional
 import logging
+import os
+from typing import Optional
 
-from music_flow.core.utils import path_registry, path_results
+import boto3
+from botocore.exceptions import ClientError
+
 from music_flow.config.core import settings
+from music_flow.core.utils import path_registry, path_results
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 
 class ModelRegistry:
@@ -25,6 +28,8 @@ class ModelRegistry:
             self.path_results = path_results
         else:
             self.path_results = path_upload
+
+        self.files_to_download = ["model.pickle", "metadata.json"]
 
     def upload_folder(
         self, folder_name: str, exclude_folders: Optional[list[str]] = None
@@ -78,22 +83,37 @@ class ModelRegistry:
         ):
             if result.get("CommonPrefixes"):
                 for subdir in result.get("CommonPrefixes"):
+                    logger.debug(f"subdir: {subdir}")
+
                     self.download_folder(subdir.get("Prefix"))
 
             for file in result.get("Contents", []):
-                path_destination = os.path.join(self.path_registry, file.get("Key"))
-                logger.info(f"download: {path_destination}")
+                file_path = file.get("Key")
+                logger.debug(f"file_path: {file_path}")
+                path_destination = os.path.join(self.path_registry, file_path)
+
+                if os.path.basename(path_destination) not in self.files_to_download:
+                    continue
+
                 if not os.path.exists(os.path.dirname(path_destination)):
                     os.makedirs(os.path.dirname(path_destination))
+
+                logger.debug(f"path_destination: {path_destination}")
 
                 if not file.get("Key").endswith("/"):
                     s3_resource.meta.client.download_file(
                         self.bucket_name, file.get("Key"), path_destination
                     )
+                    logger.debug(f"download successful!: {path_destination}")
 
 
 if __name__ == "__main__":
-    registry = ModelRegistry(bucket_name=settings.BUCKET_NAME)
-    for folder_name in os.listdir(path_results):
-        registry.upload_folder(folder_name)
-        registry.download_folder(folder_name)
+    registry = ModelRegistry(
+        bucket_name=settings.BUCKET_NAME,
+        path_registry=f"/home/maurol/track-recommender/tmp",
+    )
+    folders = os.listdir(path_results)
+    folder_name = "2023-03-24--22-58-57"
+    print(folder_name)
+    # registry.upload_folder(folder_name)
+    registry.download_folder(folder_name)
