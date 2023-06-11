@@ -5,18 +5,23 @@ from pprint import pprint
 import pandas as pd
 
 from music_flow.core.features.format_features import get_features
-from music_flow.core.utils import path_data, path_data_lake, path_features, read_json
+from music_flow.core.utils import (
+    path_data,
+    path_features,
+    read_json,
+    path_data_lake_success,
+)
+from music_flow.dataset.config import dataset_settings
+
+path_target_values = os.path.join(path_data, dataset_settings.TARGERT_VALUES)
+path_audio_features = os.path.join(path_features, dataset_settings.AUDIO_FEATURES)
 
 
 def create_audio_features_dataset():
-    """_summary_"""
+    """Create the audio features dataset"""
 
-    df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
-
-    path_audio_features = os.path.join(path_features, r"audio_features.csv")
-    path_success = os.path.join(path_data_lake, "success")
-
-    files_set = set(os.listdir(path_success))
+    df = pd.read_csv(path_target_values, sep=";")
+    files_set = set(os.listdir(path_data_lake_success))
     count_failing_tracks = 0
     count_missing_tracks = 0
 
@@ -40,7 +45,7 @@ def create_audio_features_dataset():
             count_missing_tracks += 1
             continue
 
-        path_file = os.path.join(path_success, filename)
+        path_file = os.path.join(path_data_lake_success, filename)
         data = read_json(path_file)
 
         if (

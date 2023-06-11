@@ -9,7 +9,7 @@ from music_flow.core.spotify_api import SpotifyAPI
 logger = logging.getLogger(__name__)
 
 spotify_api = SpotifyAPI()
-
+# TODO: allow for batch downloading of api requests
 
 @dataclass
 class Endpoint:

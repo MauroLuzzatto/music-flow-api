@@ -76,7 +76,7 @@ class Training(object):
         self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
         self.folder_name = f"{self.timestamp} - {folder}" if folder else self.timestamp
 
-        self.set_paths(folder)
+        self.set_paths()
 
         data = TrainingData(X, y, self.path_logs)
         data.get_train_test_split()
@@ -88,11 +88,11 @@ class Training(object):
         self.logger = logger(self.path_logs, stage="training")
         self.logger.info(f"column_name: {self.column_names}")
 
-    def set_paths(self, folder):
+    def set_paths(self):
         """
         Define the neceneeded paths for saving the results
         """
-        self.path_model = create_folder(os.path.join(self.path_model, folder_name))
+        self.path_model = create_folder(os.path.join(self.path_model, self.folder_name))
         self.path_save = create_folder(os.path.join(self.path_model, "results"))
         self.path_plots = create_folder(os.path.join(self.path_model, "plots"))
         self.path_logs = create_folder(os.path.join(self.path_model, "logs"))

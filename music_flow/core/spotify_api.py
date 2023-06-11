@@ -3,7 +3,6 @@ import os
 
 import requests
 from dotenv import load_dotenv
-from ratelimiter import RateLimiter
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -13,9 +12,6 @@ load_dotenv(path_env)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-
-
-limiter = RateLimiter(max_calls=2000, period=3600)
 
 
 class SpotifyAPI(object):
@@ -41,7 +37,6 @@ class SpotifyAPI(object):
         headers = {"Authorization": f"Bearer {token}"}
         return headers
 
-    @limiter
     def get_request(self, url: str):
         """TODO: move to Base class"""
         with requests.Session() as session:
@@ -50,7 +45,6 @@ class SpotifyAPI(object):
 
         return response.json(), response.status_code
 
-    @limiter
     def get_post(self, url: str, params=None):
         """TODO: move to Base class"""
         if not params:

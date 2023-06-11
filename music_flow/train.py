@@ -9,11 +9,16 @@ from music_flow.core.features.preprocessing import feature_preprocessing
 from music_flow.core.model_registry import ModelRegistry
 from music_flow.core.utils import path, path_dataset, path_results
 from music_flow.model.Training import Training
+from music_flow.dataset.config import dataset_settings
 
-dataset = pd.read_csv(os.path.join(path_dataset, "dataset.csv"), sep=";", index_col=0)
+
+path_dataset_file = os.path.join(path_dataset, dataset_settings.FINAL_DATASET)
+
+dataset = pd.read_csv(path_dataset_file, sep=";", index_col=0)
 dataset = feature_preprocessing(dataset)
 
 # move to settings
+# add datatype to settings
 target_column = "plays"
 columns_scope = [
     "number_of_available_markets",
