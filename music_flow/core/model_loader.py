@@ -34,9 +34,14 @@ class ModelLoader(object):
         else:
             self.path_registry = path_registry
 
-        logger.debug(f"list of models: {os.listdir( self.path_registry)}")
+        try:
+            list_of_models = os.listdir(self.path_registry)
+        except FileNotFoundError:
+            list_of_models = []
 
-        if model_folder not in os.listdir(path_results):
+        logger.debug(f"list of models: {list_of_models}")
+
+        if model_folder not in list_of_models:
             logger.info(f"downloading model from s3 bucket: {model_folder}")
             registry = ModelRegistry(
                 settings.BUCKET_NAME, path_registry=self.path_registry
