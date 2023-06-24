@@ -11,11 +11,14 @@ from mangum import Mangum
 
 from app.__init__ import __version__ as api_version
 from app.config import settings
-from app.response_messages import formating_failure, prediction_failure
+from app.utils.response_messages import formating_failure, prediction_failure
 from app.routers import song_form
 from app.schemas import Features, Health, Prediction
-from app.utils import map_score_to_emoji, prepare_raw_features_response
-from music_flow import Predictor, get_features, get_raw_features
+from app.utils.response_formatter import (
+    map_score_to_emoji,
+    prepare_raw_features_response,
+)
+from music_flow import Predictor, get_formatted_features, get_raw_features
 from music_flow.config.core import model_settings
 from music_flow.core.utils import path_app
 
@@ -160,13 +163,7 @@ async def get_features_api(song: str, artist: str) -> Features:
         Features: features object
     """
     raw_features = await get_raw_features_api(song, artist)
-
-    features = get_features(
-        data=raw_features,
-        track_name=song,
-        artist_name=artist,
-        flattened=False,
-    )
+    features = get_formatted_features(data=raw_features, is_flattened=False)
     if not features:
         status_code = 500
         detail = {
@@ -197,13 +194,7 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
     """
 
     raw_features = await get_raw_features_api(song, artist)
-
-    features = get_features(
-        data=raw_features,
-        track_name=song,
-        artist_name=artist,
-        flattened=True,
-    )
+    features = get_formatted_features(data=raw_features, is_flattened=True)
 
     if not features:
         status_code = 500

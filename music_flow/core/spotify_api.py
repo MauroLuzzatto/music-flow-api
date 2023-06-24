@@ -19,6 +19,9 @@ load_dotenv(path_env)
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
+if not CLIENT_ID or not CLIENT_SECRET:
+    raise Exception("CLIENT_ID or CLIENT_SECRET not set in .env file")
+
 status_codes = []
 
 

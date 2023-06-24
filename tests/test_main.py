@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from main import app
+from pprint import pprint
 
 client = TestClient(app)
 
@@ -23,8 +24,6 @@ def test_read_features():
     song = "The Less I Know The Better"
     artist = "Tame Impala"
     response = client.get(f"/features/?song={song}&artist={artist}")
-
-    from pprint import pprint
 
     pprint(response.json())
 
@@ -106,8 +105,6 @@ def test_read_prediction():
 
     with TestClient(app) as client:
         response = client.get(f"/prediction/?song={song}&artist={artist}")
-
-        from pprint import pprint
 
         pprint(response)
         assert response.status_code == 200

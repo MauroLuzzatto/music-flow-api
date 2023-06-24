@@ -6,7 +6,6 @@ spotify_api = SpotifyAPI()
 
 
 def test_search_track_url():
-
     track = "one more time"
     artist = "daft punk"
     url = spotify_api.search_track_url(track, artist)
@@ -23,7 +22,6 @@ def test_search_track_url():
 
 
 def test_track_endpoint():
-
     id = "6K4t31amVTZDgR3sKmwUJJ"
     response, status_code = spotify_api.get_track(id)
 
