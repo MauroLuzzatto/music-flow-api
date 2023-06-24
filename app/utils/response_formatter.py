@@ -19,6 +19,7 @@ def map_score_to_emoji(score) -> Dict[str, str]:
 
 
 def prepare_raw_features_response(raw_features, status_code):
+    # Do we need this function?
     keys = ["status", "failure_type", "description"]
     detail = {key: raw_features[key] for key in keys}
     detail["status_code"] = status_code

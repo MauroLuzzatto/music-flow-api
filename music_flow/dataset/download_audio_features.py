@@ -6,46 +6,36 @@ from pprint import pprint
 
 import pandas as pd
 
-from music_flow.core.features.get_audio_features import get_raw_features
-from music_flow.core.utils import path_data, path_data_lake
+from music_flow.core.features.get_raw_features import get_raw_features
+from music_flow.core.utils import (
+    path_data,
+    path_data_lake_success,
+    path_data_lake_failed,
+)
+from music_flow.dataset.config import dataset_settings
 
 logger = logging.getLogger(__name__)
 
-
-def save_dict_to_json(data: dict, path: str, filename: str):
-    """_summary_
-
-    Args:
-        data (dict): _description_
-        path (str): _description_
-        filename (str): _description_
-    """
-    assert filename.endswith(".json"), "filename must be a json file"
-
-    with open(os.path.join(path, filename), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+path_target_values = os.path.join(path_data, dataset_settings.TARGERT_VALUES)
 
 
-def download_audio_features(df=None) -> bool:
+def download_audio_features(is_retry_failed_files: bool = False) -> bool:
     """
     This function will download the audio features from the spotify API and store them in a json file.
     The json file will be stored in the path_data_lake folder.
 
     Args:
-        df (dict): The dataframe containing the track names and artist names.
+        is_retry_failed_files (bool): indicate if failed files should be retired or not
+
+    Returns:
+        bool: has_finished
     """
-    retry_failed_files = False
+    df = pd.read_csv(path_target_values, sep=";")
+    files_failed_set = set(os.listdir(path_data_lake_failed))
+    number_of_files_failed = len(os.listdir(path_data_lake_failed))
 
-    if not df:
-        df = pd.read_csv(os.path.join(path_data, "target_values.csv"), sep=";")
-
-    path_failed = os.path.join(path_data_lake, "failed")
-    files_failed_set = set(os.listdir(path_failed))
-    number_of_files_failed = len(os.listdir(path_failed))
-
-    path_success = os.path.join(path_data_lake, "success")
-    files_set = set(os.listdir(path_success))
-    number_of_files_success = len(os.listdir(path_success))
+    files_set = set(os.listdir(path_data_lake_success))
+    number_of_files_success = len(os.listdir(path_data_lake_success))
 
     print(
         f"Files missing: {len(df) - number_of_files_failed - number_of_files_success}"
@@ -61,8 +51,10 @@ def download_audio_features(df=None) -> bool:
         hash = row["hash"]
         filename = f"{hash}.json"
 
-        if (filename in files_set) or (
-            filename in files_failed_set or retry_failed_files
+        if (
+            (filename in files_set)
+            or (filename in files_failed_set)
+            or is_retry_failed_files
         ):
             continue
 
@@ -73,10 +65,10 @@ def download_audio_features(df=None) -> bool:
         data["hash"] = hash
 
         if data["status"] == "success":
-            save_dict_to_json(data, path_success, filename)
+            save_dict_to_json(data, path_data_lake_success, filename)
             success += 1
         else:
-            save_dict_to_json(data, path_failed, filename)
+            save_dict_to_json(data, path_data_lake_success, filename)
             failed += 1
             logger.debug(f"{status_code} - {data}")
             print(status_code)
@@ -88,6 +80,20 @@ def download_audio_features(df=None) -> bool:
             raise Exception("Too many failed requests")
 
     return True
+
+
+def save_dict_to_json(data: dict, path: str, filename: str):
+    """save data to json file
+
+    Args:
+        data (dict): _description_
+        path (str): _description_
+        filename (str): _description_
+    """
+    assert filename.endswith(".json"), "filename must be a json file"
+
+    with open(os.path.join(path, filename), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 def main(max_retries=5):

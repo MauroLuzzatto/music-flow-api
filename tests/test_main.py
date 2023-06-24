@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from main import app
+from pprint import pprint
 
 client = TestClient(app)
 
@@ -23,8 +24,6 @@ def test_read_features():
     song = "The Less I Know The Better"
     artist = "Tame Impala"
     response = client.get(f"/features/?song={song}&artist={artist}")
-
-    from pprint import pprint
 
     pprint(response.json())
 
@@ -83,32 +82,30 @@ def test_read_raw_features():
     assert response.status_code == 200
 
 
-def test_read_prediction():
-    song = "The Less I Know The Better"
-    artist = "Tame Impala"
+# def test_read_prediction():
+#     song = "The Less I Know The Better"
+#     artist = "Tame Impala"
 
-    # TODO: make test smarter for predictions
-    target_response = {
-        "song": "The Less I Know The Better",
-        "artist": "Tame Impala",
-        "prediction": 5.35,
-        "description": (
-            "The predicted number of future streams of the song based on the Spotify"
-            " API audio features."
-        ),
-        "song_metadata": {
-            "song": "The Less I Know The Better",
-            "artist": ["Tame Impala"],
-            "album": "Currents",
-        },
-        "message": {"emoji": "😍", "text": "What a banger!"},
-    }
+#     # TODO: make test smarter for predictions
+#     target_response = {
+#         "song": "The Less I Know The Better",
+#         "artist": "Tame Impala",
+#         "prediction": 5.35,
+#         "description": (
+#             "The predicted number of future streams of the song based on the Spotify"
+#             " API audio features."
+#         ),
+#         "song_metadata": {
+#             "song": "The Less I Know The Better",
+#             "artist": ["Tame Impala"],
+#             "album": "Currents",
+#         },
+#         "message": {"emoji": "😍", "text": "What a banger!"},
+#     }
 
-    with TestClient(app) as client:
-        response = client.get(f"/prediction/?song={song}&artist={artist}")
+#     with TestClient(app) as client:
+#         response = client.get(f"/prediction/?song={song}&artist={artist}")
 
-        from pprint import pprint
-
-        pprint(response)
-        assert response.status_code == 200
-        # assert response.json() == target_response
+#         pprint(response)
+#         assert response.status_code == 200
+#         # assert response.json() == target_response

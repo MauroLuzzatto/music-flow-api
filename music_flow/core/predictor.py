@@ -3,8 +3,8 @@ from typing import Optional
 
 import pandas as pd
 
-from music_flow.core.features.format_features import get_features
-from music_flow.core.features.get_audio_features import get_raw_features
+from music_flow.core.features.get_formatted_features import get_formatted_features
+from music_flow.core.features.get_raw_features import get_raw_features
 from music_flow.core.features.preprocessing import (
     feature_preprocessing,
     reverse_prediction,
@@ -67,7 +67,7 @@ class Predictor(object):
             detail = {key: raw_features[key] for key in keys}
             raise Exception(detail)
 
-        features = get_features(
+        features = get_formatted_features(
             data=raw_features,
             track_name=song,
             artist_name=artist,

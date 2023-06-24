@@ -3,14 +3,16 @@ import os
 import pandas as pd
 
 from music_flow.core.utils import path_data
+from music_flow.dataset.config import dataset_settings
+
+path_kaggle = os.path.join(path_data, "kaggle", "kaggle_spotify_dataset", "tracks.csv")
+path_kaggle_dataset = os.path.join(path_data, dataset_settings.KAGGEL_DATASET)
 
 if __name__ == "__main__":
     df_kaggle = (
         (
             pd.read_csv(
-                os.path.join(
-                    path_data, "kaggle", "kaggle_spotify_dataset", "tracks.csv"
-                ),
+                path_kaggle,
                 index_col=0,
                 usecols=["name", "artists"],
             )
@@ -29,7 +31,6 @@ if __name__ == "__main__":
         subset=["artist_name", "track_name"], keep="first"
     )
 
-    path_kaggle = os.path.join(path_data, "kaggle_tracks.csv")
-    df_kaggle.to_csv(path_kaggle, sep=";")
+    df_kaggle.to_csv(path_kaggle_dataset, sep=";")
     print(f"save to: {path_kaggle}")
     print(df_kaggle.shape)

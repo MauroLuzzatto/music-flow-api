@@ -1,21 +1,28 @@
 import json
 import os
+import time
 
 import requests
 from dotenv import load_dotenv
-from ratelimiter import RateLimiter
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from music_flow.core.utils import path_env
+import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 load_dotenv(path_env)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
+if not CLIENT_ID or not CLIENT_SECRET:
+    raise Exception("CLIENT_ID or CLIENT_SECRET not set in .env file")
 
-limiter = RateLimiter(max_calls=2000, period=3600)
+status_codes = []
 
 
 class SpotifyAPI(object):
@@ -41,16 +48,51 @@ class SpotifyAPI(object):
         headers = {"Authorization": f"Bearer {token}"}
         return headers
 
-    @limiter
-    def get_request(self, url: str):
-        """TODO: move to Base class"""
-        with requests.Session() as session:
-            session.mount("https://", self.adapter)
-            response = session.get(url=url, headers=self.headers)
+    def get_request(self, url: str, max_retries=3, rate_limit=1):
+        """TODO: move to Base class
+        Fetches data from the specified URL while respecting the rate limit.
 
-        return response.json(), response.status_code
+        Args:
+            url (str): The URL of the API endpoint.
+            rate_limit (int): The desired rate limit in requests per second (default: 1).
+            max_retries (int): The maximum number of retries if rate limit is exceeded (default: 3).
 
-    @limiter
+        Returns:
+            Tuple(dict, int): The JSON response from the API and the status code
+
+        """
+
+        retries = 0
+        start_time = time.time()
+
+        while True:
+            with requests.Session() as session:
+                session.mount("https://", self.adapter)
+                response = session.get(url=url, headers=self.headers)
+
+            if response.status_code == 200:
+                return response.json(), response.status_code
+
+            if response.status_code == 429:
+                if retries >= max_retries:
+                    raise Exception("Rate limit exceeded after multiple retries.")
+
+                retry_after = int(response.headers.get("Retry-After", 1))
+                logger.debug(retry_after)
+                print(retry_after)
+
+                elapsed_time = time.time() - start_time
+
+                # Calculate the time to sleep based on the rate limit and elapsed time
+                sleep_time = (
+                    max(0, (retries + 1) / rate_limit - elapsed_time) + retry_after + 1
+                )
+                time.sleep(sleep_time)
+                retries += 1
+                continue
+
+            raise Exception(f"Request failed with status code {response.status_code}.")
+
     def get_post(self, url: str, params=None):
         """TODO: move to Base class"""
         if not params:
