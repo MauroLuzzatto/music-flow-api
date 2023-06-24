@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
-from app.core.song_request_form import SongRequestForm
+from app.utils.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app
 
 base_path = Path(path_app).absolute()
@@ -53,7 +53,6 @@ async def post_form(request: Request):
         return templates.TemplateResponse("prediction.html", form.__dict__)
 
     if form.is_valid():
-
         header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # type: ignore
         prediction = output.dict()
 
