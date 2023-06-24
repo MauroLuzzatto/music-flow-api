@@ -29,6 +29,7 @@ def get_formatted_features(data: dict, is_flattened: Optional[bool] = True) -> d
         if key in features:
             del features[key]
 
+    features["metadata"] = data.get("metadata", {})
     return features
 
 
@@ -71,7 +72,6 @@ def extract_features(data: dict) -> dict:
     features["track"] = track_dict
     features["album"] = album_dict
     features["audio_features"] = data["audio_features"]
-    features["metadata"] = data.get("metadata", {})
 
     if settings.INCLUDE_AUDIO_ANALYSIS_DATASET and "audio_analysis" in data:
         features["audio_analysis"] = data["audio_analysis"]

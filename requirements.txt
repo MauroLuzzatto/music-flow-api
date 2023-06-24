@@ -6,7 +6,7 @@ fastapi
 jinja2
 mangum
 uvicorn
-xgboost
+xgboost==1.6.1
 scikit-learn
 loguru
 pytest

@@ -1,4 +1,5 @@
 from pydantic import BaseSettings
+import logging
 
 # add all the paths
 
@@ -17,10 +18,11 @@ class ModelSettings(BaseSettings):
 class Settings(BaseSettings):
     NUMBER_OF_KAGGLE_DATASET_TRACKS: int = 32_000
     INCLUDE_AUDIO_ANALYSIS_DATASET: bool = False
-    INCLUDE_AUDIO_ANALYSIS_API: bool = True
+    INCLUDE_AUDIO_ANALYSIS_API: bool = False
     API_MODE: bool = True
     # model registry s3 bucket name
     BUCKET_NAME: str = "musicflow-registry-398212703914"
+    LOGGING_LEVEL = logging.DEBUG
 
 
 model_settings = ModelSettings()

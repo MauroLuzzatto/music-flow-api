@@ -44,49 +44,61 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /
+            Path: /info
             Method: get
         Health:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /health
+            Path: /api/health
             Method: get
         Features:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /features
+            Path: /api/features
             Method: get
         RawFeatures:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /raw_features
+            Path: /api/raw_features
             Method: get
         Prediction:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /prediction
+            Path: /api/prediction
+            Method: get
+        APIDocumentation:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref MusicFlowAPI
+            Path: /api
+            Method: get
+        Documentation:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref MusicFlowAPI
+            Path: /docs
             Method: get
         FormGet:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /form
+            Path: /
             Method: get
         FormPost:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /form
+            Path: /
             Method: post
         About:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /form/about
+            Path: /about
             Method: get
 
     Metadata:

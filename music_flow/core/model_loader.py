@@ -9,6 +9,8 @@ from music_flow.core.model_registry import ModelRegistry
 from music_flow.core.utils import path_results, read_json
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(settings.LOGGING_LEVEL)
 
 
 class ModelLoader(object):
