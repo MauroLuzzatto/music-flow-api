@@ -4,7 +4,7 @@ from pprint import pprint
 
 import pandas as pd
 
-from music_flow.core.features.format_features import get_features
+from music_flow.core.features.get_formatted_features import get_formatted_features
 from music_flow.core.utils import (
     path_data,
     path_features,
@@ -57,7 +57,7 @@ def create_audio_features_dataset():
             os.remove(path_file)
             continue
 
-        features = get_features(data, track_name, artist_name, hash)
+        features = get_formatted_features(data, track_name, artist_name, hash)
 
         if not features:
             count_failing_tracks += 1

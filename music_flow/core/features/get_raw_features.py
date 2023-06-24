@@ -11,33 +11,49 @@ logger = logging.getLogger(__name__)
 spotify_api = SpotifyAPI()
 # TODO: allow for batch downloading of api requests
 
+
 @dataclass
 class Endpoint:
     """Class for defintion the API endpoints that called."""
 
     name: str
     func: Callable
-    descripton: str
+    description: str
 
 
 def get_song_data_metadata(response: dict) -> dict:
     """get the song data from the spotify api for a given track"""
+
+    metadata = {}
     try:
         song = response["name"]
         album = response["album"]["name"]
-        artists_dict = response["album"]["artists"]
-        artists = [artist["name"] for artist in artists_dict]
+        artists = [artist["name"] for artist in response["album"]["artists"]]
+        metadata.update({"song": song, "artist": artists, "album": album})
     except (IndexError, KeyError) as e:
         print(f"Error: could not get the metadata - {e}")
-        return {}
-    metadata = {"song": song, "artist": artists, "album": album}
+        logger.debug("Failed to extract metadata from Spotify API.")
     return metadata
+
+
+def get_track_id(track_name: str, artist_name: str) -> Tuple[Optional[str], int]:
+    """get the track_id from the Spotify API for a given track"""
+    url = spotify_api.search_track_url(track_name, artist_name)
+    response, status_code = spotify_api.get_request(url)
+    logger.info(f"status_code: {status_code}")
+    try:
+        track_id = response["tracks"]["items"][0]["id"]
+    except (IndexError, KeyError):
+        track_id = None
+        logger.debug("Failed to get track_id from Spotify API.")
+    return track_id, status_code
 
 
 def get_raw_features(
     track_name: str, artist_name: str, track_id: Optional[str] = None
 ) -> Tuple[dict, int]:
     """get the features from the Spotify API for a given track"""
+    # TODO: refactor this function
 
     data = {
         "track_name": track_name,
@@ -45,16 +61,8 @@ def get_raw_features(
     }
 
     if not track_id:
-        url = spotify_api.search_track_url(track_name, artist_name)
-        response, status_code = spotify_api.get_request(url)
-        logger.info(f"status_code: {status_code}")
-        try:
-            track_id = response["tracks"]["items"][0]["id"]
-            failed = False
-        except (IndexError, KeyError):
-            failed = True
-
-        if status_code != 200 or failed:
+        track_id, status_code = get_track_id(track_name, artist_name)
+        if not track_id:
             data["status"] = "failed"
             data["failure_type"] = "search_track_url"
             data["description"] = "Failed to fetched track_id from Spotfiy API."
@@ -64,38 +72,41 @@ def get_raw_features(
         Endpoint(
             name="audio_features",
             func=spotify_api.get_audio_features,
-            descripton=(
+            description=(
                 "Failed to fetched data from Spotify API audio features endpoint."
             ),
         ),
         Endpoint(
             name="track",
             func=spotify_api.get_track,
-            descripton="Failed to fetched data from Sptofiy API track endpoint.",
+            description="Failed to fetched data from Sptofiy API track endpoint.",
+        ),
+        Endpoint(
+            name="audio_analysis",
+            func=spotify_api.get_audio_analysis,
+            description=(
+                "Failed to fetched data from Spotify API audio analysis endpoint."
+            ),
         ),
     ]
 
-    if settings.INCLUDE_AUDIO_ANALYSIS_API:
+    if not settings.INCLUDE_AUDIO_ANALYSIS_API:
+        endpoints = [
+            endpoint for endpoint in endpoints if endpoint.name != "audio_analysis"
+        ]
+    else:
         logger.info("Including audio analysis")
-        endpoints.append(
-            Endpoint(
-                name="audio_analysis",
-                func=spotify_api.get_audio_analysis,
-                descripton=(
-                    "Failed to fetched data from Spotify API audio analysis endpoint."
-                ),
-            ),
-        )
+
     for endpoint in endpoints:
         name = endpoint.name
         response, status_code = endpoint.func(track_id)
-        logger.info(f"endpoint: {endpoint.name} - status_code: {status_code}")
+        logger.info(f"endpoint: {endpoint.name}, status_code: {status_code}")
         if status_code == 200:
             data[name] = response
         else:
             data["status"] = "failed"
             data["failure_type"] = name
-            data["description"] = endpoint.descripton
+            data["description"] = endpoint.description
             return data, status_code
 
     data["status"] = "success"
