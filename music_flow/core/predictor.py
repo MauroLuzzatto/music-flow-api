@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 import pandas as pd
-
+from music_flow.config.core import settings
 from music_flow.core.features.get_formatted_features import get_formatted_features
 from music_flow.core.features.get_raw_features import get_raw_features
 from music_flow.core.features.preprocessing import (
@@ -12,6 +12,8 @@ from music_flow.core.features.preprocessing import (
 from music_flow.core.model_loader import ModelLoader
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(settings.LOGGING_LEVEL)
 
 
 class Predictor(object):

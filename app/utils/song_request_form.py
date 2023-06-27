@@ -16,7 +16,6 @@ class SongRequestForm:
         self.artist = form.get("artist")  # type: ignore
 
     def is_valid(self):
-
         if not self.song or self.number_of_tokens(self.song) > 10:
             self.errors.append("A valid song is required")
 

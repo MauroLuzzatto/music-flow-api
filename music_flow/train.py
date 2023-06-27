@@ -7,7 +7,7 @@ from music_flow.__init__ import __version__ as model_version
 from music_flow.config.core import settings
 from music_flow.core.features.preprocessing import feature_preprocessing
 from music_flow.core.model_registry import ModelRegistry
-from music_flow.core.utils import path, path_dataset, path_results
+from music_flow.core.utils import path_dataset, path_results
 from music_flow.model.Training import Training
 from music_flow.dataset.config import dataset_settings
 
@@ -66,15 +66,6 @@ print(type(X))
 
 estimator = XGBRegressor()
 
-trainer = Training(
-    estimator=estimator,
-    X=X,
-    y=y,
-    model_version=model_version,
-    path_model=path_results,
-)
-
-
 param_distributions = {
     "learning_rate": [0.001, 0.01, 0.1, 0.25],
     "max_depth": [3, 5, 7, 9, 11, 13, 15, 18],
@@ -93,6 +84,15 @@ cv_settings = {
     "n_jobs": -1,
     "verbose": 3,
 }
+
+
+trainer = Training(
+    estimator=estimator,
+    X=X,
+    y=y,
+    model_version=model_version,
+    path_model=path_results,
+)
 
 trainer.train(param_distributions, cv_settings)
 

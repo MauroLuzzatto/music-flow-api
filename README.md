@@ -13,10 +13,10 @@ The MusicFlow API is built using the FastAPI framework, which makes it fast, eas
 The MusicFlow API provides the following endpoints:
 
 - `musicflow.link/` - The root page of the MusicFlow API.
-- `musicflow.link/health` - Returns the health status of the API.
-- `musicflow.link/raw_features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song using the Spotify API.
-- `musicflow.link/features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song.
-- `musicflow.link/prediction/?song={song}&artist={artist}` - Predicts the number of streams for a given song based on the Spotify audio features and track metadata.
+- `musicflow.link/api/health` - Returns the health status of the API.
+- `musicflow.link/api/raw_features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song using the Spotify API.
+- `musicflow.link/api/features/?song={song}&artist={artist}` - Returns the unprocessed audio features of a song.
+- `musicflow.link/api/prediction/?song={song}&artist={artist}` - Predicts the number of streams for a given song based on the Spotify audio features and track metadata.
 
 
 ## Examples
@@ -34,7 +34,7 @@ The MusicFlow API provides the following endpoints:
 
 Let's predict the number of streams for "The Less I know the better" from "Tame Impala":
 
-[https://musicflow.link/prediction/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/api/prediction/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/api/prediction/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
 
 Response:
@@ -59,7 +59,7 @@ Response:
 
 ### `/features`
 
-[https://musicflow.link/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
+[https://musicflow.link/api/features/?song=The Less I know the better&artist=Tame Impala](https://musicflow.link/api/features/?song=The%20Less%20I%20know%20the%20better&artist=Tame%20Impala)
 
 
 Response:

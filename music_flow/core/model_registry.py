@@ -6,7 +6,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 from music_flow.config.core import settings
-from music_flow.core.utils import path_registry, path_results
+from music_flow.core.utils import path_results
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -110,7 +110,7 @@ class ModelRegistry:
 if __name__ == "__main__":
     registry = ModelRegistry(
         bucket_name=settings.BUCKET_NAME,
-        path_registry=f"/home/maurol/track-recommender/tmp",
+        path_registry="/home/maurol/track-recommender/tmp",
     )
     folders = os.listdir(path_results)
     folder_name = "2023-03-24--22-58-57"

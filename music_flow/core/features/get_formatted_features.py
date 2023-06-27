@@ -31,6 +31,7 @@ def get_formatted_features(data: dict, is_flattened: Optional[bool] = True) -> d
         if key in features:
             del features[key]
 
+    features["metadata"] = data.get("metadata", {})
     return features
 
 
