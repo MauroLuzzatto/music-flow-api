@@ -14,6 +14,7 @@ COPY ./main.py ./main.py
 # COPY ./results/ ./results/
 
 RUN mkdir -v -p ./results/
+RUN chmod -R o+rX .
 
 # Run the FastAPI application
 CMD ["main.handler"]

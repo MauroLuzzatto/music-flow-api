@@ -195,6 +195,7 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
 
     raw_features = await get_raw_features_api(song, artist)
     features = get_formatted_features(data=raw_features, is_flattened=True)
+    logger.debug(f"features: {features}")
 
     if not features:
         status_code = 500
@@ -206,11 +207,12 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         }
         raise HTTPException(status_code=status_code, detail=detail)
 
-    metadata = features["metadata"]
-    logger.debug(metadata)
+    metadata = features.get("metadata")
+    logger.debug(f"metadata: {metadata}")
     del features["metadata"]
     try:
         prediction = ml_model["predict"](features)
+        logger.debug(f"prediction: {prediction}")
     except Exception as e:
         logging.debug(e)
         status_code = 500
