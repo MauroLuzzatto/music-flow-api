@@ -1,10 +1,15 @@
 from pathlib import Path
+import logging
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
 from app.utils.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 base_path = Path(path_app).absolute()
 templates = Jinja2Templates(directory=str(base_path / "templates"))
@@ -38,6 +43,7 @@ async def post_form(request: Request):
 
     form = SongRequestForm(request)
     await form.load_data()
+    logger.debug(f"form: {form.__dict__}")
 
     from main import get_prediction_api
 

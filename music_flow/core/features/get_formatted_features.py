@@ -24,6 +24,8 @@ def get_formatted_features(data: dict, is_flattened: Optional[bool] = True) -> d
     if is_flattened:
         features = flatten_dict(features)
 
+    features["metadata"] = data.get("metadata", {})
+
     exclude_keys = ["id_hash", "type", "uri", "track_href", "analysis_url"]
     for key in exclude_keys:
         if key in features:
