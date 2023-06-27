@@ -8,22 +8,18 @@ client = TestClient(app)
 
 def test_read_main():
     response = client.get("/")
-    print(response.json())
     assert response.status_code == 200
-    assert response.json() == {
-        "message": "Welcome to the music flow API! Here is an example: https://musicflow.link/prediction/?song=sun&artist=caribou"
-    }
 
 
 def test_read_health():
-    response = client.get("/health")
+    response = client.get("/api/health")
     assert response.status_code == 200
 
 
 def test_read_features():
     song = "The Less I Know The Better"
     artist = "Tame Impala"
-    response = client.get(f"/features/?song={song}&artist={artist}")
+    response = client.get(f"/api/features/?song={song}&artist={artist}")
 
     pprint(response.json())
 
@@ -78,7 +74,7 @@ def test_read_features():
 def test_read_raw_features():
     song = "The Less I Know The Better"
     artist = "Tame Impala"
-    response = client.get(f"/raw_features/?song={song}&artist={artist}")
+    response = client.get(f"/api/raw_features/?song={song}&artist={artist}")
     assert response.status_code == 200
 
 
