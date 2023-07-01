@@ -7,9 +7,9 @@ import pandas as pd
 from music_flow.core.features.get_formatted_features import get_formatted_features
 from music_flow.core.utils import (
     path_data,
+    path_data_lake_success,
     path_features,
     read_json,
-    path_data_lake_success,
 )
 from music_flow.dataset.config import dataset_settings
 

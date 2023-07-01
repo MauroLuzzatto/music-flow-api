@@ -233,5 +233,6 @@ To set up an API with AWS SAM, follow these steps:
 Using lifespan event on APIRoute() instead in FastAPI() #9664
 https://github.com/tiangolo/fastapi/discussions/9664
 
-
+https://github.com/ipinfo/python
+https://github.com/shon/httpagentparser
 -->

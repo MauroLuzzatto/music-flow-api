@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import time
 
@@ -8,7 +9,6 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from music_flow.core.utils import path_env
-import logging
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
