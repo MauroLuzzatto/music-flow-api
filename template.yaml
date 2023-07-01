@@ -13,6 +13,20 @@ Globals:
 
 Resources:
 
+  MusicFlowS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: musicflow-data-store
+      AccessControl: Private
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+
   MusicFlowFunctionRole:
     Type: AWS::IAM::Role
     Properties:

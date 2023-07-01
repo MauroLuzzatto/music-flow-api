@@ -1,5 +1,6 @@
 import logging
 import os
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -10,18 +11,17 @@ from mangum import Mangum
 
 from app.__init__ import __version__ as api_version
 from app.config import settings
-from app.utils.response_messages import formating_failure, prediction_failure
-from app.utils.get_registry_path import setup
-
+from app.core.analytics import Analytics
+from app.core.aws import upload_json_to_s3
+from app.routers import api, root
 from app.schemas import Prediction
-from app.utils.response_formatter import (
-    map_score_to_emoji,
-)
+from app.utils.get_registry_path import setup
+from app.utils.response_formatter import map_score_to_emoji
+from app.utils.response_messages import get_exception_details
+from app.utils.runtime import get_is_lambda_runtime
+from music_flow import Predictor, get_formatted_features
 from music_flow.config.core import model_settings
 from music_flow.core.utils import path_app
-from music_flow import Predictor, get_formatted_features
-
-from app.routers import api, root
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -29,7 +29,10 @@ logger.setLevel(logging.DEBUG)
 
 ml_model = {}
 model_folder = model_settings.MODEL_FOLDER
-path_registry = setup()
+
+is_testing = False
+is_lambda_runtime = get_is_lambda_runtime()
+path_registry = setup(is_lambda_runtime)
 
 
 @asynccontextmanager
@@ -69,6 +72,9 @@ app = FastAPI(
     servers=[{"url": settings.ROOT_PATH}],
 )
 
+app.add_middleware(
+    Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
+)
 app.include_router(api.router)
 app.include_router(root.router)
 
@@ -104,12 +110,7 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
 
     if not features:
         status_code = 500
-        detail = {
-            "status": "failure",
-            "failure_type": formating_failure.failure_type,
-            "description": formating_failure.description,
-            "status_code": status_code,
-        }
+        detail = get_exception_details("formating_failure", status_code)
         raise HTTPException(status_code=status_code, detail=detail)
 
     metadata = features.get("metadata")
@@ -121,14 +122,8 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         logger.debug(f"prediction: {prediction}")
     except Exception as e:
         logging.debug(e)
-
         status_code = 500
-        detail = {
-            "status": "failure",
-            "failure_type": prediction_failure.failure_type,
-            "description": f"{prediction_failure.description}: error {e}",
-            "status_code": status_code,
-        }
+        detail = get_exception_details("prediction_failure", status_code)
         raise HTTPException(status_code=status_code, detail=detail)
 
     user_message = map_score_to_emoji(prediction)
@@ -137,11 +132,25 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         "song": song,
         "artist": artist,
         "prediction": round(prediction, 2),
-        "description": settings.PREDICTION_DESCRIPTION,
         "song_metadata": metadata,
+    }
+
+    if is_lambda_runtime or is_testing:
+        save_folder = (
+            settings.FOLDER_PREDICTIONS if not is_testing else "predictions_test"
+        )
+        name = str(uuid.uuid4())
+        upload_json_to_s3(
+            data_dict=data_response,
+            save_name=f"{save_folder}/{name}.json",
+        )
+
+    data_enrichted = {
+        "description": settings.PREDICTION_DESCRIPTION,
         "message": user_message,
         "preview_url": raw_features["track"]["preview_url"],
     }
+    data_response.update(data_enrichted)
     return Prediction(**data_response)
 
 

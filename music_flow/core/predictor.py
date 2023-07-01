@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 
 import pandas as pd
+
 from music_flow.config.core import settings
 from music_flow.core.features.get_formatted_features import get_formatted_features
 from music_flow.core.features.get_raw_features import get_raw_features

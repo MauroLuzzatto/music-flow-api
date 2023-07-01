@@ -1,5 +1,5 @@
-from pathlib import Path
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
@@ -14,19 +14,18 @@ logger.setLevel(logging.DEBUG)
 base_path = Path(path_app).absolute()
 templates = Jinja2Templates(directory=str(base_path / "templates"))
 
-
-song_not_found_error = "Song not found."
-generic_error = "OPS, Something went wrong. Please try again."
-failed_to_fetch_song_error = (
-    "Failed to fetch song. Please check for typos or try another one."
-)
+erros = {
+    "song_not_found": "Song not found.",
+    "generic_error": "OPS, Something went wrong. Please try again.",
+    "failed_to_fetch_song": "Failed to fetch song. Please check for typos or try another one.",
+}
 
 
 router = APIRouter(tags=["FORM"])
 
 
 @router.get("/")
-def get_form(request: Request):
+async def get_form(request: Request):
     return templates.TemplateResponse("prediction.html", {"request": request})
 
 
@@ -50,7 +49,7 @@ async def post_form(request: Request):
     try:
         output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
     except HTTPException:
-        form.errors.append(failed_to_fetch_song_error)
+        form.errors.append(erros["failed_to_fetch_song"])
         return templates.TemplateResponse("prediction.html", form.__dict__)
 
     if form.is_valid():
@@ -66,13 +65,13 @@ async def post_form(request: Request):
         try:
             return templates.TemplateResponse("success.html", payload)
         except Exception as e:
-            form.errors.append(generic_error)
-            print(e)
+            form.errors.append(erros["generic_error"])
+            logger.error(e)
             return templates.TemplateResponse("prediction.html", form.__dict__)
 
     return templates.TemplateResponse("prediction.html", form.__dict__)
 
 
 @router.get("/about/")
-async def about(request: Request):
+async def get_about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
