@@ -1,8 +1,13 @@
 .DS_Store
 .vscode/
 data/*
-!data/raw/example_data/*
+!data/raw/
+
+data/raw/*
+!data/raw/example_data/
+
 !data/README.md
+!data/__init__.py
 
 
 data_lake/*
