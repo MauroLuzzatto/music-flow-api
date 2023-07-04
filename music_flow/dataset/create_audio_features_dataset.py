@@ -35,9 +35,6 @@ def create_audio_features_dataset():
                 f"missing tracks: {count_missing_tracks} - failing tracks:"
                 f" {count_failing_tracks}"
             )
-
-        track_name = row["track_name"]
-        artist_name = row["artist_name"]
         hash = row["hash"]
         filename = f"{hash}.json"
 
@@ -48,16 +45,13 @@ def create_audio_features_dataset():
         path_file = os.path.join(path_data_lake_success, filename)
         data = read_json(path_file)
 
-        if (
-            data["status"] == "failed"
-            and not data["failure_reason"] == "audio_analysis"
-        ):
+        if data["status"] == "failed" and not data["failure_type"] == "audio_analysis":
             count_failing_tracks += 1
             pprint(data["track_name"])
             os.remove(path_file)
             continue
 
-        features = get_formatted_features(data, track_name, artist_name, hash)
+        features = get_formatted_features(data, hash)
 
         if not features:
             count_failing_tracks += 1

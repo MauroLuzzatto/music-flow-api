@@ -14,7 +14,7 @@ def create_dataset() -> pd.DataFrame:
     """Load target values and audio features and merge them into one dataset."""
 
     try:
-        previous_dataset = pd.read_csv(path_dataset, sep=";", index_col=0)
+        previous_dataset = pd.read_csv(path_dataset_file, sep=";", index_col=0)
         previous_rows = previous_dataset.shape[0]
     except FileNotFoundError:
         previous_rows = 0

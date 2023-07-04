@@ -36,12 +36,10 @@ path_data_lake = os.path.join(path, "data_lake")
 path_data_lake_success = os.path.join(path_data_lake, "success")
 path_data_lake_failed = os.path.join(path_data_lake, "failed")
 
-
 path_data = os.path.join(path, "data")
 path_features = os.path.join(path_data, "features")
 path_dataset = os.path.join(path_data, "dataset")
 path_raw = os.path.join(path_data, "raw")
-
 
 path_env = os.path.join(path, ".env")
 path_app = os.path.join(path, "app")

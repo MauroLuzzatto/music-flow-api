@@ -1,10 +1,4 @@
 import sys
-
-# sys.path.append("/Users/mauroluzzatto/Documents/python_scripts/track-recommender")
-
-
-print(sys.path)
-
 from music_flow.dataset.create_audio_features_dataset import (
     create_audio_features_dataset,
 )
