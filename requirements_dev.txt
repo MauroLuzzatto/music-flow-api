@@ -3,3 +3,4 @@ mlflow
 ruff
 black
 isort
+mypy

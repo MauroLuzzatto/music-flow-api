@@ -1,6 +1,10 @@
 .DS_Store
 .vscode/
 data/*
+!data/raw/example_data/*
+!data/README.md
+
+
 data_lake/*
 _archive/
 tmp/

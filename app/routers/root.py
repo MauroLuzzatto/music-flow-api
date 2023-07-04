@@ -25,12 +25,12 @@ router = APIRouter(tags=["FORM"])
 
 
 @router.get("/")
-async def get_form(request: Request):
+async def get_form(request: Request) -> Jinja2Templates:
     return templates.TemplateResponse("prediction.html", {"request": request})
 
 
 @router.post("/")
-async def post_form(request: Request):
+async def post_form(request: Request) -> Jinja2Templates:
     """_summary_
 
     Args:
@@ -73,5 +73,5 @@ async def post_form(request: Request):
 
 
 @router.get("/about/")
-async def get_about(request: Request):
+async def get_about(request: Request) -> Jinja2Templates:
     return templates.TemplateResponse("about.html", {"request": request})

@@ -15,7 +15,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-router = APIRouter(prefix="/api", tags=["API"])
+router: APIRouter = APIRouter(prefix="/api", tags=["API"])
 
 
 @router.get("/info")

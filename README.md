@@ -101,7 +101,14 @@ Response:
 }
 ```
 
+## Get Spotify API Access Client ID and Client Secret
 
+To access the Spotify API, you need to create a Spotify Developer account and obtain a Client ID and Client Secret. Follow these steps:
+
+- Go to the Spotify Developer Dashboard and log in with your Spotify account.
+- Click on "Create an app" and fill out the required information.
+- Once you have created the app, you will see your Client ID and Client Secret on the app dashboard.
+- Add them to your `env` file
 
 
 ## Model Features derived from the Spotify API

@@ -70,7 +70,7 @@ class SpotifyAPI(object):
                 session.mount("https://", self.adapter)
                 response = session.get(url=url, headers=self.headers)
 
-            if response.status_code == 200:
+            if response.status_code == 200 or response.status_code == 404:
                 return response.json(), response.status_code
 
             if response.status_code == 429:
@@ -90,6 +90,10 @@ class SpotifyAPI(object):
                 time.sleep(sleep_time)
                 retries += 1
                 continue
+
+            print(response.status_code)
+            print(response.json())
+            print(response.headers)
 
             raise Exception(f"Request failed with status code {response.status_code}.")
 
@@ -149,11 +153,10 @@ class SpotifyAPI(object):
     def clean_string(string):
         return (
             string.replace("'", "")
-            .replace("-", "")
+            .replace("-", " ")
             .replace("(", "")
             .replace(")", "")
             .replace("#", "")
-            .replace("-", "")
-            .replace("&", "")
+            .replace("&", " ")
             .replace("'", "")
         )
