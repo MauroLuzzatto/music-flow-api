@@ -1,3 +1,11 @@
+
+
+[![Supported versions](https://img.shields.io/pypi/pyversions/explainy.svg)](https://pypi.org/project/explainy)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+
+
+
 # MusicFlow API
 
 MusicFlow is an API that use the Spotify's API to predict the number of song streams using the Spotify audio features and track metadata.
@@ -23,11 +31,12 @@ The MusicFlow API provides the following endpoints:
 
 ### root
 
+
 [https://musicflow.link/](https://musicflow.link)
 
-```
-{"message":"Welcome to the music flow API! Here is an example: https://musicflow.link/prediction/?song=sun&artist=caribou"}
-```
+<p align="center">
+<img src="https://github.com/MauroLuzzatto/mlops-music-flow/raw/main/static/ui.png" width="200" height="200"/>
+
 
 
 ### `/prediction`
