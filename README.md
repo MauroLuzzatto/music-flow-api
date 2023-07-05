@@ -1,6 +1,5 @@
 
 
-[![Supported versions](https://img.shields.io/pypi/pyversions/explainy.svg)](https://pypi.org/project/explainy)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
@@ -35,9 +34,8 @@ The MusicFlow API provides the following endpoints:
 [https://musicflow.link/](https://musicflow.link)
 
 <p align="center">
-<img src="https://github.com/MauroLuzzatto/mlops-music-flow/raw/main/static/ui.png" width="200" height="200"/>
-
-
+<img src="https://github.com/MauroLuzzatto/mlops-music-flow/raw/main/static/ui.png" width="500" height="400"/>
+</p>
 
 ### `/prediction`
 
