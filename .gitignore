@@ -27,6 +27,8 @@ registry/
 .aws-sam/
 .ruff_cache/
 
+.bumpversion.cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
