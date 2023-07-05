@@ -13,19 +13,19 @@ Globals:
 
 Resources:
 
-  MusicFlowModelRegistry:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: musicflow-registry-398212703914
-      AccessControl: Private
-      CorsConfiguration:
-        CorsRules:
-          - AllowedOrigins:
-              - "*"
-            AllowedMethods:
-              - GET
-              - PUT
-              - POST
+  # MusicFlowModelRegistry:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: musicflow-registry-398212703914
+  #     AccessControl: Private
+  #     CorsConfiguration:
+  #       CorsRules:
+  #         - AllowedOrigins:
+  #             - "*"
+  #           AllowedMethods:
+  #             - GET
+  #             - PUT
+  #             - POST
 
   MusicFlowS3Bucket:
     Type: AWS::S3::Bucket
