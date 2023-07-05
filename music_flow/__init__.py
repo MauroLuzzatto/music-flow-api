@@ -1,4 +1,7 @@
-"""Top-level package for track_recommender."""
+"""
+Top-level package for track_recommender
+.. include:: ../README.md
+"""
 
 __author__ = """Mauro Luzzatto"""
 __email__ = "mauroluzzatto@hotmail.com"

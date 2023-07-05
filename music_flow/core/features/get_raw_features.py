@@ -43,7 +43,7 @@ def get_track_id(track_name: str, artist_name: str) -> Tuple[Optional[str], int]
     logger.info(f"status_code: {status_code}")
     try:
         track_id = response["tracks"]["items"][0]["id"]
-    except (IndexError, KeyError):
+    except (IndexError, KeyError, TypeError):
         track_id = None
         logger.debug("Failed to get track_id from Spotify API.")
     return track_id, status_code
@@ -113,6 +113,7 @@ def get_raw_features(
     data["failure_type"] = None  # type: ignore
     data["description"] = "Raw audio features from Spotify API fetched successfully."
     data["metadata"] = get_song_data_metadata(data["track"])  # type: ignore
+    data["track_id"] = track_id
     return data, status_code  # type: ignore
 
 

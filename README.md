@@ -225,6 +225,11 @@ To set up an API with AWS SAM, follow these steps:
 
 
 <!--
+
+TODO: make info graphics of the application
+- use excalidraw
+
+
 ## Plan
 - request streaming history from spotify
 - find some random tracks (e.g kaggle datasets)

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 from app.utils.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app
@@ -24,13 +25,13 @@ erros = {
 router = APIRouter(tags=["FORM"])
 
 
-@router.get("/")
-async def get_form(request: Request) -> Jinja2Templates:
+@router.get("/", response_class=HTMLResponse)
+async def get_form(request: Request):
     return templates.TemplateResponse("prediction.html", {"request": request})
 
 
-@router.post("/")
-async def post_form(request: Request) -> Jinja2Templates:
+@router.post("/", response_class=HTMLResponse)
+async def post_form(request: Request):
     """_summary_
 
     Args:
@@ -72,6 +73,6 @@ async def post_form(request: Request) -> Jinja2Templates:
     return templates.TemplateResponse("prediction.html", form.__dict__)
 
 
-@router.get("/about/")
-async def get_about(request: Request) -> Jinja2Templates:
+@router.get("/about/", response_class=HTMLResponse)
+async def get_about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
