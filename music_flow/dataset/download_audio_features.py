@@ -43,7 +43,6 @@ def download_audio_features(is_retry_failed_files: bool = False) -> bool:
 
     success = 0.000001
     failed = 0
-
     for index, row in df.iterrows():
         if index % 1_000 == 0:  # type: ignore
             print(f"{index}/{len(df)}")

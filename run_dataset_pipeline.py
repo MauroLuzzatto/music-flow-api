@@ -1,4 +1,3 @@
-import sys
 from music_flow.dataset.create_audio_features_dataset import (
     create_audio_features_dataset,
 )
@@ -11,12 +10,11 @@ from music_flow.dataset.read_streams import read_streams
 
 def main():
     setup_folders()
-    _ = read_streams()
-    _ = create_target_values()
-    # shall these functions be merge?
+    read_streams()
+    create_target_values()
     download_audio_features()
-    _ = create_audio_features_dataset()
-    _ = create_dataset()
+    create_audio_features_dataset()
+    create_dataset()
 
 
 if __name__ == "__main__":

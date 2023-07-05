@@ -4,8 +4,18 @@
 black: ## black formatting
 	black .
 
+
+test:
+	python -m pytest
+
 mlflow:
 	mlflow ui
+
+docs:
+	pdoc music_flow -o ./docs
+
+lint:
+	ruff .
 
 clean:
 	pre-commit run --all-files
