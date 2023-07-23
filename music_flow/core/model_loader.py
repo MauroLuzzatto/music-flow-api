@@ -3,7 +3,7 @@ import os
 import pickle
 from typing import Optional
 
-from music_flow.config.core import model_settings, settings
+from music_flow.config import model_settings, settings
 from music_flow.core.model_finder import get_model_folder
 from music_flow.core.model_registry import ModelRegistry
 from music_flow.core.utils import path_results, read_json

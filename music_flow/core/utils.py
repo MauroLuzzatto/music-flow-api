@@ -3,7 +3,7 @@ import json
 import os
 
 
-def create_folder(path):
+def create_folder(path: str) -> str:
     """
     create folder, if it doesn't already exist
     """
@@ -16,7 +16,7 @@ def create_folder(path):
     return path
 
 
-def get_hash(name):
+def get_hash(name: str) -> str:
     return hashlib.sha256(name.encode("utf-8")).hexdigest()
 
 

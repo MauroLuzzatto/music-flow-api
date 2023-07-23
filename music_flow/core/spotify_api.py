@@ -7,6 +7,7 @@ import requests
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from requests.utils import requote_uri
 
 from music_flow.core.utils import path_env
 
@@ -28,7 +29,7 @@ status_codes = []
 class SpotifyAPI(object):
     def __init__(self):
         self.headers = self.get_headers()
-        retry = Retry(connect=3, backoff_factor=0.5)
+        retry = Retry(connect=1, backoff_factor=0.5)
         self.adapter = HTTPAdapter(max_retries=retry)
 
     def get_headers(self):
@@ -48,7 +49,7 @@ class SpotifyAPI(object):
         headers = {"Authorization": f"Bearer {token}"}
         return headers
 
-    def get_request(self, url: str, max_retries=3, rate_limit=1):
+    def get_request(self, url: str, max_retries: int = 3, rate_limit: int = 1):
         """TODO: move to Base class
         Fetches data from the specified URL while respecting the rate limit.
 
@@ -73,13 +74,15 @@ class SpotifyAPI(object):
             if response.status_code == 200 or response.status_code == 404:
                 return response.json(), response.status_code
 
-            if response.status_code == 429:
+            if response.status_code == 429 or response.status_code == 503:
                 if retries >= max_retries:
                     raise Exception("Rate limit exceeded after multiple retries.")
 
+                print(response)
+                print("retry")
                 retry_after = int(response.headers.get("Retry-After", 1))
                 logger.debug(retry_after)
-                print(retry_after)
+                print("retry_after", retry_after)
 
                 elapsed_time = time.time() - start_time
 
@@ -87,13 +90,13 @@ class SpotifyAPI(object):
                 sleep_time = (
                     max(0, (retries + 1) / rate_limit - elapsed_time) + retry_after + 1
                 )
-                time.sleep(sleep_time)
+                time.sleep("sleep_time", sleep_time / 60)
                 retries += 1
                 continue
 
             print(response.status_code)
-            print(response.json())
             print(response.headers)
+            print(response.json())
 
             raise Exception(f"Request failed with status code {response.status_code}.")
 
@@ -107,7 +110,7 @@ class SpotifyAPI(object):
             response = session.post(url=url, headers=self.headers, json=params)
         return response.json(), response.status_code
 
-    def get_playlists(self, user_id):
+    def get_playlists(self, user_id: str):
         # Second step – make a request tox any of the playlists endpoint. Make sure to set a valid value for <spotify_user>.
         url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
         response, status_code = self.get_request(url)
@@ -151,12 +154,15 @@ class SpotifyAPI(object):
 
     @staticmethod
     def clean_string(string):
-        return (
-            string.replace("'", "")
-            .replace("-", " ")
-            .replace("(", "")
-            .replace(")", "")
-            .replace("#", "")
-            .replace("&", " ")
-            .replace("'", "")
-        )
+        return requote_uri(string)
+
+    # (
+    #     string.replace("'", "")
+    #     .replace("-", " ")
+    #     .replace("(", "")
+    #     .replace(")", "")
+    #     .replace("#", "")
+    #     .replace("&", " ")
+    #     .replace("'", "")
+    #     .replace("5", "")
+    # )

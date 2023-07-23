@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from music_flow.config.core import model_settings
+from music_flow.config import model_settings
 
 key_mapping = {
     0: "C",

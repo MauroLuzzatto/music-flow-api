@@ -12,7 +12,7 @@ from music_flow.core.utils import (
     path_data_lake_failed,
     path_data_lake_success,
 )
-from music_flow.dataset.config import dataset_settings
+from music_flow.config import dataset_settings
 
 logger = logging.getLogger(__name__)
 
