@@ -76,6 +76,7 @@ class Training(object):
         self.X_test, self.y_test = dataset.get_test_data()
         data_log = dataset.get_data_log()
         self.column_names = dataset.get_column_names()
+        self.data_version = dataset.data_version
 
         logger = Logger()
         self.logger = logger(self.path_logs, stage="training")
@@ -240,7 +241,7 @@ class Training(object):
 
         """
         self.final_model = self.estimator.set_params(**self.best_params)
-        self.final_model.fit(self.X, self.y)  # type: ignore
+        self.final_model.fit(self.dataset.X, self.dataset.y)  # type: ignore
 
     def save_metadata(self, score_dict) -> None:
         """
@@ -314,6 +315,7 @@ class Training(object):
             y_pred=self.y_pred_reversed,
         )
         score_dict = evaluator.evaluate()
+
         evaluator.visualize(path_save=self.path_plots)
 
         ###### evaluate before training on all data

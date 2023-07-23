@@ -155,14 +155,3 @@ class SpotifyAPI(object):
     @staticmethod
     def clean_string(string):
         return requote_uri(string)
-
-    # (
-    #     string.replace("'", "")
-    #     .replace("-", " ")
-    #     .replace("(", "")
-    #     .replace(")", "")
-    #     .replace("#", "")
-    #     .replace("&", " ")
-    #     .replace("'", "")
-    #     .replace("5", "")
-    # )

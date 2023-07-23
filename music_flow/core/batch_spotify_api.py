@@ -5,7 +5,7 @@ class BatchSpotifyAPI(SpotifyAPI):
     def __init__(self):
         super().__init__()
 
-    def get_multiple_audio_features(self, ids: list[str]):
+    def get_batch_audio_features(self, ids: list[str]):
         if len(ids) > 100:
             raise Exception("too many values requested")
 
@@ -14,7 +14,7 @@ class BatchSpotifyAPI(SpotifyAPI):
         response, status_code = self.get_request(url)
         return response, status_code
 
-    def get_multiple_tracks(self, ids: list[str]):
+    def get_batch_tracks(self, ids: list[str]):
         if len(ids) > 50:
             raise Exception("too many values requested")
 
@@ -24,7 +24,7 @@ class BatchSpotifyAPI(SpotifyAPI):
         return response, status_code
 
     @staticmethod
-    def convert_multi_response_to_dict(responses):
+    def convert_batch_response_to_dict(responses):
         try:
             output_dict = {audio["id"]: audio for audio in responses}
         except:
@@ -35,9 +35,9 @@ class BatchSpotifyAPI(SpotifyAPI):
 if __name__ == "__main__":
     from pprint import pprint
 
-    multi = MultiSpotifyAPI()
+    multi = BatchSpotifyAPI()
     ids = ["1qRpqv3I1t1kRol36KAfEi", "4knd2gQyr2DTRLfJDHcyMS"]
-    response, status_code = multi.get_multiple_audio_features(ids)
+    response, status_code = multi.get_batch_audio_features(ids)
     pprint(response)
 
     response, status_code = multi.get_multiple_tracks(ids)

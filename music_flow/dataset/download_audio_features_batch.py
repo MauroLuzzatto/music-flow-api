@@ -48,7 +48,7 @@ def download_audio_features_batch(is_retry_failed_files: bool = False) -> bool:
 
     start_time = time.time()
 
-    multi = MultiSpotifyAPI()
+    batch = BatchSpotifyAPI()
     data_collection = {}
 
     for index, row in df.iterrows():
@@ -94,15 +94,12 @@ def download_audio_features_batch(is_retry_failed_files: bool = False) -> bool:
             continue
 
         ids = list(data_collection.keys())
-        response, status_code = multi.get_multiple_audio_features(ids)
-        audio_features_dict = multi.convert_multi_response_to_dict(
+        response, _ = batch.get_batch_audio_features(ids)
+        audio_features_dict = batch.convert_batch_response_to_dict(
             response["audio_features"]
         )
-        response, status_code = multi.get_multiple_tracks(ids)
-        tracks_dict = multi.convert_multi_response_to_dict(response["tracks"])
-
-        # if not tracks_dict or not audio_features_dict:
-        #     continue
+        response, _ = batch.get_batch_tracks(ids)
+        tracks_dict = batch.convert_batch_response_to_dict(response["tracks"])
 
         for track_id, data in data_collection.items():
             try:

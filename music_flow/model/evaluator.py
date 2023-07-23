@@ -67,6 +67,8 @@ class Evaluator:
         plt.xlabel("predictions")
         plt.ylabel("test values")
         plt.show(block=False)
+        plt.tight_layout()
+
         if path_save:
             fig.savefig(os.path.join(path_save, image_name))
 
@@ -76,6 +78,8 @@ class Evaluator:
         plt.ylabel("residuals")
         plt.xlabel("predictions")
         plt.show(block=False)
+        plt.tight_layout()
+
         if path_save:
             fig.savefig(os.path.join(path_save, image_name))
 
@@ -84,5 +88,6 @@ class Evaluator:
         plt.hist(residuals, alpha=0.5)
         plt.ylabel("residuals")
         plt.show(block=False)
+        plt.tight_layout()
         if path_save:
             fig.savefig(os.path.join(path_save, image_name))

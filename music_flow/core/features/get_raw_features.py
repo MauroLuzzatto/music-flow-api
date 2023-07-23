@@ -11,7 +11,6 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 
 spotify_api = SpotifyAPI()
-# TODO: allow for batch downloading of api requests
 
 
 @dataclass
@@ -102,7 +101,7 @@ def get_raw_features(
     for endpoint in endpoints:
         name = endpoint.name
         response, status_code = endpoint.func(track_id)
-        logger.info(f"endpoint: {endpoint.name}, status_code: {status_code}")
+        logger.debug(f"endpoint: {endpoint.name}, status_code: {status_code}")
         if status_code == 200:
             data[name] = response
         else:

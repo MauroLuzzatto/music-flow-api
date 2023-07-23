@@ -82,11 +82,11 @@ def feature_preprocessing(dataset: pd.DataFrame):
 
     # transformation step
     for column in [
-        "plays",
         "speechiness",
         "acousticness",
         "instrumentalness",
         "liveness",
+        "plays",
     ]:
         dataset[column] = dataset[column].apply(np.log1p)
 

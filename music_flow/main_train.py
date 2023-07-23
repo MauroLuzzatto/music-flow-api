@@ -1,5 +1,5 @@
 import os
-
+import numpy as np
 import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
@@ -34,7 +34,6 @@ cv_settings = {
 
 
 path_dataset_file = os.path.join(path_dataset, dataset_settings.FINAL_DATASET)
-
 dataset = pd.read_csv(path_dataset_file, sep=";", index_col=0)  # type: ignore
 dataset = feature_preprocessing(dataset)
 
@@ -77,9 +76,11 @@ columns_scope = [
     "Unknown",
 ]
 
-
+dataset.sample(frac=1, random_state=42)
 X: pd.DataFrame = dataset[columns_scope]
 y: pd.Series = dataset[target_column]
+
+# y = np.log1p(y)
 
 print(X.describe().T)
 print(type(X))
@@ -100,5 +101,7 @@ trainer = Training(
 
 trainer.train(param_distributions, cv_settings)
 
-registry = ModelRegistry(bucket_name=settings.BUCKET_NAME)
-registry.upload_folder(trainer.folder_name)
+upload = False
+if upload:
+    registry = ModelRegistry(bucket_name=settings.BUCKET_NAME)
+    registry.upload_folder(trainer.folder_name)
