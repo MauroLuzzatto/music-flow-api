@@ -2,7 +2,7 @@ python-multipart
 python-dotenv
 pandas
 requests
-fastapi=0.96.0
+fastapi==0.96.0
 jinja2
 mangum
 uvicorn
