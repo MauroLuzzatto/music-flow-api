@@ -19,7 +19,7 @@ from app.utils.response_formatter import map_score_to_emoji
 from app.utils.response_messages import get_exception_details
 from app.utils.runtime import get_is_lambda_runtime
 from music_flow import Predictor, get_formatted_features
-from music_flow.config.core import model_settings
+from music_flow.config import model_settings
 from music_flow.core.utils import path_app
 
 logger = logging.getLogger(__name__)
@@ -71,19 +71,15 @@ app = FastAPI(
     servers=[{"url": settings.ROOT_PATH}],
 )
 
+path_static = str(Path(path_app).absolute() / "static")
+app.mount("/static", StaticFiles(directory=path_static), name="static")
+
+
 app.add_middleware(
     Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
 )
 app.include_router(api.router)
 app.include_router(root.router)
-
-
-base_path = Path(path_app).absolute()
-path_static = str(base_path / "static")
-logger.debug(f"Base path: {base_path}")
-logger.debug(f"static: {path_static}")
-
-app.mount("/static", StaticFiles(directory=path_static), name="static")
 
 
 @app.get("/api/prediction/", tags=["API"])
@@ -144,12 +140,12 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
             save_name=f"{save_folder}/{name}.json",
         )
 
-    data_enrichted = {
+    data_enriched = {
         "description": settings.PREDICTION_DESCRIPTION,
         "message": user_message,
         "preview_url": raw_features["track"]["preview_url"],
     }
-    data_response.update(data_enrichted)
+    data_response.update(data_enriched)
     return Prediction(**data_response)
 
 
