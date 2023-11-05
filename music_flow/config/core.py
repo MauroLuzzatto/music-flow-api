@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     API_MODE: bool = True
     # model registry s3 bucket name
     BUCKET_NAME: str = "musicflow-registry-398212703914"
-    LOGGING_LEVEL = logging.DEBUG
+    LOGGING_LEVEL: int = logging.DEBUG
 
 
 model_settings = ModelSettings()

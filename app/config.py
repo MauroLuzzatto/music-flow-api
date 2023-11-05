@@ -26,10 +26,10 @@ class Settings(BaseSettings):
 
     GITHUB_URL: str = "https://github.com/MauroLuzzatto/music-flow"
 
-    LOGGING_LEVEL = logging.DEBUG
-    BUCKET_NAME = "musicflow-data-store"
-    FOLDER_PREDICTIONS = "predictions"
-    FOLDER_ACTIVITY = "activity"
+    LOGGING_LEVEL: int = logging.DEBUG
+    BUCKET_NAME: str = "musicflow-data-store"
+    FOLDER_PREDICTIONS: str = "predictions"
+    FOLDER_ACTIVITY: str = "activity"
 
     class Config:
         case_sensitive = True
