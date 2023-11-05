@@ -71,19 +71,14 @@ app = FastAPI(
     servers=[{"url": settings.ROOT_PATH}],
 )
 
+path_static = str(Path(path_app).absolute() / "static")
+app.mount("/static", StaticFiles(directory=path_static), name="static")
+
 app.add_middleware(
     Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
 )
 app.include_router(api.router)
 app.include_router(root.router)
-
-
-base_path = Path(path_app).absolute()
-path_static = str(base_path / "static")
-logger.debug(f"Base path: {base_path}")
-logger.debug(f"static: {path_static}")
-
-app.mount("/static", StaticFiles(directory=path_static), name="static")
 
 
 @app.get("/api/prediction/", tags=["API"])
