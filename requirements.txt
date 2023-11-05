@@ -12,3 +12,4 @@ loguru
 pytest
 httpx
 boto3
+pydantic-settings
