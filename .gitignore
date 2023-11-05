@@ -12,6 +12,7 @@ data/raw/*
 
 docs/*
 
+data_lake_v2/*
 data_lake/*
 _archive/
 tmp/
