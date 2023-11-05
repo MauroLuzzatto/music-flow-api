@@ -1,6 +1,6 @@
 import logging
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 # add all the paths
 
