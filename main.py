@@ -74,7 +74,6 @@ app = FastAPI(
 path_static = str(Path(path_app).absolute() / "static")
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 
-
 app.add_middleware(
     Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
 )

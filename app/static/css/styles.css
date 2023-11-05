@@ -12,9 +12,6 @@ body {
     padding: 0;
     font-weight: 330;
     background-color:#FCEDDA;
-    /* Peach , Burnt Orange #EE4E34 */
-
-
 }
 
 html {
@@ -82,36 +79,6 @@ img {
     object-fit: cover;
     border-radius: 50%;
 }
-
-
-/* p.menusomething a>img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: blue;
-    object-fit: cover;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border-radius: 50%;
-} */
-
-
-/* .circular_image {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: blue;
-    display: inline-block;
-    vertical-align: middle;
-} */
-
-
-/* .circular_image img {
-    width: 100%;
-    display: block;
-} */
 
 td {
     vertical-align: top
@@ -408,16 +375,3 @@ footer span {
     /* black satz */
     text-align: justify;
 }
-
-
-/* img.rounded {
-    object-fit: cover;
-    border-radius: 50%;
-    margin: auto;
-    left: 0
-} */
-
-
-/* .catalogue-line {
-    border-top: 0.05rem solid red;
-} */
