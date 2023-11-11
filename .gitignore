@@ -25,6 +25,7 @@ workspace.code-workspace
 results/
 registry/
 
+*.code-workspace
 .aws-sam/
 .ruff_cache/
 
