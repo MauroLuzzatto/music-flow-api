@@ -12,7 +12,7 @@ def test_search_track_url():
     response, status_code = spotify_api.get_request(url)
     assert (
         url
-        == "https://api.spotify.com/v1/search?q=track:one more time artist:daft punk&type=track"
+        == "https://api.spotify.com/v1/search?q=track:one%20more%20time artist:daft%20punk&type=track"
     )
     assert status_code == 200
     assert (

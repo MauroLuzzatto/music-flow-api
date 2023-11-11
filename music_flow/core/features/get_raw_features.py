@@ -3,13 +3,14 @@ import logging.config
 from dataclasses import dataclass
 from typing import Callable, Optional, Tuple
 
-from music_flow.config.core import settings
+from music_flow.config import settings
 from music_flow.core.spotify_api import SpotifyAPI
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.INFO)
 
 spotify_api = SpotifyAPI()
-# TODO: allow for batch downloading of api requests
 
 
 @dataclass
@@ -40,7 +41,7 @@ def get_track_id(track_name: str, artist_name: str) -> Tuple[Optional[str], int]
     """get the track_id from the Spotify API for a given track"""
     url = spotify_api.search_track_url(track_name, artist_name)
     response, status_code = spotify_api.get_request(url)
-    logger.info(f"status_code: {status_code}")
+    logger.debug(f"status_code: {status_code}")
     try:
         track_id = response["tracks"]["items"][0]["id"]
     except (IndexError, KeyError, TypeError):
@@ -100,7 +101,7 @@ def get_raw_features(
     for endpoint in endpoints:
         name = endpoint.name
         response, status_code = endpoint.func(track_id)
-        logger.info(f"endpoint: {endpoint.name}, status_code: {status_code}")
+        logger.debug(f"endpoint: {endpoint.name}, status_code: {status_code}")
         if status_code == 200:
             data[name] = response
         else:

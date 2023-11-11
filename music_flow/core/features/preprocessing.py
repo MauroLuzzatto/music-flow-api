@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from music_flow.config.core import model_settings
+from music_flow.config import model_settings
 
 key_mapping = {
     0: "C",
@@ -82,11 +82,11 @@ def feature_preprocessing(dataset: pd.DataFrame):
 
     # transformation step
     for column in [
-        "plays",
         "speechiness",
         "acousticness",
         "instrumentalness",
         "liveness",
+        "plays",
     ]:
         dataset[column] = dataset[column].apply(np.log1p)
 

@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 from music_flow.core.utils import path_data, path_dataset, path_features
-from music_flow.dataset.config import dataset_settings
+from music_flow.config import dataset_settings
 
 path_target_values = os.path.join(path_data, dataset_settings.TARGERT_VALUES)
 path_audio_features = os.path.join(path_features, dataset_settings.AUDIO_FEATURES)

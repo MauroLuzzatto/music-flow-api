@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from music_flow.core.utils import path_data
-from music_flow.dataset.config import dataset_settings
+from music_flow.config import dataset_settings
 
 path_raw = os.path.join(path_data, "raw")
 path_save = os.path.join(path_data, dataset_settings.RAW_STREAMS)

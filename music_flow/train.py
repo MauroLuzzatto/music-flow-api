@@ -9,7 +9,7 @@ from music_flow.core.features.preprocessing import feature_preprocessing
 from music_flow.core.model_registry import ModelRegistry
 from music_flow.core.utils import path_dataset, path_results
 from music_flow.dataset.config import dataset_settings
-from music_flow.model.Training import Training
+from music_flow.model.v2_Training import Training
 
 path_dataset_file = os.path.join(path_dataset, dataset_settings.FINAL_DATASET)
 

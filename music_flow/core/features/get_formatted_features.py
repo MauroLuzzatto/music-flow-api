@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 
-from music_flow.config.core import settings
+from music_flow.config import settings
 
 
 def get_formatted_features(data: dict, is_flattened: Optional[bool] = True) -> dict:

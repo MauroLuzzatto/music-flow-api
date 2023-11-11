@@ -5,7 +5,7 @@ from typing import Optional
 import boto3
 from botocore.exceptions import ClientError
 
-from music_flow.config.core import settings
+from music_flow.config import settings
 from music_flow.core.utils import path_results
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,9 @@ logger.setLevel(logging.DEBUG)
 class ModelRegistry:
     """Model Registry class, uploads and downloads models to a s3 bucket"""
 
-    def __init__(self, bucket_name, path_registry=None, path_upload=None):
+    def __init__(
+        self, bucket_name: str, path_registry: str = None, path_upload: str = None
+    ):
         self.bucket_name = bucket_name
 
         if not path_registry:
@@ -64,7 +66,7 @@ class ModelRegistry:
                 s3_object_name = f"{folder_name}{directory_name}/{file}"
                 logger.info(f"upload: {s3_object_name}")
                 try:
-                    s3_bucket.upload_file(local_file_name, s3_object_name)
+                    s3_bucket.upload_file(local_file_name, s3_object_name)  # type: ignore
                 except ClientError as e:
                     print(e)
 

@@ -3,8 +3,8 @@ from typing import List, Optional
 
 from music_flow.core.utils import path_results, read_json
 
-default_max = 1_000_000
-default_min = 0
+DEFAULT_MAX: int = 1_000_000
+DEFAULT_MIN: int = 0
 
 
 def get_latest_folder(folders: List[str]) -> str:
@@ -14,7 +14,6 @@ def get_latest_folder(folders: List[str]) -> str:
     Returns:
         str: _description_
     """
-
     folders.sort()
     try:
         return folders[-1]
@@ -38,10 +37,10 @@ def get_best_score_folder(folders: List[str], metric: Optional[str]) -> str:
     """
 
     metrics = {
-        "r2_score": ("higher", default_min),
-        "mean_absolute_error": ("lower", default_max),
-        "mean_squared_error": ("lower", default_max),
-        "mean_absolute_percentage_error": ("lower", default_max),
+        "r2_score": ("higher", DEFAULT_MIN),
+        "mean_absolute_error": ("lower", DEFAULT_MAX),
+        "mean_squared_error": ("lower", DEFAULT_MAX),
+        "mean_absolute_percentage_error": ("lower", DEFAULT_MAX),
     }
 
     if not metric:

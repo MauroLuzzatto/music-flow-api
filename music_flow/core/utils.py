@@ -3,7 +3,7 @@ import json
 import os
 
 
-def create_folder(path):
+def create_folder(path: str) -> str:
     """
     create folder, if it doesn't already exist
     """
@@ -16,7 +16,7 @@ def create_folder(path):
     return path
 
 
-def get_hash(name):
+def get_hash(name: str) -> str:
     return hashlib.sha256(name.encode("utf-8")).hexdigest()
 
 
@@ -32,7 +32,7 @@ path_base = os.path.join(path, "music_flow")
 path_results = os.path.join(path, "results")
 path_registry = os.path.join(path, "registry")
 path_reports = os.path.join(path, "reports")
-path_data_lake = os.path.join(path, "data_lake")
+path_data_lake = os.path.join(path, "data_lake_v2")
 path_data_lake_success = os.path.join(path_data_lake, "success")
 path_data_lake_failed = os.path.join(path_data_lake, "failed")
 

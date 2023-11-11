@@ -12,6 +12,7 @@ data/raw/*
 
 docs/*
 
+data_lake_v2/*
 data_lake/*
 _archive/
 tmp/
@@ -24,6 +25,7 @@ workspace.code-workspace
 results/
 registry/
 
+*.code-workspace
 .aws-sam/
 .ruff_cache/
 

@@ -226,10 +226,12 @@ To set up an API with AWS SAM, follow these steps:
 <!-- - Use data classes for sample -->
 - Improve feature processing pipeline
 <!-- - Improve api reponse for formatted feature -->
+- [x] upload the request to S3 (add metadata from request IP, etc.)
+- [] Move all configrations outside of code into a yaml file and settings classes
 - Add Deep learning models
-- upload the request to S3 (add metadata from request IP, etc.)
-
-
+- [] add model baseline
+- [] version the data
+- [] add model versioning
 
 <!--
 
