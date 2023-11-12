@@ -34,7 +34,7 @@ The MusicFlow API provides the following endpoints:
 [https://musicflow.link/](https://musicflow.link)
 
 <p align="center">
-<img src="https://github.com/MauroLuzzatto/mlops-music-flow/raw/main/static/ui.png"/>
+<img src="https://github.com/MauroLuzzatto/mlops-music-flow/raw/main/images/ui.png"/>
 </p>
 
 ### `/prediction`

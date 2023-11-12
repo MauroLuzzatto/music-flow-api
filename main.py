@@ -34,121 +34,145 @@ is_lambda_runtime = get_is_lambda_runtime()
 path_registry = setup(is_lambda_runtime)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Load the Machine Learning model
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     """
+#     Load the Machine Learning model
 
-    Args:
-        app (FastAPI): fastapi app object
-    """
-    predictor = Predictor(
-        model_folder=model_folder,
-        path_registry=path_registry,
-    )
-    model_metadata = predictor.get_metdata()
+#     Args:
+#         app (FastAPI): fastapi app object
+#     """
+#     predictor = Predictor(
+#         model_folder=model_folder,
+#         path_registry=path_registry,
+#     )
+#     model_metadata = predictor.get_metdata()
 
-    ml_model["predict"] = predictor.predict_from_features
-    ml_model["metadata"] = model_metadata
+#     ml_model["predict"] = predictor.predict_from_features
+#     ml_model["metadata"] = model_metadata
 
-    global model_version
-    model_version = predictor.get_model_version()
+#     global ml_model_version
+#     ml_model_version = predictor.get_model_version()
 
-    yield
+#     yield
 
-    # Clean up the ML models and release the resources
-    ml_model.clear()
+#     # Clean up the ML models and release the resources
+#     ml_model.clear()
 
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=settings.API_DESCRIPTION,
     version=api_version,
-    lifespan=lifespan,  # type: ignore
     openapi_url="/api",
     docs_url="/docs",
-    root_path=settings.ROOT_PATH,
-    servers=[{"url": settings.ROOT_PATH}],
+    # root_path=settings.ROOT_PATH,
+    # servers=[{"url": settings.ROOT_PATH}],
 )
 
-path_static = str(Path(path_app).absolute() / "static")
+handler = Mangum(app)
+
+import os
+
+
+# path_static = str(Path(path_app).absolute() / "static")
+path_static = Path(__file__).parent.absolute() / "app" / "static"
+print(os.path.join(os.getcwd(), "app", "static"))
+logger.info(os.listdir(os.path.join(os.getcwd(), "app")))
+logger.info(os.listdir(os.path.join(os.getcwd(), "app", "static")))
+
+# logger.info(Path(__file__).parent.absolute() / "app" / "static")
+# logger.info(Path(__file__).absolute())
+
+# path_static = os.path.join("app", "static")
+logger.info(f"path_static: {path_static}")
+logger.info("---" * 10)
+
+base_path = Path(path_app).absolute()
+path_static = str(base_path / "static")
+
+# from starlette.routing import Router
+
+
+# static_router = Router()
+# static_router.mount("/", StaticFiles(directory=path_static), name="static")
+# app.mount("/static", static_router)
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 
 app.add_middleware(
     Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
 )
-app.include_router(api.router)
+# app.include_router(api.router)
 app.include_router(root.router)
 
+from fastapi.responses import HTMLResponse
 
-@app.get("/api/prediction/", tags=["API"])
-async def get_prediction_api(song: str, artist: str) -> Prediction:
-    """Get the model predictions
+# @app.get("/api/prediction/", tags=["API"])
+# async def get_prediction_api(song: str, artist: str) -> Prediction:
+#     """Get the model predictions
 
-    Args:
-        song (str): name of the song
-        artist (str): artist of the song
+#     Args:
+#         song (str): name of the song
+#         artist (str): artist of the song
 
-    Raises:
-        HTTPException: if the song or audio features could not be found or fetched from Spotify API
-                or if formatting of the features failed
-                or if the prediction failed
+#     Raises:
+#         HTTPException: if the song or audio features could not be found or fetched from Spotify API
+#                 or if formatting of the features failed
+#                 or if the prediction failed
 
-    Returns:
-        Prediction: prediction object
-    """
+#     Returns:
+#         Prediction: prediction object
+#     """
 
-    raw_features = await api.get_raw_features_api(song, artist)
-    features = get_formatted_features(data=raw_features, is_flattened=True)
-    logger.debug(f"features: {features}")
+#     raw_features = await api.get_raw_features_api(song, artist)
+#     features = get_formatted_features(data=raw_features, is_flattened=True)
+#     logger.debug(f"features: {features}")
 
-    if not features:
-        status_code = 500
-        detail = get_exception_details("formating_failure", status_code)
-        raise HTTPException(status_code=status_code, detail=detail)
+#     if not features:
+#         status_code = 500
+#         detail = get_exception_details("formating_failure", status_code)
+#         raise HTTPException(status_code=status_code, detail=detail)
 
-    metadata = features.get("metadata")
-    logger.debug(f"metadata: {metadata}")
-    del features["metadata"]
+#     metadata = features.get("metadata")
+#     logger.debug(f"metadata: {metadata}")
+#     del features["metadata"]
 
-    try:
-        prediction = ml_model["predict"](features)
-        logger.debug(f"prediction: {prediction}")
-    except Exception as e:
-        logging.debug(e)
-        status_code = 500
-        detail = get_exception_details("prediction_failure", status_code)
-        raise HTTPException(status_code=status_code, detail=detail)
+#     try:
+#         prediction = ml_model["predict"](features)
+#         logger.debug(f"prediction: {prediction}")
+#     except Exception as e:
+#         logging.debug(e)
+#         status_code = 500
+#         detail = get_exception_details("prediction_failure", status_code)
+#         raise HTTPException(status_code=status_code, detail=detail)
 
-    user_message = map_score_to_emoji(prediction)
+#     user_message = map_score_to_emoji(prediction)
 
-    data_response = {
-        "song": song,
-        "artist": artist,
-        "prediction": round(prediction, 2),
-        "song_metadata": metadata,
-    }
+#     data_response = {
+#         "song": song,
+#         "artist": artist,
+#         "prediction": round(prediction, 2),
+#         "song_metadata": metadata,
+#     }
 
-    if is_lambda_runtime or is_testing:
-        save_folder = (
-            settings.FOLDER_PREDICTIONS if not is_testing else "predictions_test"
-        )
-        name = str(uuid.uuid4())
-        upload_json_to_s3(
-            data_dict=data_response,
-            save_name=f"{save_folder}/{name}.json",
-        )
+#     if is_lambda_runtime or is_testing:
+#         save_folder = (
+#             settings.FOLDER_PREDICTIONS if not is_testing else "predictions_test"
+#         )
+#         name = str(uuid.uuid4())
+#         upload_json_to_s3(
+#             data_dict=data_response,
+#             save_name=f"{save_folder}/{name}.json",
+#         )
 
-    data_enriched = {
-        "description": settings.PREDICTION_DESCRIPTION,
-        "message": user_message,
-        "preview_url": raw_features["track"]["preview_url"],
-    }
-    data_response.update(data_enriched)
-    return Prediction(**data_response)
+#     data_enriched = {
+#         "description": settings.PREDICTION_DESCRIPTION,
+#         "message": user_message,
+#         "preview_url": raw_features["track"]["preview_url"],
+#     }
+#     data_response.update(data_enriched)
+#     return Prediction(**data_response)
 
-
-handler = Mangum(app)
 
 if __name__ == "__main__":
     logger.warning("Running in development mode. Do not run like this in production.")

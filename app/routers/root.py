@@ -25,52 +25,52 @@ erros = {
 router = APIRouter(tags=["FORM"])
 
 
-@router.get("/", response_class=HTMLResponse)
-async def get_form(request: Request):
-    return templates.TemplateResponse("prediction.html", {"request": request})
+# @router.get("/", response_class=HTMLResponse)
+# async def get_form(request: Request):
+#     return templates.TemplateResponse("prediction.html", {"request": request})
 
 
-@router.post("/", response_class=HTMLResponse)
-async def post_form(request: Request):
-    """_summary_
+# @router.post("/", response_class=HTMLResponse)
+# async def post_form(request: Request):
+#     """_summary_
 
-    Args:
-        request (Request): _description_
+#     Args:
+#         request (Request): _description_
 
-    Returns:
-        _type_: _description_
-    """
+#     Returns:
+#         _type_: _description_
+#     """
 
-    form = SongRequestForm(request)
-    await form.load_data()
-    logger.debug(f"form: {form.__dict__}")
+#     form = SongRequestForm(request)
+#     await form.load_data()
+#     logger.debug(f"form: {form.__dict__}")
 
-    from main import get_prediction_api
+#     from main import get_prediction_api
 
-    try:
-        output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
-    except HTTPException:
-        form.errors.append(erros["failed_to_fetch_song"])
-        return templates.TemplateResponse("prediction.html", form.__dict__)
+#     try:
+#         output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
+#     except HTTPException:
+#         form.errors.append(erros["failed_to_fetch_song"])
+#         return templates.TemplateResponse("prediction.html", form.__dict__)
 
-    if form.is_valid():
-        header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # type: ignore
-        prediction = output.dict()
+#     if form.is_valid():
+#         header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # type: ignore
+#         prediction = output.dict()
 
-        payload = {
-            "request": request,
-            "header": header,
-            "prediction": prediction,
-        }
+#         payload = {
+#             "request": request,
+#             "header": header,
+#             "prediction": prediction,
+#         }
 
-        try:
-            return templates.TemplateResponse("success.html", payload)
-        except Exception as e:
-            form.errors.append(erros["generic_error"])
-            logger.error(e)
-            return templates.TemplateResponse("prediction.html", form.__dict__)
+#         try:
+#             return templates.TemplateResponse("success.html", payload)
+#         except Exception as e:
+#             form.errors.append(erros["generic_error"])
+#             logger.error(e)
+#             return templates.TemplateResponse("prediction.html", form.__dict__)
 
-    return templates.TemplateResponse("prediction.html", form.__dict__)
+#     return templates.TemplateResponse("prediction.html", form.__dict__)
 
 
 @router.get("/about/", response_class=HTMLResponse)
