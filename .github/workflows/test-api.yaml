@@ -18,14 +18,14 @@ jobs:
       - name: install all dependencies
         run: |
           pip install -r requirements.txt
-      
+
       - name: Create env file
         run: |
           touch .env
           echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
           echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
           cat .env
-      
+
       - name: test with pytest
         run: |
           python -m pytest

@@ -6,13 +6,12 @@ from pprint import pprint
 
 import pandas as pd
 
-from music_flow.core.features.get_raw_features import get_track_id
+from music_flow.config import dataset_settings
 from music_flow.core.batch_spotify_api import BatchSpotifyAPI
-
+from music_flow.core.features.get_raw_features import get_track_id
 from music_flow.core.utils import (
     path_data,
 )
-from music_flow.config import dataset_settings
 
 logger = logging.getLogger(__name__)
 

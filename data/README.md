@@ -13,5 +13,4 @@ Once you have received the email from Spotify, you can download your data and cr
 
 - Download your data from Spotify and unzip the file.
 - Run `run_dataset_pipeline.py`
-- Note the files need to be placed in a folder in the `raw` folder, and the files need to contain `StreamingHistory` 
-
+- Note the files need to be placed in a folder in the `raw` folder, and the files need to contain `StreamingHistory`

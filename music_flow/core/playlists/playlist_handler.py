@@ -1,7 +1,7 @@
 import requests
 
 
-class PlaylistHandler(object):
+class PlaylistHandler:
     def __init__(self, headers):
         self.headers = headers
 

@@ -4,6 +4,7 @@ from pprint import pprint
 
 import pandas as pd
 
+from music_flow.config import dataset_settings
 from music_flow.core.features.get_formatted_features import get_formatted_features
 from music_flow.core.utils import (
     path_data,
@@ -11,7 +12,6 @@ from music_flow.core.utils import (
     path_features,
     read_json,
 )
-from music_flow.config import dataset_settings
 
 path_target_values = os.path.join(path_data, dataset_settings.TARGERT_VALUES)
 path_audio_features = os.path.join(path_features, dataset_settings.AUDIO_FEATURES)

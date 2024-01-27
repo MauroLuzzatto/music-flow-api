@@ -6,8 +6,8 @@ import time
 import requests
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 from requests.utils import requote_uri
+from urllib3.util.retry import Retry
 
 from music_flow.core.utils import path_env
 
@@ -26,7 +26,7 @@ if not CLIENT_ID or not CLIENT_SECRET:
 status_codes = []
 
 
-class SpotifyAPI(object):
+class SpotifyAPI:
     def __init__(self):
         self.headers = self.get_headers()
         retry = Retry(connect=1, backoff_factor=0.5)

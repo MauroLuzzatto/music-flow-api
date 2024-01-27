@@ -3,7 +3,6 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from mangum import Mangum
@@ -150,5 +149,7 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
 handler = Mangum(app)
 
 if __name__ == "__main__":
+    import uvicorn
+
     logger.warning("Running in development mode. Do not run like this in production.")
     uvicorn.run(app="main:app", reload=True)

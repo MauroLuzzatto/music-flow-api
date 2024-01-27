@@ -22,7 +22,7 @@ clean:
 
 build:
 	sam build --use-container -t template.yaml --debug
-	
+
 local: build
 	sam local start-api --debug --port 5858
 
@@ -30,7 +30,7 @@ validate:
 	sam validate --debug
 
 sync: validate build
-	sam sync --stack-name musicflow-sam-app --watch 
+	sam sync --stack-name musicflow-sam-app --watch
 
 deploy: build
 	sam deploy \
@@ -41,7 +41,7 @@ deploy: build
 	--debug
 
 ci-deploy:
-	sam deploy --stack-name ${{env.STACK_NAME}} --s3-bucket ${{env.S3_BUCKET}} --capabilities CAPABILITY_IAM --resolve-image-repos --no-confirm-changeset --no-fail-on-empty-changeset 
+	sam deploy --stack-name ${{env.STACK_NAME}} --s3-bucket ${{env.S3_BUCKET}} --capabilities CAPABILITY_IAM --resolve-image-repos --no-confirm-changeset --no-fail-on-empty-changeset
 
 
 ecr-login:

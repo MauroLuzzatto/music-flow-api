@@ -1,14 +1,15 @@
 import os
+
 import numpy as np
 import pandas as pd
 from xgboost import XGBRegressor  # type: ignore
 
-from music_flow.core.features.preprocessing import feature_preprocessing
-from music_flow.core.utils import path_dataset, create_folder, path_results
 from music_flow.config import dataset_settings
-from music_flow.model.training_data import TrainingData
+from music_flow.core.features.preprocessing import feature_preprocessing
+from music_flow.core.utils import create_folder, path_dataset, path_results
 from music_flow.model.evaluator import Evaluator
 from music_flow.model.file_handler import save_json
+from music_flow.model.training_data import TrainingData
 
 path_dataset_file = os.path.join(path_dataset, dataset_settings.FINAL_DATASET)
 dataset = pd.read_csv(path_dataset_file, sep=";", index_col=0)  # type: ignore

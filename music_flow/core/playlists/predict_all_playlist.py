@@ -6,8 +6,8 @@ model_folder = "2023-01-21--12-33-25"
 user_id = "1157239771"
 playlist_id = "37i9dQZEVXcJlIMuDHGHCM"
 
-spotifAPI = SpotifyAPI()
-paylist, status_code = spotifAPI.get_playlist_items(playlist_id=playlist_id)
+spotify_api = SpotifyAPI()
+paylist, status_code = spotify_api.get_playlist_items(playlist_id=playlist_id)
 tracks = get_playlist_tracks(paylist)
 
 predictor = Predictor(model_folder)

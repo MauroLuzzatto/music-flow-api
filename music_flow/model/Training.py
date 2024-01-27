@@ -16,18 +16,16 @@ from xgboost import XGBRegressor  # type: ignore
 from music_flow.config import model_settings
 from music_flow.core.features.preprocessing import reverse_prediction
 from music_flow.core.utils import create_folder
-from music_flow.model.logger import Logger
 from music_flow.model.evaluator import Evaluator
-from music_flow.model.training_data import TrainingData
-
 from music_flow.model.file_handler import save_json
-
+from music_flow.model.logger import Logger
+from music_flow.model.training_data import TrainingData
 
 # enable autologging
 mlflow.sklearn.autolog()  # type: ignore
 
 
-class Training(object):
+class Training:
     """
     This class provides the funktionality to train a model using
     a random grid search and evaluate the results
@@ -97,7 +95,9 @@ class Training(object):
         # tracking_uri = mlflow.get_tracking_uri()
         # print("Current tracking uri: {}".format(tracking_uri))
 
-        random_search = self.build_CV_search(param_distributions, cv_settings)
+        random_search = self.build_cross_validation_search(
+            param_distributions, cv_settings
+        )
 
         with mlflow.start_run() as run:
             random_search.fit(self.X_train, self.y_train)
@@ -105,7 +105,7 @@ class Training(object):
         mlflow_logs = self.get_mlflow_logs(run)
         self.logger.info(f"mlflow_logs: {dict(mlflow_logs)}")
 
-        self.get_CV_results(random_search, sort_by="rank_test_score")
+        self.get_cross_validation_results(random_search, sort_by="rank_test_score")
 
         self.best_estimator = random_search.best_estimator_
         self.best_params = random_search.best_params_
@@ -165,7 +165,7 @@ class Training(object):
             ]
         )
 
-    def build_CV_search(
+    def build_cross_validation_search(
         self, param_distributions: dict, param_cv: dict
     ) -> sklearn.model_selection.RandomizedSearchCV:  # type: ignore
         """
@@ -193,7 +193,7 @@ class Training(object):
 
         return random_search
 
-    def get_CV_results(
+    def get_cross_validation_results(
         self,
         random_search: sklearn.model_selection.RandomizedSearchCV,  # type: ignore
         sort_by: str,

@@ -248,7 +248,7 @@ TODO: make info graphics of the application
 - train model using GridSearch
 - save different model versions
 - use API to serve model
-- use API to predict number of streams per track 
+- use API to predict number of streams per track
 
 
 Using lifespan event on APIRoute() instead in FastAPI() #9664
