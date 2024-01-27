@@ -145,9 +145,7 @@ class SpotifyAPI(object):
         artist = "" if not artist else artist
         track = self.clean_string(track)
         artist = self.clean_string(artist)
-        return (
-            f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
-        )
+        return f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
 
     def get_audio_analysis(self, id: str):
         url = f"https://api.spotify.com/v1/audio-analysis/{id}"
