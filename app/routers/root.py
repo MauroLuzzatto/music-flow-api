@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.utils.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app

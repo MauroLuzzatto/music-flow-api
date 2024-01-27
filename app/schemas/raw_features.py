@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any
 
 from pydantic import BaseModel
 
 
 class Metadata(BaseModel):
     song: str
-    artist: List[str]
+    artist: list[str]
     album: str
 
 
@@ -58,12 +58,12 @@ class Image(BaseModel):
 class Album(BaseModel):
     album_group: str
     album_type: str
-    artists: List[Artist]
-    available_markets: List[str]
+    artists: list[Artist]
+    available_markets: list[str]
     external_urls: ExternalUrls1
     href: str
     id: str
-    images: List[Image]
+    images: list[Image]
     is_playable: bool
     name: str
     release_date: str
@@ -96,8 +96,8 @@ class ExternalUrls3(BaseModel):
 
 class Track(BaseModel):
     album: Album
-    artists: List[Artist1]
-    available_markets: List[str]
+    artists: list[Artist1]
+    available_markets: list[str]
     disc_number: int
     duration_ms: int
     explicit: bool

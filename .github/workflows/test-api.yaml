@@ -19,6 +19,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: lint with ruff
+        uses: chartboost/ruff-action@v1
+        with:
+          args: "check"
+
       - name: Create env file
         run: |
           touch .env
