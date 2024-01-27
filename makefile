@@ -1,9 +1,6 @@
 .PHONY: clean clean-test clean-pyc clean-build docs help
 .DEFAULT_GOAL := help
 
-black: ## black formatting
-	black .
-
 
 test:
 	python -m pytest
@@ -15,7 +12,7 @@ docs:
 	pdoc music_flow -o ./docs
 
 lint:
-	ruff .
+	ruff check .
 
 clean:
 	pre-commit run --all-files
