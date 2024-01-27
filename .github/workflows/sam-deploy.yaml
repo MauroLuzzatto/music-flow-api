@@ -34,4 +34,11 @@ jobs:
       - run: sam build --use-container -t template.yaml
 
       # Prevent prompts and failure when the stack is unchanged
-      - run: sam deploy --stack-name ${{env.STACK_NAME}} --s3-bucket ${{env.S3_BUCKET}} --capabilities CAPABILITY_NAMED_IAM --resolve-image-repos --no-confirm-changeset --no-fail-on-empty-changeset 
+      - run: |
+          sam deploy \
+          --stack-name ${{env.STACK_NAME}} \
+          --s3-bucket ${{env.S3_BUCKET}} \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --resolve-image-repos \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset\

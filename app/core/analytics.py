@@ -1,3 +1,6 @@
+"""
+Take from https://github.com/tom-draper/api-analytics
+"""
 import uuid
 from datetime import datetime
 from time import time
@@ -23,9 +26,14 @@ class Analytics(BaseHTTPMiddleware):
         start = time()
         response = await call_next(request)
 
+        try:
+            ip_address = request.client.host
+        except AttributeError:
+            ip_address = None
+
         request_data = {
             "hostname": request.url.hostname,
-            "ip_address": request.client.host,
+            "ip_address": ip_address,
             "path": request.url.path,
             "user_agent": request.headers["user-agent"],
             "method": request.method,

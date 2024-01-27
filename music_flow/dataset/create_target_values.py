@@ -2,9 +2,8 @@ import os
 
 import pandas as pd
 
-from music_flow.config import settings
+from music_flow.config import dataset_settings, settings
 from music_flow.core.utils import get_hash, path_data
-from music_flow.config import dataset_settings
 
 path_target_values = os.path.join(path_data, dataset_settings.TARGERT_VALUES)
 path_raw_streams = os.path.join(path_data, dataset_settings.RAW_STREAMS)

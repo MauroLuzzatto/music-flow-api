@@ -8,14 +8,14 @@ from music_flow.core.utils import path_data
 
 random_playlists = ["6p21dRudS9FmcyGvKWPq2R"]
 
-spotifAPI = SpotifyAPI()
+spotify_api = SpotifyAPI()
 
 
 if __name__ == "__main__":
     list_of_tracks = []
 
     for playlist_id in random_playlists:
-        paylist, status_code = spotifAPI.get_playlist_items(playlist_id=playlist_id)
+        paylist, status_code = spotify_api.get_playlist_items(playlist_id=playlist_id)
         tracks = get_playlist_tracks(paylist)
         list_of_tracks.extend(tracks)
 

@@ -1,18 +1,18 @@
-import matplotlib.pyplot as plt  # type: ignore
+import logging
 import os
-from sklearn.metrics import f1_score  # type: ignore
+from typing import Optional
+
+import matplotlib.pyplot as plt  # type: ignore
+import numpy as np
 from sklearn.metrics import (
     accuracy_score,  # type: ignore
+    f1_score,  # type: ignore
     mean_absolute_error,  # type: ignore
     mean_absolute_percentage_error,  # type: ignore
     mean_squared_error,  # type: ignore
     precision_score,  # type: ignore
     r2_score,  # type: ignore
 )
-
-import numpy as np
-from typing import Optional
-import logging
 
 logger = logging.getLogger(__name__)
 

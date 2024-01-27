@@ -17,7 +17,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(settings.LOGGING_LEVEL)
 
 
-class Predictor(object):
+class Predictor:
     def __init__(
         self,
         model_folder=None,

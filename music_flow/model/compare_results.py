@@ -1,15 +1,16 @@
-from music_flow.core.utils import path_dataset, create_folder, path_results
 import json
 import os
+
 import pandas as pd
 
+from music_flow.core.utils import path_results
 
 results = []
 
 
 def read_json(path):
     try:
-        with open(path, "r") as f:
+        with open(path) as f:
             data = json.load(f)
     except (FileNotFoundError, NotADirectoryError):
         data = {}

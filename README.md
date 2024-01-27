@@ -1,8 +1,7 @@
 
+[![Tests](https://github.com/MauroLuzzatto/music-flow-api/workflows/Tests/badge.svg)](https://github.com/MauroLuzzatto/music-flow-api/actions?workflow=Tests)
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
-
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 
 # MusicFlow API
@@ -248,7 +247,7 @@ TODO: make info graphics of the application
 - train model using GridSearch
 - save different model versions
 - use API to serve model
-- use API to predict number of streams per track 
+- use API to predict number of streams per track
 
 
 Using lifespan event on APIRoute() instead in FastAPI() #9664

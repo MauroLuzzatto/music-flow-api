@@ -14,6 +14,17 @@
         <h4 class="text-left display-10">Number of streams: {{prediction["prediction"]}}</h4>
         <h4 class="text-left display-10">{{prediction["message"]["text"]}} {{prediction["message"]["emoji"]}}</h4>
 
+        <!-- <h4 class="text-left display-10">{{prediction["features"]}}</h4> -->
+
+
+        <hr style="border-bottom: 1px solid #888">
+
+        {% for key, value in prediction["song_metadata"].items() %}
+            <h7 class="text-left display-15">{{key}}: {{ value }}</h7>
+        {% endfor %}
+        <hr style="border-bottom: 1px solid #888">
+
+
         {% if prediction["preview_url"] is not none %}
         <div class="container-audio">
             <audio controls>

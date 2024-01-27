@@ -6,8 +6,8 @@ import time
 import requests
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 from requests.utils import requote_uri
+from urllib3.util.retry import Retry
 
 from music_flow.core.utils import path_env
 
@@ -26,7 +26,7 @@ if not CLIENT_ID or not CLIENT_SECRET:
 status_codes = []
 
 
-class SpotifyAPI(object):
+class SpotifyAPI:
     def __init__(self):
         self.headers = self.get_headers()
         retry = Retry(connect=1, backoff_factor=0.5)
@@ -116,7 +116,7 @@ class SpotifyAPI(object):
         response, status_code = self.get_request(url)
         return response, status_code
 
-    def get_playlist_items(self, playlist_id, limit=100, offset=0):
+    def get_playlist_items(self, playlist_id: str, limit=100, offset=0):
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}"
         response, status_code = self.get_request(url)
         return response, status_code
@@ -126,17 +126,17 @@ class SpotifyAPI(object):
         response, status_code = self.get_request(url)
         return response, status_code
 
-    def get_track(self, id):
+    def get_track(self, id: str):
         url = f"https://api.spotify.com/v1/tracks/{id}"
         response, status_code = self.get_request(url)
         return response, status_code
 
-    def get_audio_features(self, id):
+    def get_audio_features(self, id: str):
         url = f"https://api.spotify.com/v1/audio-features/{id}"
         response, status_code = self.get_request(url)
         return response, status_code
 
-    def get_albums(self, id):
+    def get_albums(self, id: str):
         url = f"https://api.spotify.com/v1/albums/{id}"
         response, status_code = self.get_request(url)
         return response, status_code
@@ -147,7 +147,7 @@ class SpotifyAPI(object):
         artist = self.clean_string(artist)
         return f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
 
-    def get_audio_analysis(self, id):
+    def get_audio_analysis(self, id: str):
         url = f"https://api.spotify.com/v1/audio-analysis/{id}"
         response, status_code = self.get_request(url)
         return response, status_code

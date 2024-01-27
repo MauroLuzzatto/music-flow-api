@@ -13,7 +13,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(settings.LOGGING_LEVEL)
 
 
-class ModelLoader(object):
+class ModelLoader:
     def __init__(
         self,
         model_folder: Optional[str] = None,

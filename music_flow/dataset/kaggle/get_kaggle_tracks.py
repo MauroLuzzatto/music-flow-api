@@ -2,8 +2,8 @@ import os
 
 import pandas as pd
 
-from music_flow.core.utils import path_data
 from music_flow.config import dataset_settings
+from music_flow.core.utils import path_data
 
 path_kaggle = os.path.join(path_data, "kaggle", "kaggle_spotify_dataset", "tracks.csv")
 path_kaggle_dataset = os.path.join(path_data, dataset_settings.KAGGEL_DATASET)

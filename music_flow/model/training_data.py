@@ -1,9 +1,9 @@
-import random
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split  # type: ignore
+
 from music_flow.config import dataset_settings
 from music_flow.dataset import __version__ as data_version
 

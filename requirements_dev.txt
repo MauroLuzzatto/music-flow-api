@@ -1,6 +1,4 @@
 matplotlib
 mlflow
 ruff
-black
-isort
 mypy

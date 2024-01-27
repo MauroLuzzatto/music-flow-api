@@ -6,13 +6,12 @@ from pprint import pprint
 
 import pandas as pd
 
-from music_flow.core.features.get_raw_features import get_track_id
+from music_flow.config import dataset_settings
 from music_flow.core.batch_spotify_api import BatchSpotifyAPI
-
+from music_flow.core.features.get_raw_features import get_track_id
 from music_flow.core.utils import (
     path_data,
 )
-from music_flow.config import dataset_settings
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +71,7 @@ def download_audio_features_batch(is_retry_failed_files: bool = False) -> bool:
         }
         try:
             track_id, _ = get_track_id(track_name, artist_name)
-        except Exception as e:
+        except Exception:
             print("track_id error")
             track_id = None
 
@@ -148,9 +147,7 @@ def save_dict_to_json(data: dict, path: str, filename: str):
 
 
 def main(max_retries=5):
-    retries = 0
-    has_finished = False
-    has_finished = download_audio_features_batch()
+    download_audio_features_batch()
 
     # while retries < max_retries:
     #     try:

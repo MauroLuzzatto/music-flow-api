@@ -22,22 +22,6 @@ class Message(BaseModel):
     text: str
 
 
-class Prediction(BaseModel):
-    song: str
-    artist: str
-    prediction: float
-    description: str
-    song_metadata: SongMetadataModel
-    message: Message
-    preview_url: Union[str, None]
-
-
-class Metadata(BaseModel):
-    song: str
-    artist: List[str]
-    album: str
-
-
 class AudioFeatures(BaseModel):
     danceability: float
     energy: float
@@ -57,6 +41,22 @@ class AudioFeatures(BaseModel):
     analysis_url: str
     duration_ms: int
     time_signature: int
+
+
+class Prediction(BaseModel):
+    song: str
+    artist: str
+    prediction: float
+    description: str
+    song_metadata: SongMetadataModel
+    message: Message
+    preview_url: Union[str, None]
+
+
+class Metadata(BaseModel):
+    song: str
+    artist: List[str]
+    album: str
 
 
 class ExternalUrls(BaseModel):
