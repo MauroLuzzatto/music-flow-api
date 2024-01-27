@@ -1,4 +1,5 @@
 
+[![Tests](https://github.com/MauroLuzzatto/music-flow-api/workflows/Tests/badge.svg)](https://github.com/MauroLuzzatto/music-flow-api/actions?workflow=Tests)
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
