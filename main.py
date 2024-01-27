@@ -127,6 +127,10 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
         "artist": artist,
         "prediction": round(prediction, 2),
         "song_metadata": metadata,
+        "description": settings.PREDICTION_DESCRIPTION,
+        "message": user_message,
+        "preview_url": raw_features["track"]["preview_url"],
+        "features": features,
     }
 
     if is_lambda_runtime or is_testing:
@@ -139,12 +143,7 @@ async def get_prediction_api(song: str, artist: str) -> Prediction:
             save_name=f"{save_folder}/{name}.json",
         )
 
-    data_enriched = {
-        "description": settings.PREDICTION_DESCRIPTION,
-        "message": user_message,
-        "preview_url": raw_features["track"]["preview_url"],
-    }
-    data_response.update(data_enriched)
+    print(features)
     return Prediction(**data_response)
 
 

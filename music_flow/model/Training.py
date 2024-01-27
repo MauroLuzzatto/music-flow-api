@@ -1,10 +1,8 @@
 import datetime
-import json
 import os
 import pickle
 from typing import Optional
 
-import matplotlib.pyplot as plt  # type: ignore
 import mlflow
 import pandas as pd  # type: ignore
 import sklearn  # type: ignore
