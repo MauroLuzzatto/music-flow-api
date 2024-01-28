@@ -16,15 +16,18 @@ class SongRequestForm:
         self.artist = form.get("artist")  # type: ignore
 
     def is_valid(self):
-        if not self.song or self.number_of_tokens(self.song) > 10:
+        if not self.song and self.number_of_tokens(self.song) > 10:
             self.errors.append("A valid song is required")
 
-        if not self.artist or self.number_of_tokens(self.artist) > 5:
+        if not self.artist and self.number_of_tokens(self.artist) > 5:
             self.errors.append("A valid artist is required")
 
-        if not self.errors:
-            return True
-        return False
+        if self.errors:
+            return False
+        return True
+
+    def as_dict(self):
+        return self.__dict__
 
     @staticmethod
     def number_of_tokens(string):

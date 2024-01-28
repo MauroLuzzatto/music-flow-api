@@ -71,6 +71,8 @@ app = FastAPI(
     servers=[{"url": settings.ROOT_PATH}],
 )
 
+app.scores = []
+
 path_static = str(Path(path_app).absolute() / "static")
 app.mount("/static", StaticFiles(directory=path_static), name="static")
 
