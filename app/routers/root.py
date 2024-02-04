@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from app.core.highscore import Highscore
 from app.utils.song_request_form import SongRequestForm
 from music_flow.core.utils import path_app
 
@@ -27,50 +28,15 @@ router = APIRouter(tags=["FORM"])
 
 @router.get("/", response_class=HTMLResponse)
 async def get_form(request: Request):
-    return templates.TemplateResponse("prediction.html", {"request": request})
+    highscore = Highscore(request)
 
+    payload = {
+        "request": request,
+        "scores": highscore.get_highscore(),
+    }
 
-# @router.post("/", response_class=HTMLResponse)
-# async def post_form(request: Request):
-#     """_summary_
-
-#     Args:
-#         request (Request): _description_
-
-#     Returns:
-#         _type_: _description_
-#     """
-
-#     form = SongRequestForm(request)
-#     await form.load_data()
-#     logger.debug(f"form: {form.__dict__}")
-
-#     from main import get_prediction_api
-
-#     try:
-#         output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
-#     except HTTPException:
-#         form.errors.append(erros["failed_to_fetch_song"])
-#         return templates.TemplateResponse("prediction.html", form.__dict__)
-
-#     if form.is_valid():
-#         header = f"{form.song.capitalize()} by {form.artist.capitalize()}"  # type: ignore
-#         prediction = output.dict()
-
-#         payload = {
-#             "request": request,
-#             "header": header,
-#             "prediction": prediction,
-#         }
-
-#         try:
-#             return templates.TemplateResponse("success.html", payload)
-#         except Exception as e:
-#             form.errors.append(erros["generic_error"])
-#             logger.error(e)
-#             return templates.TemplateResponse("prediction.html", form.__dict__)
-
-#     return templates.TemplateResponse("prediction.html", form.__dict__)
+    template = "prediction.html"
+    return templates.TemplateResponse(template, payload)
 
 
 @router.get("/about/", response_class=HTMLResponse)
@@ -93,6 +59,11 @@ async def get_success_endpoint(request: Request):
 
     form = SongRequestForm(request)
     await form.load_data()
+
+    if not form.is_valid():
+        payload = form.as_dict()
+        return templates.TemplateResponse(template, payload)
+
     logger.debug(f"form: {form.as_dict()}")
 
     from main import get_prediction_api
@@ -101,37 +72,31 @@ async def get_success_endpoint(request: Request):
         output = await get_prediction_api(song=form.song, artist=form.artist)  # type: ignore
     except HTTPException:
         form.errors.append(erros["failed_to_fetch_song"])
-
         payload = form.as_dict()
         del payload["song"]
         del payload["artist"]
         return templates.TemplateResponse(template, payload)
 
-    if form.is_valid():
-        header = f'"{form.song.capitalize()}" by "{form.artist.capitalize()}"'  # type: ignore
-        prediction = output.dict()
+    header = f'"{form.song.capitalize()}" by "{form.artist.capitalize()}"'  # type: ignore
+    response = output.dict()
 
-        # score = {
-        #     "song": form.song,
-        #     "artist": form.artist,
-        #     "prediction": prediction["prediction"],
-        # }
+    highscore = Highscore(request)
+    song = form.song
+    artist = form.artist
+    id = header
+    _prediction = response["prediction"]
+    highscore.add_score(id, song, artist, _prediction)
 
-        # print("scores before append", request.scores)
-
-        payload = {
-            "request": request,
-            "header": header,
-            "prediction": prediction,
-            "scores": [],
-        }
-        try:
-            template = "partials/success.html"
-            return templates.TemplateResponse(template, payload)
-        except Exception as e:
-            form.errors.append(erros["generic_error"])
-            logger.error(e)
-            return templates.TemplateResponse(template, payload)
-
-    payload = form.as_dict()
-    return templates.TemplateResponse(template, payload)
+    payload = {
+        "request": request,
+        "header": header,
+        "prediction": response,
+        "scores": highscore.get_highscore(),
+    }
+    try:
+        template = "partials/success.html"
+        return templates.TemplateResponse(template, payload)
+    except Exception as e:
+        form.errors.append(erros["generic_error"])
+        logger.error(e)
+        return templates.TemplateResponse(template, payload)
