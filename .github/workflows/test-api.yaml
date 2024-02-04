@@ -1,7 +1,5 @@
 name: Tests
-on:
-  pull_request:
-    types: [opened, edited]
+on: [push]
 
 jobs:
   run-api-tests:
