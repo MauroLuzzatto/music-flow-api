@@ -143,7 +143,6 @@ class SpotifyAPI:
 
     def search_track_url(self, track, artist=None):
         artist = "" if not artist else artist
-        track = "" if not track else track
         track = self.clean_string(track)
         artist = self.clean_string(artist)
         return f"https://api.spotify.com/v1/search?q=track:{track} artist:{artist}&type=track"
