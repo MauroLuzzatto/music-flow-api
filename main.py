@@ -7,6 +7,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from mangum import Mangum
+from starlette.middleware.sessions import SessionMiddleware
 
 from app.__init__ import __version__ as api_version
 from app.config import settings
@@ -77,6 +78,9 @@ app.mount("/static", StaticFiles(directory=path_static), name="static")
 app.add_middleware(
     Analytics, is_lambda_runtime=is_lambda_runtime, is_testing=is_testing
 )
+
+app.add_middleware(SessionMiddleware, secret_key="some-random-string")
+
 app.include_router(api.router)
 app.include_router(root.router)
 
