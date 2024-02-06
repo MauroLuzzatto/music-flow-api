@@ -12,8 +12,6 @@ jobs:
         AWS_REGION: eu-west-1
         STACK_NAME: musicflow-sam-app
         S3_BUCKET: portfolio-on-lambda-2999-v3
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/setup-sam@v2
@@ -25,12 +23,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{env.AWS_REGION}}
 
-      # - name: Create env file
-      #   run: |
-      #     touch .env
-      #     echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
-      #     echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
-      #     cat .env
+      - name: Create env file
+        run: |
+          touch .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+          cat .env
 
       # Build inside Docker containers
       - run: sam build --use-container -t template.yaml
