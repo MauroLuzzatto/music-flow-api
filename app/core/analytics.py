@@ -1,9 +1,11 @@
 """
 Take from https://github.com/tom-draper/api-analytics
 """
+
 import uuid
 from datetime import datetime
 from time import time
+from typing import Optional
 
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
@@ -20,22 +22,32 @@ class Analytics(BaseHTTPMiddleware):
         self.is_lambda_runtime = is_lambda_runtime
         self.is_testing = is_testing
 
+    def _get_user_agent(self, request: Request) -> Optional[str]:
+        """Get the user agent from the request headers"""
+        if "user-agent" in request.headers:
+            return request.headers["user-agent"]
+        elif "User-Agent" in request.headers:
+            return request.headers["User-Agent"]
+        return None
+
+    def _get_ip_address(self, request: Request) -> Optional[str]:
+        """Get the IP address from the request"""
+        try:
+            return request.client.host
+        except AttributeError:
+            return None
+
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
         start = time()
         response = await call_next(request)
 
-        try:
-            ip_address = request.client.host
-        except AttributeError:
-            ip_address = None
-
         request_data = {
             "hostname": request.url.hostname,
-            "ip_address": ip_address,
+            "ip_address": self._get_ip_address(request),
             "path": request.url.path,
-            "user_agent": request.headers["user-agent"],
+            "user_agent": self._get_user_agent(request),
             "method": request.method,
             "status": response.status_code,
             "response_time": int((time() - start) * 1000),
