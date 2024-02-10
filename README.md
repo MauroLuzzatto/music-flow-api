@@ -256,3 +256,9 @@ https://github.com/tiangolo/fastapi/discussions/9664
 https://github.com/ipinfo/python
 https://github.com/shon/httpagentparser
 -->
+
+
+
+<!-- curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{}'
+
+curl: (52) Empty reply from server -->

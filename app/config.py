@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
-    ROOT_PATH: str = "/"
+    ROOT_PATH: str = "/Prod/"
     PROJECT_NAME: str = "MusicFlow API"
     API_DESCRIPTION: str = (
         "This API predicts the number of song streams on Spotify based on"

@@ -13,3 +13,4 @@ pytest
 httpx
 boto3
 pydantic-settings==2.0.3
+itsdangerous
