@@ -116,11 +116,11 @@ Resources:
             RestApiId: !Ref MusicFlowAPI
             Path: /
             Method: get
-        FormPost:
+        SearchSong:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref MusicFlowAPI
-            Path: /
+            Path: /search_song
             Method: post
         About:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
