@@ -6,7 +6,7 @@ from fastapi import Request
 class SongRequestForm:
     def __init__(self, request: Request):
         self.request: Request = request
-        self.errors: List = []
+        self.errors: List[str] = []
         self.song: Optional[str] = None
         self.artist: Optional[str] = None
 
@@ -16,16 +16,21 @@ class SongRequestForm:
         self.artist = form.get("artist")  # type: ignore
 
     def is_valid(self):
-        if not self.song or self.number_of_tokens(self.song) > 10:
-            self.errors.append("A valid song is required")
+        if not self.song and self.number_of_tokens(self.song) > 10:
+            song_error = "A valid song is required"
+            self.errors.append(song_error)
 
-        if not self.artist or self.number_of_tokens(self.artist) > 5:
-            self.errors.append("A valid artist is required")
+        if not self.artist and self.number_of_tokens(self.artist) > 5:
+            aritst_error = "A valid artist is required"
+            self.errors.append(aritst_error)
 
-        if not self.errors:
-            return True
-        return False
+        if self.errors:
+            return False
+        return True
+
+    def as_dict(self):
+        return self.__dict__
 
     @staticmethod
-    def number_of_tokens(string):
+    def number_of_tokens(string: str) -> int:
         return len(string.split())
