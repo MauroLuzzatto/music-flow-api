@@ -28,19 +28,33 @@ router = APIRouter(tags=["FORM"])
 
 @router.get("/", response_class=HTMLResponse)
 async def get_form(request: Request):
-    highscore = Highscore(request)
+    """_summary_
 
+    Args:
+        request (Request): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    highscore = Highscore(request)
     payload = {
         "request": request,
         "scores": highscore.get_highscore(),
     }
-
     template = "prediction.html"
     return templates.TemplateResponse(template, payload)
 
 
 @router.get("/about/", response_class=HTMLResponse)
 async def get_about(request: Request):
+    """_summary_
+
+    Args:
+        request (Request): _description_
+
+    Returns:
+        _type_: _description_
+    """
     return templates.TemplateResponse("about.html", {"request": request})
 
 
@@ -54,9 +68,7 @@ async def get_success_endpoint(request: Request):
     Returns:
         _type_: _description_
     """
-
     template = "partials/songform.html"
-
     form = SongRequestForm(request)
     await form.load_data()
 
@@ -81,11 +93,9 @@ async def get_success_endpoint(request: Request):
     response = output.dict()
 
     highscore = Highscore(request)
-    song = form.song
-    artist = form.artist
     id = header
     _prediction = response["prediction"]
-    highscore.add_score(id, song, artist, _prediction)
+    highscore.add_score(id, _prediction, header)
 
     payload = {
         "request": request,

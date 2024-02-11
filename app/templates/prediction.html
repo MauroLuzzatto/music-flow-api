@@ -3,14 +3,13 @@
 {% endblock %}
 
 
+<div class="container my-5 mx-5" style="height: 20em" id="songForm">
+    <!--  include songform -->
+    {% include 'partials/songform.html' %}
+</div>
 
 
-<!--  include songform -->
-{% include 'partials/songform.html' %}
-
-
-
-<div class="container-fluid my-5 mx-5" id="highscore">
+<div class="container my-5 mx-5" id="highscore">
     <hr style="border-bottom: 1px solid #888">
 
     <h4 class="text-left display-10">Highscore</h4>
@@ -18,7 +17,7 @@
 
     <ul class="list-group">
         {% for score in scores %}
-        <li class="list-group-item">{{ score["prediction"] }}, {{ score["song"]}} by {{ score["artist"]}}
+        <li class="list-group-item">{{ score["prediction"] }}: {{ score["header"] }}
         </li>
         {% endfor %}
     </ul>
