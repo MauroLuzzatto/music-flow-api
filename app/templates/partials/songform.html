@@ -1,28 +1,28 @@
-<h3 class="text-left display-5">Let's predict the number of streams for a song</h3>
+<h1 class="text-left display-6">Let's predict the number of streams for a song</h1>
 
-<div class="text-danger font-weight-bold">
-    {% for error in errors %}
-    <li>{{error}}</li>
-    {% endfor %}
-</div>
 
-<h4 class="text-left display-7">Choose a song!</h4>
+
+<h2 class="text-left display-7">Choose a song!</h2>
 <form id="myForm" action="/search_song" method="POST" hx-boost="true" hx-trigger="submit" hx-swap="innerHTML"
     hx-target="#songForm">
 
-    <div class="mb-3">
+    <div class="form-outline h-100 mb-3">
         <input type="text" required placeholder="Choose an artist e.g Queen" name="artist" value="{{artist}}"
             class="form-control">
     </div>
 
-    <div class="mb-3">
+    <div class="form-outline h-100 mb-3">
         <input type="text" required placeholder="Choose a song e.g Don't stop me now" name="song" value="{{song}}"
             class="form-control">
     </div>
 
-    <div class="class text-center">
+    <div class="text-center my-2">
         <button type="submit" hx-trigger="submit">Search</button>
     </div>
-
-
 </form>
+
+<div class="container-fluid text-danger text-left display-6 font-weight-bold">
+    {% for error in errors %}
+    {{error}}
+    {% endfor %}
+</div>

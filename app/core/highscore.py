@@ -4,10 +4,11 @@ secret_key = "highscore"
 
 
 class Highscore:
-    def __init__(self, request):
+    def __init__(self, request, is_reset: bool = False, max_values: int = 4):
         self.session = request.session
-        scores = self.session.get(secret_key)
+        self.max_values = max_values
 
+        scores = {} if is_reset else self.session.get(secret_key)
         if not scores:
             # save an empty scores dict in the session
             scores = self.session[secret_key] = {}
@@ -35,5 +36,5 @@ class Highscore:
         """
         highscore = sorted(
             self.scores.values(), key=lambda x: x["prediction"], reverse=True
-        )[:5]
+        )[: self.max_values]
         return highscore
