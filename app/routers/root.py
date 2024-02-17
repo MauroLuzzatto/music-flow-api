@@ -36,7 +36,9 @@ async def get_form(request: Request):
     Returns:
         _type_: _description_
     """
-    highscore = Highscore(request)
+    is_reset = "resetButton" == request.headers.get("HX-Trigger")
+    highscore = Highscore(request, is_reset=is_reset)
+
     payload = {
         "request": request,
         "scores": highscore.get_highscore(),

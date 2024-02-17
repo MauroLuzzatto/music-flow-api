@@ -1,0 +1,11 @@
+<hr style="border-bottom: 1px solid #888">
+
+<h4 class="text-left display-10">Highscore</h4>
+<p class="text-left">The training dataset uses streams between 0 and 30.</p>
+
+<ul class="list-group">
+    {% for score in scores %}
+    <li class="list-group-item">{{ score["prediction"] }}: {{ score["header"] }}
+    </li>
+    {% endfor %}
+</ul>
